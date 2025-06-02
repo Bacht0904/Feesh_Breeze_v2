@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
 
 
@@ -12,6 +13,7 @@ use App\Http\Controllers\Controller;
 
 Auth::routes();
 
+Route::get('/admin', [AdminController::class, 'admin'])->name('admin');
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
 Route::get('/register', [HomeController::class, 'showRegistrationForm'])->name('register');
