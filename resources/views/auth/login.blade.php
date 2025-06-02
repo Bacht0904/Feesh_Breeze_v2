@@ -19,7 +19,7 @@
                         <div class="form-floating mb-3">
                             <input class="form-control form-control_gray " name="email" value="" required="" autocomplete="email"
                                 autofocus="">
-                            <label for="email" class="col-md-4 col-form-label text-md-end">{{ __('Email Address') }}</label>
+                            <label for="email" >{{('Email Address *') }}</label>
                             @error('email')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>
@@ -68,7 +68,7 @@
                             </div>
                             <div class="customer-option mt-4 text-center">
                                 <span class="text-secondary">No account yet?</span>
-                                @if (Route::has('registerregister'))
+                                @if (Route::has('register'))
                                 <a href="{{ route('register') }}" class="btn-text js-show-register">Create Account</a> | <a href="#"
                                     class="btn-text js-show-register">My Account</a>
                                 @endif
