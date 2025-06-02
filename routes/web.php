@@ -13,7 +13,7 @@ use App\Http\Controllers\Controller;
 
 Auth::routes();
 
-Route::get('/admin', [AdminController::class, 'admin'])->name('admin');
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
 Route::get('/register', [HomeController::class, 'showRegistrationForm'])->name('register');
