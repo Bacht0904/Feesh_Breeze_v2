@@ -13,7 +13,23 @@ use App\Http\Controllers\Controller;
 
 Auth::routes();
 
-Route::get('/admin', [AdminController::class, 'admin'])->name('admin');
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+Route::get('/admin/brand/add', [AdminController::class, 'add_brand'])->name('admin.brand.add');
+Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
+Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
+Route::get('/admin/category/add', [AdminController::class, 'add_category'])->name('admin.category.add');
+Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
+Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
+Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
+Route::get('/admin/product/add', [AdminController::class, 'add_product'])->name('admin.product.add');
+Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
+Route::get('/admin/slide/add', [AdminController::class, 'add_slide'])->name('admin.slide.add');
+Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
+Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
+Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
 Route::get('/register', [HomeController::class, 'showRegistrationForm'])->name('register');
