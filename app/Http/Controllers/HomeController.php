@@ -34,32 +34,5 @@ class HomeController extends Controller
             return redirect()->route('welcome');
         }
     }
-    public function about()
-    {
-        return view('user.about');
-    }
-    public function shop()
-    {
-        return view('user.shop');
-    }
-    public function contact()
-    {
-        return view('user.contact');
-    }
-    public function cart()
-    {
-        return view('user.cart');
-    }
-    public function wishlist()
-    {
-        return view('user.wishlist');
-    }
-    public function checkout()
-    {
-        return view('user.checkout');
-    }
-    public function profile()
-    {
-        return view('user.profile');
-    }
+    
 }
