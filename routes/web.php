@@ -5,11 +5,31 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\UserController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Hash;
 
 
 // Route::get('/', function () {
 //     return view('welcome');
 // });
+
+Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
+Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
+Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
+Route::get('/admin/password/reset', [AdminController::class, 'showResetForm'])->name('admin.password.reset');
+Route::post('/admin/password/email', [AdminController::class, 'sendResetLinkEmail'])->name('admin.password.email');
+Route::post('/admin/password/reset', [AdminController::class, 'reset'])->name('admin.password.update');
+Route::get('/admin/password/reset/{token}', [AdminController::class, 'showResetFormWithToken'])->name('admin.password.reset.token');
+Route::get('/admin/password/confirm', [AdminController::class, 'showConfirmForm'])->name('admin.password.confirm');
+Route::post('/admin/password/confirm', [AdminController::class, 'confirm'])->name('admin.password.confirm.submit');
+Route::middleware(['auth:admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/profile', [AdminController::class, 'profile'])->name('admin.profile');
+    Route::post('/admin/profile/update', [AdminController::class, 'updateProfile'])->name('admin.profile.update');
+});
+
 
 Auth::routes();
 
@@ -32,6 +52,11 @@ Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
+Route::post('/login', [HomeController::class, 'login'])->name('login');
+
+Route::get('/logout','HomeController@logout')->name('user.logout');
+
+Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
 Route::get('/register', [HomeController::class, 'showRegistrationForm'])->name('register');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
