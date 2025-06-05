@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class HomeController extends Controller
 {
@@ -34,32 +35,44 @@ class HomeController extends Controller
             return redirect()->route('welcome');
         }
     }
-    public function about()
-    {
-        return view('user.about');
+
+    public function login(Request $request){
+        $data= $request->all();
+        if(Auth::attempt(['email' => $data['email'], 'password' => $data['password'],'status'=>'active'])){
+            Session::put('user',$data['email']);
+            request()->session()->flash('success','Đăng nhập thành công');
+            return redirect()->route('home');
+        }
+        else{
+            request()->session()->flash('error','Email hoặc mật khẩu không đúng!');
+            return redirect()->back();
+        }
     }
-    public function shop()
-    {
-        return view('user.shop');
+
+    public function logout(){
+        Session::forget('user');
+        Auth::logout();
+        request()->session()->flash('success','Đăng xuất thành công');
+        return back();
     }
-    public function contact()
+
+    public function register(Request $request)
     {
-        return view('user.contact');
+        $this->validate($request, [
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = \App\Models\User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password),
+        ]);
+
+        Auth::login($user);
+
+        return redirect()->route('welcome');
     }
-    public function cart()
-    {
-        return view('user.cart');
-    }
-    public function wishlist()
-    {
-        return view('user.wishlist');
-    }
-    public function checkout()
-    {
-        return view('user.checkout');
-    }
-    public function profile()
-    {
-        return view('user.profile');
-    }
+  
 }

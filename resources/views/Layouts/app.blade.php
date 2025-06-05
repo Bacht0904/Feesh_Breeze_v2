@@ -269,7 +269,7 @@
 
             <div class="logo">
                 <a href="{{route('home')}}">
-                    <img src="{{asset('(assets/images/logo.png')}}" alt="Uomo" class="logo__image d-block" />
+                    <img src="{{asset('(assets/images/logo.jpg')}}"  class="logo__image d-block" />
                 </a>
             </div>
 
@@ -389,7 +389,8 @@
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
                     <a href="{{ route('home') }}">    
-                        <img src="assets/images/logo.png" alt="Uomo" class="logo__image d-block" />
+                        <img src="{{ asset('images/logo.jpg') }}" class="logo__image" >
+
                     </a>
                 </div>
 
@@ -460,15 +461,27 @@
                         </div>
                     </div>
 
-                    <div class="header-tools__item hover-container">
-                        <a href="{{ route('Login') }}" class="header-tools__item">
+                   @guest
+                    <div class="header-tools__item">
+                        <a href="{{ route('login') }}" class="header-tools__link">
                             <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <use href="#icon_user" />
                             </svg>
+                            <span class="d-block text-uppercase fw-medium">Login</span>
                         </a>
                     </div>
-
+                    @else   
+                    <div class="header-tools__item">
+                        <a href="{{ route('profile') }}" class="header-tools__link">
+                            <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#icon_user" />
+                            </svg>
+                            <span class="d-block text-uppercase fw-medium"></span>
+                        </a>
+                    </div>
+                    @endguest
                     <a href="{{ route('wishlist') }} " class="header-tools__item">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_heart" />
@@ -496,7 +509,7 @@
                 <div class="footer-column footer-store-info col-12 mb-4 mb-lg-0">
                     <div class="logo">
                         <a href="{{ route('home') }}">
-                            <img src="{{asset('assets/images/logo.png')}}" alt="SurfsideMedia" class="logo__image d-block" />
+                            <img src="{{asset('assets/images/logo.jpg')}}" alt="SurfsideMedia" class="logo__image d-block" />
                         </a>
                     </div>
                     <p class="footer-address">123 Beach Avenue, Surfside City, CA 00000</p>
