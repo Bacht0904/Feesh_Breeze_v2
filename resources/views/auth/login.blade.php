@@ -48,7 +48,7 @@
                         <div class="form-floating mb-3">
                             <input id="password" type="password" class="form-control form-control_gray " name="password" required=""
                                 autocomplete="current-password">
-                            <label for="customerPasswodInput">Mặt khẩu *</label>
+                            <label for="customerPasswodInput">Mật khẩu *</label>
                             @error('password')
                             <span class="invalid-feedback" role="alert">
                                 <strong>{{ $message }}</strong>

@@ -4,27 +4,27 @@
 <main class="pt-90">
     <div class="mb-4 pb-4"></div>
     <section class="shop-checkout container">
-      <h2 class="page-title">Shipping and Checkout</h2>
+      <h2 class="page-title">Vận chuyển và Thanh toán</h2>
       <div class="checkout-steps">
         <a href="cart.html" class="checkout-steps__item active">
           <span class="checkout-steps__item-number">01</span>
           <span class="checkout-steps__item-title">
-            <span>Shopping Bag</span>
-            <em>Manage Your Items List</em>
+            <span>Giỏ Hàng</span>
+            <em>Danh sách sản phẩm</em>
           </span>
         </a>
         <a href="checkout.html" class="checkout-steps__item active">
           <span class="checkout-steps__item-number">02</span>
           <span class="checkout-steps__item-title">
-            <span>Shipping and Checkout</span>
-            <em>Checkout Your Items List</em>
+            <span>Vận chuyển và Thanh toán</span>
+            <em>Kiểm tra danh sách sản phẩm</em>
           </span>
         </a>
         <a href="order-confirmation.html" class="checkout-steps__item">
           <span class="checkout-steps__item-number">03</span>
           <span class="checkout-steps__item-title">
-            <span>Confirmation</span>
-            <em>Review And Submit Your Order</em>
+            <span>Xác nhận</span>
+            <em>Xem lại và gửi đơn hàng của bạn</em>
           </span>
         </a>
       </div>
@@ -33,7 +33,7 @@
           <div class="billing-info__wrapper">
             <div class="row">
               <div class="col-6">
-                <h4>SHIPPING DETAILS</h4>
+                <h4>CHI TIẾT VẬN CHUYỂN</h4>
               </div>
               <div class="col-6">
               </div>
@@ -43,70 +43,35 @@
               <div class="col-md-6">
                 <div class="form-floating my-3">
                   <input type="text" class="form-control" name="name" required="">
-                  <label for="name">Full Name *</label>
+                  <label for="name">Tên *</label>
                   <span class="text-danger"></span>
                 </div>
               </div>
               <div class="col-md-6">
                 <div class="form-floating my-3">
                   <input type="text" class="form-control" name="phone" required="">
-                  <label for="phone">Phone Number *</label>
+                  <label for="phone">SĐT *</label>
                   <span class="text-danger"></span>
                 </div>
               </div>
-              <div class="col-md-4">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="zip" required="">
-                  <label for="zip">Pincode *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
+          
               <div class="col-md-4">
                 <div class="form-floating mt-3 mb-3">
                   <input type="text" class="form-control" name="state" required="">
-                  <label for="state">State *</label>
+                  <label for="state">Địa Chỉ *</label>
                   <span class="text-danger"></span>
                 </div>
               </div>
-              <div class="col-md-4">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="city" required="">
-                  <label for="city">Town / City *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="address" required="">
-                  <label for="address">House no, Building Name *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="locality" required="">
-                  <label for="locality">Road Name, Area, Colony *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="landmark" required="">
-                  <label for="landmark">Landmark *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-            </div>
-          </div>
+    
           <div class="checkout__totals-wrapper">
             <div class="sticky-content">
               <div class="checkout__totals">
-                <h3>Your Order</h3>
+                <h3>Đơn Hàng</h3>
                 <table class="checkout-cart-items">
                   <thead>
                     <tr>
-                      <th>PRODUCT</th>
-                      <th align="right">SUBTOTAL</th>
+                      <th>Sản Phẩm</th>
+                      <th align="right">Tổng Tiền</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -131,15 +96,15 @@
                 <table class="checkout-totals">
                   <tbody>
                     <tr>
-                      <th>SUBTOTAL</th>
+                      <th>Tổng Tiền</th>
                       <td align="right">$62.40</td>
                     </tr>
                     <tr>
-                      <th>SHIPPING</th>
-                      <td align="right">Free shipping</td>
+                      <th>Vận Chuyển</th>
+                      <td align="right">Miễn Phí Vận Chuyển</td>
                     </tr>
                     <tr>
-                      <th>VAT</th>
+                      <th>Thuế</th>
                       <td align="right">$19</td>
                     </tr>
                     <tr>
@@ -154,10 +119,9 @@
                   <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
                     id="checkout_payment_method_1" checked>
                   <label class="form-check-label" for="checkout_payment_method_1">
-                    Direct bank transfer
+                    Thanh Toán Ngân Hàng
                     <p class="option-detail">
-                      Make your payment directly into our bank account. Please use your Order ID as the payment
-                      reference.Your order will not be shipped until the funds have cleared in our account.
+                     
                     </p>
                   </label>
                 </div>
@@ -165,11 +129,9 @@
                   <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
                     id="checkout_payment_method_2">
                   <label class="form-check-label" for="checkout_payment_method_2">
-                    Check payments
+                    MOMO
                     <p class="option-detail">
-                      Phasellus sed volutpat orci. Fusce eget lore mauris vehicula elementum gravida nec dui. Aenean
-                      aliquam varius ipsum, non ultricies tellus sodales eu. Donec dignissim viverra nunc, ut aliquet
-                      magna posuere eget.
+                     
                     </p>
                   </label>
                 </div>
@@ -177,33 +139,15 @@
                   <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
                     id="checkout_payment_method_3">
                   <label class="form-check-label" for="checkout_payment_method_3">
-                    Cash on delivery
+                    VNPAY
                     <p class="option-detail">
-                      Phasellus sed volutpat orci. Fusce eget lore mauris vehicula elementum gravida nec dui. Aenean
-                      aliquam varius ipsum, non ultricies tellus sodales eu. Donec dignissim viverra nunc, ut aliquet
-                      magna posuere eget.
+                      
                     </p>
                   </label>
                 </div>
-                <div class="form-check">
-                  <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
-                    id="checkout_payment_method_4">
-                  <label class="form-check-label" for="checkout_payment_method_4">
-                    Paypal
-                    <p class="option-detail">
-                      Phasellus sed volutpat orci. Fusce eget lore mauris vehicula elementum gravida nec dui. Aenean
-                      aliquam varius ipsum, non ultricies tellus sodales eu. Donec dignissim viverra nunc, ut aliquet
-                      magna posuere eget.
-                    </p>
-                  </label>
-                </div>
-                <div class="policy-text">
-                  Your personal data will be used to process your order, support your experience throughout this
-                  website, and for other purposes described in our <a href="terms.html" target="_blank">privacy
-                    policy</a>.
-                </div>
+                
               </div>
-              <button class="btn btn-primary btn-checkout">PLACE ORDER</button>
+              <button class="btn btn-primary btn-checkout">ĐẶT HÀNG</button>
             </div>
           </div>
         </div>
