@@ -16,7 +16,7 @@
             <h5 class="accordion-header" id="accordion-heading-1">
               <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
                 data-bs-target="#accordion-filter-1" aria-expanded="true" aria-controls="accordion-filter-1">
-                Product Categories
+                Danh Mục
                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
                   <g aria-hidden="true" stroke="none" fill-rule="evenodd">
                     <path
@@ -71,7 +71,7 @@
             <h5 class="accordion-header" id="accordion-heading-1">
               <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
                 data-bs-target="#accordion-filter-2" aria-expanded="true" aria-controls="accordion-filter-2">
-                Color
+                Màu
                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
                   <g aria-hidden="true" stroke="none" fill-rule="evenodd">
                     <path
@@ -204,7 +204,7 @@
             <h5 class="accordion-header mb-2" id="accordion-heading-price">
               <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
                 data-bs-target="#accordion-filter-price" aria-expanded="true" aria-controls="accordion-filter-price">
-                Price
+                Giá
                 <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
                   <g aria-hidden="true" stroke="none" fill-rule="evenodd">
                     <path
@@ -387,7 +387,7 @@
                 </div>
                 <button
                   class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside"
-                  data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
+                  data-aside="cartDrawer" title="Add To Cart">Thêm vào giỏ</button>
               </div>
 
               <div class="pc__info position-relative">
