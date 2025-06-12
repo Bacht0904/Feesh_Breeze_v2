@@ -50,7 +50,7 @@
                                 <li class="menu-item">
                                     <a href="{{route('admin.index')}}" class="">
                                         <div class="icon"><i class="icon-grid"></i></div>
-                                        <div class="text">Dashboard</div>
+                                        <div class="text">Trang chủ</div>
                                     </a>
                                 </li>
                             </ul>
@@ -60,17 +60,17 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-shopping-cart"></i></div>
-                                        <div class="text">Products</div>
+                                        <div class="text">Sản phẩm</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.product.add') }}" class="">
-                                                <div class="text">Add Product</div>
+                                                <div class="text">Thêm sản phẩm</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.products') }}" class="">
-                                                <div class="text">Products</div>
+                                                <div class="text">Danh sách sản phẩm</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -78,17 +78,17 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-layers"></i></div>
-                                        <div class="text">Brand</div>
+                                        <div class="text">Thương hiệu</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.brand.add') }}" class="">
-                                                <div class="text">New Brand</div>
+                                                <div class="text">Thêm thương hiệu</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.brands') }}" class="">
-                                                <div class="text">Brands</div>
+                                                <div class="text">Danh sách thương hiệu</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -96,17 +96,17 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-layers"></i></div>
-                                        <div class="text">Category</div>
+                                        <div class="text">Loại sản phẩm</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.category.add') }}" class="">
-                                                <div class="text">New Category</div>
+                                                <div class="text">Thêm loại sản phẩm</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
                                             <a href="{{route('admin.categories')}}" class="">
-                                                <div class="text">Categories</div>
+                                                <div class="text">Danh sách loại sản phẩm</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -115,17 +115,17 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-file-plus"></i></div>
-                                        <div class="text">Order</div>
+                                        <div class="text">Hóa đơn</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.orders') }}" class="">
-                                                <div class="text">Orders</div>
+                                                <div class="text">Danh sách hóa đơn</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.order.tracking') }}" class="">
-                                                <div class="text">Order tracking</div>
+                                                <div class="text">Trạng thái hóa đơn</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -139,21 +139,21 @@
                                 <li class="menu-item">
                                     <a href="{{ route('admin.coupons') }}" class="">
                                         <div class="icon"><i class="icon-grid"></i></div>
-                                        <div class="text">Coupns</div>
+                                        <div class="text">Phiếu giảm giá</div>
                                     </a>
                                 </li>
 
                                 <li class="menu-item">
                                     <a href="{{ route('admin.users') }}" class="">
                                         <div class="icon"><i class="icon-user"></i></div>
-                                        <div class="text">User</div>
+                                        <div class="text">Người dùng</div>
                                     </a>
                                 </li>
 
                                 <li class="menu-item">
                                     <a href="{{ route('admin.settings') }}" class="">
                                         <div class="icon"><i class="icon-settings"></i></div>
-                                        <div class="text">Settings</div>
+                                        <div class="text">Cài đặt</div>
                                     </a>
                                 </li>
 
@@ -162,7 +162,7 @@
                                         @csrf
                                     <a href="{{route('logout')}}" class="" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                                         <div class="icon"><i class="icon-settings"></i></div>
-                                        <div class="text">Logout</div>
+                                        <div class="text">Đăng xuất</div>
                                     </a>
                                     </form>
                                 </li>
@@ -196,7 +196,7 @@
                                     <div class="box-content-search" id="box-content-search">
                                         <ul class="mb-24">
                                             <li class="mb-14">
-                                                <div class="body-title">Top selling product</div>
+                                                <div class="body-title">Sản phẩm bán chạy</div>
                                             </li>
                                             <li class="mb-14">
                                                 <div class="divider"></div>

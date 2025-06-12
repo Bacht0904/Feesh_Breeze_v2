@@ -7,14 +7,14 @@
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
-                            <div class="text-tiny">Dashboard</div>
+                            <div class="text-tiny">Trang chủ</div>
                         </a>
                     </li>
                     <li>
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">All User</div>
+                        <div class="text-tiny">Danh sách người dùng</div>
                     </li>
                 </ul>
             </div>
@@ -41,11 +41,11 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>User</th>
-                                    <th>Phone</th>
+                                    <th>Người dùng</th>
+                                    <th>Số điện thoại</th>
                                     <th>Email</th>
-                                    <th class="text-center">Total Orders</th>
-                                    <th>Action</th>
+                                    <th>Tổng hóa đơn</th>
+                                    <th>Trạng thái</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,12 +57,11 @@
                                         </div>
                                         <div class="name">
                                             <a href="#" class="body-title-2">Admin</a>
-                                            <div class="text-tiny mt-3">ADM</div>
                                         </div>
                                     </td>
                                     <td>1234567890</td>
-                                    <td>admin@surfsidemedia.in</td>
-                                    <td class="text-center"><a href="#" target="_blank">0</a></td>
+                                    <td>admin@gmail.com</td>
+                                    <td><a href="#" target="_blank">0</a></td>
                                     <td>
                                         <div class="list-icon-function">
                                             <a href="#">

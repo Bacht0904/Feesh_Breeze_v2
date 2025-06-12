@@ -1,10 +1,13 @@
 <?php
 
-namespace App\Models;
+
+namespace App\Http\Models;
+
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model
+
+class Brand extends Model
 {
     //
 }
