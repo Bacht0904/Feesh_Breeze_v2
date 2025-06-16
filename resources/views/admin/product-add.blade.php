@@ -8,7 +8,7 @@
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
-                            <div class="text-tiny">Dashboard</div>
+                            <div class="text-tiny">Trang chủ</div>
                         </a>
                     </li>
                     <li>
@@ -16,7 +16,7 @@
                     </li>
                     <li>
                         <a href="all-product.html">
-                            <div class="text-tiny">Products</div>
+                            <div class="text-tiny">Sản phẩm</div>
                         </a>
                     </li>
                     <li>
@@ -33,47 +33,45 @@
                 <input type="hidden" name="_token" value="8LNRTO4LPXHvbK2vgRcXqMeLgqtqNGjzWSNru7Xx" autocomplete="off">
                 <div class="wg-box">
                     <fieldset class="name">
-                        <div class="body-title mb-10">Product name <span class="tf-color-1">*</span>
+                        <div class="body-title mb-10">Tên sản phẩm<span class="tf-color-1">*</span>
                         </div>
-                        <input class="mb-10" type="text" placeholder="Enter product name" name="name" tabindex="0" value=""
+                        <input class="mb-10" type="text" placeholder="Nhập tên sản phẩm" name="name" tabindex="0" value=""
                             aria-required="true" required="">
-                        <div class="text-tiny">Do not exceed 100 characters when entering the
-                            product name.</div>
+                        <div class="text-tiny">Không được nhập tên sản phẩm quá 100 ký tự.</div>
                     </fieldset>
 
                     <fieldset class="name">
-                        <div class="body-title mb-10">Slug <span class="tf-color-1">*</span></div>
-                        <input class="mb-10" type="text" placeholder="Enter product slug" name="slug" tabindex="0" value=""
+                        <div class="body-title mb-10">Mã loại sản phẩm(Slug)<span class="tf-color-1">*</span></div>
+                        <input class="mb-10" type="text" placeholder="Nhập mã sản phẩm" name="slug" tabindex="0" value=""
                             aria-required="true" required="">
-                        <div class="text-tiny">Do not exceed 100 characters when entering the
-                            product name.</div>
+                        <div class="text-tiny">Không được nhập tên sản phẩm quá 100 ký tự.</div>
                     </fieldset>
 
                     <div class="gap22 cols">
                         <fieldset class="category">
-                            <div class="body-title mb-10">Category <span class="tf-color-1">*</span>
+                            <div class="body-title mb-10">Loại sản phẩm<span class="tf-color-1">*</span>
                             </div>
                             <div class="select">
                                 <select class="" name="category_id">
-                                    <option>Choose category</option>
-                                    <option value="1">Category1</option>
-                                    <option value="2">Category2</option>
-                                    <option value="3">Category3</option>
-                                    <option value="4">Category4</option>
+                                    <option>Chọn loại sản phẩm</option>
+                                    <option value="1">Loại sản phẩm 1</option>
+                                    <option value="2">Loại sản phẩm 2</option>
+                                    <option value="3">Loại sản phẩm 3</option>
+                                    <option value="4">Loại sản phẩm 4</option>
 
                                 </select>
                             </div>
                         </fieldset>
                         <fieldset class="brand">
-                            <div class="body-title mb-10">Brand <span class="tf-color-1">*</span>
+                            <div class="body-title mb-10">Thương hiệu<span class="tf-color-1">*</span>
                             </div>
                             <div class="select">
                                 <select class="" name="brand_id">
-                                    <option>Choose Brand</option>
-                                    <option value="1">Brand1</option>
-                                    <option value="2">Brand2</option>
-                                    <option value="3">Brand3</option>
-                                    <option value="4">Brand4</option>
+                                    <option>Chọn thương hiệu</option>
+                                    <option value="1">Thương hiệu 1</option>
+                                    <option value="2">Thương hiệu 2</option>
+                                    <option value="3">Thương hiệu 3</option>
+                                    <option value="4">Thương hiệu 4</option>
 
                                 </select>
                             </div>
@@ -81,20 +79,17 @@
                     </div>
 
                     <fieldset class="shortdescription">
-                        <div class="body-title mb-10">Short Description <span class="tf-color-1">*</span></div>
-                        <textarea class="mb-10 ht-150" name="short_description" placeholder="Short Description" tabindex="0"
+                        <div class="body-title mb-10">Mô tả ngắn<span class="tf-color-1">*</span></div>
+                        <textarea class="mb-10 ht-150" name="short_description" placeholder="Nhập mô tả" tabindex="0"
                             aria-required="true" required=""></textarea>
-                        <div class="text-tiny">Do not exceed 100 characters when entering the
-                            product name.</div>
+                        <div class="text-tiny">Không được nhập quá 100 ký tự</div>
                     </fieldset>
 
                     <fieldset class="description">
-                        <div class="body-title mb-10">Description <span class="tf-color-1">*</span>
+                        <div class="body-title mb-10">CChi tiết<span class="tf-color-1">*</span>
                         </div>
-                        <textarea class="mb-10" name="description" placeholder="Description" tabindex="0"
+                        <textarea class="mb-10" name="description" placeholder="Nhập mô tả" tabindex="0"
                             aria-required="true" required=""></textarea>
-                        <div class="text-tiny">Do not exceed 100 characters when entering the
-                            product name.</div>
                     </fieldset>
                 </div>
                 <div class="wg-box">
@@ -119,7 +114,7 @@
                     </fieldset>
 
                     <fieldset>
-                        <div class="body-title mb-10">Upload Gallery Images</div>
+                        <div class="body-title mb-10">Tải lên hình ảnh thư viện</div>
                         <div class="upload-image mb-16">
                             <!-- <div class="item">
                                     <img src="images/upload/upload-1.png" alt="">
@@ -139,13 +134,13 @@
 
                     <div class="cols gap22">
                         <fieldset class="name">
-                            <div class="body-title mb-10">Regular Price <span class="tf-color-1">*</span></div>
-                            <input class="mb-10" type="text" placeholder="Enter regular price" name="regular_price"
+                            <div class="body-title mb-10">Giá thông thường <span class="tf-color-1">*</span></div>
+                            <input class="mb-10" type="text" placeholder="Nhập giá thông thường" name="regular_price"
                                 tabindex="0" value="" aria-required="true" required="">
                         </fieldset>
                         <fieldset class="name">
-                            <div class="body-title mb-10">Sale Price <span class="tf-color-1">*</span></div>
-                            <input class="mb-10" type="text" placeholder="Enter sale price" name="sale_price" tabindex="0"
+                            <div class="body-title mb-10">Giá bán<span class="tf-color-1">*</span></div>
+                            <input class="mb-10" type="text" placeholder="Nhập giá bán" name="sale_price" tabindex="0"
                                 value="" aria-required="true" required="">
                         </fieldset>
                     </div>
