@@ -464,10 +464,7 @@
                    @guest
                     <div class="header-tools__item">
                         <a href="{{ route('login') }}" class="header-tools__link">
-                            <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_user" />
-                            </svg>
+                           
                             <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
                         </a>
                     </div>

@@ -1,8 +1,12 @@
 <?php
 namespace App\Http\Controllers;
 
+<<<<<<< HEAD
 use App\Models\Brand;
 use Carbon\Carbon;
+=======
+use App\Http\Models\Brand;
+>>>>>>> c003e191de1f040138947f86640739e312b1938e
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
