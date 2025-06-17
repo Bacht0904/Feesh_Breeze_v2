@@ -1,9 +1,11 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Http\Models\Brand;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use Intervention\Image\Laravel\Facades\Image;
 
 class AdminController extends Controller
 {
@@ -24,12 +26,52 @@ class AdminController extends Controller
 
     public function brands()
     {
-        return view('admin.brands');
+        $brands = Brand::orderBy('id','DESC')->paginate(10);
+        return view('admin.brands', compact('brands'));
     }
 
     public function add_brand()
     {
         return view('admin.brand-add');
+    }
+
+    public function brand_store(Request $request)
+    {
+        $request->validate([
+            'name'  => 'required|string|max:255',
+            'slug'  => 'required|string|unique:brands,slug',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        $brand = new Brand();
+        $brand->name = $request->name;
+        $brand->slug = Str::slug($request->name);
+
+        // Lấy ảnh & đặt tên file
+        $image = $request->file('image');
+        $ext   = $image->getClientOriginalExtension();
+        $fileName = Carbon::now()->format('YmdHis') . '.' . $ext;
+
+        // Resize và lưu ảnh thumbnail
+        $this->generateBrandThumbnailsImage($image, $fileName);
+
+        $brand->image = $fileName;
+        $brand->save();
+
+        return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được thêm thành công!');
+    }
+
+    public function generateBrandThumbnailsImage($image, $imageName)
+    {
+        $destinationPath = public_path('uploads/brands');
+
+        if (!File::exists($destinationPath)) {
+            File::makeDirectory($destinationPath, 0755, true);
+        }
+
+        Image::read($image->path())
+            ->cover(124, 124, 'top')
+            ->save($destinationPath . '/' . $imageName);
     }
 
     public function categories()

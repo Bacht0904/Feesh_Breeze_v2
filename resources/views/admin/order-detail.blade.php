@@ -3,11 +3,11 @@
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Order Details</h3>
+                <h3>Thông tin hóa đơn</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
-                            <div class="text-tiny">Dashboard</div>
+                            <div class="text-tiny">Trang chủ</div>
                         </a>
                     </li>
                     <li>
@@ -31,14 +31,13 @@
                         <thead>
                             <tr>
                                 <th>Name</th>
-                                <th class="text-center">Price</th>
-                                <th class="text-center">Quantity</th>
+                                <th class="text-center">Giá</th>
+                                <th class="text-center">Số lượng</th>
                                 <th class="text-center">SKU</th>
-                                <th class="text-center">Category</th>
-                                <th class="text-center">Brand</th>
-                                <th class="text-center">Options</th>
-                                <th class="text-center">Return Status</th>
-                                <th class="text-center">Action</th>
+                                <th class="text-center">Loại</th>
+                                <th class="text-center">Thương hiệu</th>
+                                <th class="text-center">Trạng thái phản hồi</th>
+                                <th class="text-center">Trạng thái</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -57,7 +56,6 @@
                                 <td class="text-center">SHT01245</td>
                                 <td class="text-center">Category1</td>
                                 <td class="text-center">Brand1</td>
-                                <td class="text-center"></td>
                                 <td class="text-center">No</td>
                                 <td class="text-center">
                                     <div class="list-icon-function view-icon">
@@ -82,7 +80,6 @@
                                 <td class="text-center">SHT99890</td>
                                 <td class="text-center">Category2</td>
                                 <td class="text-center">Brand1</td>
-                                <td class="text-center"></td>
                                 <td class="text-center">No</td>
                                 <td class="text-center">
                                     <div class="list-icon-function view-icon">

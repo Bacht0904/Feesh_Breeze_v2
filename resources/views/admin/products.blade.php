@@ -32,32 +32,34 @@
                             </div>
                         </form>
                     </div>
-                    <a class="tf-button style-1 w208" href="{{ route('admin.product.add') }}"><i class="icon-plus"></i>Add new</a>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.product.add') }}"><i class="icon-plus"></i>Add
+                        new</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
-                                <th>#</th>
-                                <th>Name</th>
-                                <th>Price</th>
-                                <th>SalePrice</th>
-                                <th>SKU</th>
-                                <th>Category</th>
-                                <th>Brand</th>
-                                <th>Featured</th>
-                                <th>Stock</th>
-                                <th>Quantity</th>
-                                <th>Action</th>
+                                <th>STT</th>
+                                <th>Tên sản phẩm</th>
+                                <th>Giá gốc</th>
+                                <th>Giá khuyến mãi</th>
+                                <th>Mã SKU</th>
+                                <th>Loại</th>
+                                <th>Thương hiệu</th>
+                                <th>Nổi bật</th>
+                                <th>Tình trạng</th>
+                                <th>Số lượng</th>
+                                <th>Thao tác</th>
+
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>6</td>
                                 <td class="pname">
-                                    <div class="image">
+                                    <!-- <div class="image">
                                         <img src="1718623519.html" alt="" class="image">
-                                    </div>
+                                    </div> -->
                                     <div class="name">
                                         <a href="#" class="body-title-2">Product6</a>
                                         <div class="text-tiny mt-3">product6</div>
