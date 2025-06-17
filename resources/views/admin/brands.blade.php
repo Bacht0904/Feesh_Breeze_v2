@@ -3,7 +3,7 @@
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Brands</h3>
+                <h3>Danh sách thương hiệu</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{route('admin.index')}}">
@@ -24,7 +24,7 @@
                     <div class="wg-filter flex-grow">
                         <form class="form-search">
                             <fieldset class="name">
-                                <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value=""
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value=""
                                     aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
@@ -73,7 +73,7 @@
                                     <td><a href="#" target="_blank">0</a></td>
                                     <td>
                                         <div class="list-icon-function">
-                                            <a href="#">
+                                            <a href="{{ route('admin.brand.edit',['id'=>$brand->id]) }}">
                                                 <div class="item edit">
                                                     <i class="icon-edit-3"></i>
                                                 </div>

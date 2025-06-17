@@ -3,18 +3,18 @@
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>All Products</h3>
+                <h3>Danh sách sản phẩm</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
-                            <div class="text-tiny">Dashboard</div>
+                            <div class="text-tiny">Trang chủ</div>
                         </a>
                     </li>
                     <li>
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">All Products</div>
+                        <div class="text-tiny">Sản phẩm</div>
                     </li>
                 </ul>
             </div>
@@ -24,7 +24,7 @@
                     <div class="wg-filter flex-grow">
                         <form class="form-search">
                             <fieldset class="name">
-                                <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value=""
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value=""
                                     aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
@@ -32,8 +32,7 @@
                             </div>
                         </form>
                     </div>
-                    <a class="tf-button style-1 w208" href="{{ route('admin.product.add') }}"><i class="icon-plus"></i>Add
-                        new</a>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.product.add') }}"><i class="icon-plus"></i>Thêm mới</a>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-striped table-bordered">

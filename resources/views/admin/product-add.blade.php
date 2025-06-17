@@ -15,7 +15,7 @@
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <a href="all-product.html">
+                        <a href="{{ route('admin.products') }}">
                             <div class="text-tiny">Sản phẩm</div>
                         </a>
                     </li>
@@ -23,7 +23,7 @@
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">Add product</div>
+                        <div class="text-tiny">Thêm sản phẩm</div>
                     </li>
                 </ul>
             </div>
@@ -86,15 +86,15 @@
                     </fieldset>
 
                     <fieldset class="description">
-                        <div class="body-title mb-10">CChi tiết<span class="tf-color-1">*</span>
+                        <div class="body-title mb-10">Chi tiết mô tả<span class="tf-color-1">*</span>
                         </div>
-                        <textarea class="mb-10" name="description" placeholder="Nhập mô tả" tabindex="0"
+                        <textarea class="mb-10" name="description" placeholder="Nhập chi tiết mô tả" tabindex="0"
                             aria-required="true" required=""></textarea>
                     </fieldset>
                 </div>
                 <div class="wg-box">
                     <fieldset>
-                        <div class="body-title">Upload images <span class="tf-color-1">*</span>
+                        <div class="body-title">Tải lên hình ảnh<span class="tf-color-1">*</span>
                         </div>
                         <div class="upload-image flex-grow">
                             <div class="item" id="imgpreview" style="display:none">
@@ -134,7 +134,7 @@
 
                     <div class="cols gap22">
                         <fieldset class="name">
-                            <div class="body-title mb-10">Giá thông thường <span class="tf-color-1">*</span></div>
+                            <div class="body-title mb-10">Giá thông thường<span class="tf-color-1">*</span></div>
                             <input class="mb-10" type="text" placeholder="Nhập giá thông thường" name="regular_price"
                                 tabindex="0" value="" aria-required="true" required="">
                         </fieldset>
@@ -148,41 +148,20 @@
 
                     <div class="cols gap22">
                         <fieldset class="name">
-                            <div class="body-title mb-10">SKU <span class="tf-color-1">*</span>
+                            <div class="body-title mb-10">Mã sản phẩm<span class="tf-color-1">*</span>
                             </div>
                             <input class="mb-10" type="text" placeholder="Enter SKU" name="SKU" tabindex="0" value=""
                                 aria-required="true" required="">
                         </fieldset>
                         <fieldset class="name">
-                            <div class="body-title mb-10">Quantity <span class="tf-color-1">*</span>
+                            <div class="body-title mb-10">Số lượng<span class="tf-color-1">*</span>
                             </div>
-                            <input class="mb-10" type="text" placeholder="Enter quantity" name="quantity" tabindex="0"
+                            <input class="mb-10" type="text" placeholder="Nhập số lượng" name="quantity" tabindex="0"
                                 value="" aria-required="true" required="">
                         </fieldset>
                     </div>
-
-                    <div class="cols gap22">
-                        <fieldset class="name">
-                            <div class="body-title mb-10">Stock</div>
-                            <div class="select mb-10">
-                                <select class="" name="stock_status">
-                                    <option value="instock">InStock</option>
-                                    <option value="outofstock">Out of Stock</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                        <fieldset class="name">
-                            <div class="body-title mb-10">Featured</div>
-                            <div class="select mb-10">
-                                <select class="" name="featured">
-                                    <option value="0">No</option>
-                                    <option value="1">Yes</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                    </div>
                     <div class="cols gap10">
-                        <button class="tf-button w-full" type="submit">Add product</button>
+                        <button class="tf-button w-full" type="submit">TThêm sản phẩm</button>
                     </div>
                 </div>
             </form>

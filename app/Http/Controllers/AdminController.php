@@ -1,7 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Models\Brand;
+use App\Models\Brand;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -27,7 +27,7 @@ class AdminController extends Controller
 
     public function brands()
     {
-        $brands = Brand::orderBy('id','DESC')->paginate(10);
+        $brands = Brand::orderBy('id', 'DESC')->paginate(10);
         return view('admin.brands', compact('brands'));
     }
 
@@ -36,11 +36,11 @@ class AdminController extends Controller
         return view('admin.brand-add');
     }
 
-    public function brand_store(Request $request)
+    public function brand_store(Request $request, $id)
     {
         $request->validate([
-            'name'  => 'required|string|max:255',
-            'slug'  => 'required|string|unique:brands,slug',
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:brands,slug',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048'
         ]);
 
@@ -50,8 +50,8 @@ class AdminController extends Controller
 
         // Lấy ảnh & đặt tên file
         $image = $request->file('image');
-        $ext   = $image->getClientOriginalExtension();
-        $fileName = Carbon::now()->format('YmdHis') . '.' . $ext;
+        $text = $image->getClientOriginalExtension();
+        $fileName = Carbon::now()->format('YmdHis') . '.' . $text;
 
         // Resize và lưu ảnh thumbnail
         $this->generateBrandThumbnailsImage($image, $fileName);
@@ -60,6 +60,41 @@ class AdminController extends Controller
         $brand->save();
 
         return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được thêm thành công!');
+    }
+
+    public function edit_brand($id)
+    {
+        $brand = Brand::find($id);
+        return view('admin.brand-edit', compact('brand'));
+    }
+
+    public function update_brand(Request $request)
+    {
+        $request->validate([
+            'name' => 'required',
+            'slug' => 'required|unique:brands,slug',
+            'image' => 'mimes:png,jpg,jpeg|max:2048'
+        ]);
+
+        $brand = Brand::find($request->id);
+        $brand->name = $request->name;
+        $brand->slug = Str::slug($request->name);
+        if ($request->hasFile('image')) {
+            if (file::exists(public_path('uploads/brands') . '/' . $brand->image)) 
+            {
+                file::delete(public_path('uploads/brands') . '/' . $brand->image);
+            }
+            $image = $request->file('image');
+            $text = $image->getClientOriginalExtension();
+            $fileName = Carbon::now()->format('YmdHis') . '.' . $text;
+
+            $this->generateBrandThumbnailsImage($image, $fileName);
+
+            $brand->image = $fileName;
+        }
+        $brand->save();
+
+        return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được sửa thành công!');
     }
 
     public function generateBrandThumbnailsImage($image, $imageName)
@@ -75,6 +110,11 @@ class AdminController extends Controller
             ->save($destinationPath . '/' . $imageName);
     }
 
+    public function delete_brand($id)
+    {
+        
+    }
+
     public function categories()
     {
         return view('admin.categories');
@@ -85,7 +125,7 @@ class AdminController extends Controller
         return view('admin.category-add');
     }
 
-        public function orders()
+    public function orders()
     {
         return view('admin.orders');
     }
@@ -125,7 +165,7 @@ class AdminController extends Controller
         return view('admin.coupon-add');
     }
 
-        public function settings()
+    public function settings()
     {
         return view('admin.settings');
     }

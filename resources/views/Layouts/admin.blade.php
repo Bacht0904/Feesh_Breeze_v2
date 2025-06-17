@@ -175,7 +175,7 @@
                     <div class="header-dashboard">
                         <div class="wrap">
                             <div class="header-left">
-                                <a href="index-2.html">
+                                <a href="{{ route('admin.index') }}">
                                     <img class="" id="logo_header_mobile" alt="" src="images/logo/logo.png"
                                         data-light="images/logo/logo.png" data-dark="images/logo/logo.png"
                                         data-width="154px" data-height="52px" data-retina="images/logo/logo.png">
@@ -187,7 +187,7 @@
 
                                 <form class="form-search flex-grow">
                                     <fieldset class="name">
-                                        <input type="text" placeholder="Search here..." class="show-search" name="name"
+                                        <input type="text" placeholder="Tìm kiếm..." class="show-search" name="name"
                                             tabindex="2" value="" aria-required="true" required="">
                                     </fieldset>
                                     <div class="button-submit">
