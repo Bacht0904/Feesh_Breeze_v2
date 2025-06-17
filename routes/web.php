@@ -38,6 +38,7 @@ Route::get('/admin/brand/add', [AdminController::class, 'add_brand'])->name('adm
 Route::post('/admin/brand/store', [AdminController::class, 'brand_store'])->name('admin.brand.store');
 Route::get('/admin/brand/edit/{id}', [AdminController::class, 'edit_brand'])->name('admin.brand.edit');
 Route::put('/admin/brand/update', [AdminController::class, 'update_brand'])->name('admin.brand.update');
+Route::delete('/admin/brand/{id}/delete', [AdminController::class, 'delete_brand'])->name('admin.brand.delete');
 Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
 Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
 Route::get('/admin/category/add', [AdminController::class, 'add_category'])->name('admin.category.add');

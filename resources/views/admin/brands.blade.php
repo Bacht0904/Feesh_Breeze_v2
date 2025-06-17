@@ -32,7 +32,8 @@
                             </div>
                         </form>
                     </div>
-                    <a class="tf-button style-1 w208" href="{{ route('admin.brand.add') }}"><i class="icon-plus"></i>Thêm mới</a>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.brand.add') }}"><i class="icon-plus"></i>Thêm
+                        mới</a>
                 </div>
                 <div class="wg-table table-all-user">
                     <div class="table-responsive">
@@ -52,40 +53,44 @@
                             </thead>
                             <tbody>
                                 @foreach ($brands as $brand)
-                                <tr>
-                                    <td>{{ $brand->id }}</td>
-                                    <td class="image">
+                                    <tr>
+                                        <td>{{ $brand->id }}</td>
+                                        <td class="image">
                                             <!-- <img src="{{ asset('uploads/brands') }}/{{ $brand->image }}" alt="{{ $brand->name }}" class="image"> -->
                                             <!-- <img src="{{ asset('uploads/brands/filename.jpg') }}" alt="Ảnh thương hiệu"> -->
-                                            <img src="{{ asset('uploads/brands/' . $brand->image) }}"
-     alt="{{ $brand->name }}"
-     style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+                                            <img src="{{ asset('uploads/brands/' . $brand->image) }}" alt="{{ $brand->name }}"
+                                                style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
 
 
                                         </td>
-                                    <td class="name">
-                                       
-                                     
+                                        <td class="name">
+
+
                                             <a href="#" class="body-title-2">{{ $brand->name }}</a>
-                                    
-                                    </td>
-                                    <td>{{ $brand->slug }}</td>
-                                    <td><a href="#" target="_blank">0</a></td>
-                                    <td>
-                                        <div class="list-icon-function">
-                                            <a href="{{ route('admin.brand.edit',['id'=>$brand->id]) }}">
-                                                <div class="item edit">
-                                                    <i class="icon-edit-3"></i>
-                                                </div>
-                                            </a>
-                                            <form action="#" method="POST">
-                                                <div class="item text-danger delete">
-                                                    <i class="icon-trash-2"></i>
-                                                </div>
-                                            </form>
-                                        </div>
-                                    </td>
-                                </tr>
+
+                                        </td>
+                                        <td>{{ $brand->slug }}</td>
+                                        <td><a href="#" target="_blank">0</a></td>
+                                        <td>
+                                            <div class="list-icon-function">
+                                                <a href="{{ route('admin.brand.edit', ['id' => $brand->id]) }}">
+                                                    <div class="item edit">
+                                                        <i class="icon-edit-3"></i>
+                                                    </div>
+                                                </a>
+                                                <form action="{{ route('admin.brand.delete', ['id' => $brand->id]) }}"
+                                                    method="POST">
+
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="item text-danger delete"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                        <i class="icon-trash-2"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                         </table>
@@ -99,3 +104,41 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $function(document).ready(function () {
+            // Xử lý sự kiện click cho các nút xóa
+            $('.delete').on('click', function (event) {
+                event.preventDefault();
+                swal({
+                    title: "Xác nhận xóa",
+                    text: "Bạn có chắc chắn muốn xóa thương hiệu này?",
+                    icon: "warning",
+                    buttons: ["Hủy", "Xóa"],
+                    confirmButtonColor: "#DD6B55",
+                }).then((willDelete) => {
+                    if (willDelete) {
+                        // Nếu người dùng xác nhận xóa, gửi form
+                        $(this).closest('form').submit();
+                    } else {
+                        // Nếu người dùng hủy, không làm gì cả
+                        swal("Thương hiệu không bị xóa!");
+                    }
+                });
+
+            });
+        });
+        // document.addEventListener('DOMContentLoaded', function() {
+        //     const deleteForms = document.querySelectorAll('.delete');
+        //     deleteForms.forEach(form => {
+        //         form.addEventListener('click', function(event) {
+        //             event.preventDefault();
+        //             if (confirm('Bạn có chắc chắn muốn xóa thương hiệu này?')) {
+        //                 this.closest('form').submit();
+        //             }
+        //         });
+        //     });
+        // });
+    </script>
+@endpush

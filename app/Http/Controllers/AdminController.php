@@ -1,12 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
-<<<<<<< HEAD
 use App\Models\Brand;
 use Carbon\Carbon;
-=======
-use App\Http\Models\Brand;
->>>>>>> c003e191de1f040138947f86640739e312b1938e
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -40,7 +36,7 @@ class AdminController extends Controller
         return view('admin.brand-add');
     }
 
-    public function brand_store(Request $request, $id)
+    public function brand_store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
@@ -84,8 +80,7 @@ class AdminController extends Controller
         $brand->name = $request->name;
         $brand->slug = Str::slug($request->name);
         if ($request->hasFile('image')) {
-            if (file::exists(public_path('uploads/brands') . '/' . $brand->image)) 
-            {
+            if (file::exists(public_path('uploads/brands') . '/' . $brand->image)) {
                 file::delete(public_path('uploads/brands') . '/' . $brand->image);
             }
             $image = $request->file('image');
@@ -116,7 +111,14 @@ class AdminController extends Controller
 
     public function delete_brand($id)
     {
-        
+        $brand = Brand::find($id);
+        $imagePath = public_path('uploads/brands/' . $brand->image);
+        if (File::exists($imagePath)) {
+            File::delete($imagePath);
+        }
+        $brand->delete();
+
+        return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được xóa thành công!');
     }
 
     public function categories()
