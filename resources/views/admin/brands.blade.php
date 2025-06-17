@@ -36,10 +36,14 @@
                 </div>
                 <div class="wg-table table-all-user">
                     <div class="table-responsive">
+                        @if(Session::has('status'))
+                            <p class="alert alert-success">{{ Session::get('status') }}</p>
+                        @endif
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>#</th>
+                                    <th>STT</th>
+                                    <th>Ảnh</th>
                                     <th>Tên thương hiệu</th>
                                     <th>Mã thương hiệu(slug)</th>
                                     <th>Sản phẩm</th>
@@ -50,13 +54,20 @@
                                 @foreach ($brands as $brand)
                                 <tr>
                                     <td>{{ $brand->id }}</td>
-                                    <td class="pname">
-                                        <div class="image">
-                                            <img src="{{ asset('uploads/brands') }}/{{ $brand->image }}" alt="{{ $brand->name }}" class="image">
-                                        </div>
-                                        <div class="name">
+                                    <td class="image">
+                                            <!-- <img src="{{ asset('uploads/brands') }}/{{ $brand->image }}" alt="{{ $brand->name }}" class="image"> -->
+                                            <!-- <img src="{{ asset('uploads/brands/filename.jpg') }}" alt="Ảnh thương hiệu"> -->
+                                            <img src="{{ asset('uploads/brands/' . $brand->image) }}"
+     alt="{{ $brand->name }}"
+     style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
+
+
+                                        </td>
+                                    <td class="name">
+                                       
+                                     
                                             <a href="#" class="body-title-2">{{ $brand->name }}</a>
-                                        </div>
+                                    
                                     </td>
                                     <td>{{ $brand->slug }}</td>
                                     <td><a href="#" target="_blank">0</a></td>
