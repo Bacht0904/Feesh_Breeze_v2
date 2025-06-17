@@ -1,17 +1,14 @@
 <?php
 
-
-namespace App\Http\Models;
-
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 class Brand extends Model
 {
-     protected $fillable = [
+    protected $fillable = [
         'name',
-        'slug',
+        'slug', 
         'image',
         'status',
     ];
@@ -20,5 +17,6 @@ class Brand extends Model
     {
         return $this->hasMany(Product::class);
     }
+
 
 }
