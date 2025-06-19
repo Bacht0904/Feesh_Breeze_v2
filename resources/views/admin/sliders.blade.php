@@ -24,7 +24,7 @@
                     <div class="wg-filter flex-grow">
                         <form class="form-search">
                             <fieldset class="name">
-                                <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value=""
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value=""
                                     aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
@@ -32,19 +32,19 @@
                             </div>
                         </form>
                     </div>
-                    <a class="tf-button style-1 w208" href="{{ route('admin.slide.add') }}"><i class="icon-plus"></i>Add new</a>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.slide.add') }}"><i class="icon-plus"></i>Thêm mới</a>
                 </div>
                 <div class="wg-table table-all-user">
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Image</th>
-                                <th>Tagline</th>
-                                <th>Title</th>
-                                <th>Subtitle</th>
+                                <th>Hình ảnh</th>
+                                <th>Dòng giới thiệu</th>
+                                <th>Tiêu đề</th>
+                                <th>Mô tả</th>
                                 <th>Link</th>
-                                <th>Action</th>
+                                <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>

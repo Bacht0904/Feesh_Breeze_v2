@@ -34,11 +34,21 @@ Route::middleware(['auth:admin'])->group(function () {
 Auth::routes();
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
 Route::get('/admin/brand/add', [AdminController::class, 'add_brand'])->name('admin.brand.add');
 Route::post('/admin/brand/store', [AdminController::class, 'brand_store'])->name('admin.brand.store');
+Route::get('/admin/brand/{id}/edit', [AdminController::class, 'edit_brand'])->name('admin.brand.edit');
+Route::put('/admin/brand/update', [AdminController::class, 'update_brand'])->name('admin.brand.update');
+Route::delete('/admin/brand/{id}/delete', [AdminController::class, 'delete_brand'])->name('admin.brand.delete');
 Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
+
 Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
 Route::get('/admin/category/add', [AdminController::class, 'add_category'])->name('admin.category.add');
+Route::post('/admin/category/store', [AdminController::class, 'category_store'])->name('admin.category.store');
+Route::get('/admin/category/{id}/edit', [AdminController::class, 'edit_category'])->name('admin.category.edit');
+Route::put('/admin/category/update', [AdminController::class, 'update_category'])->name('admin.category.update');
+Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_category'])->name('admin.category.delete');
+
 Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
 Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
@@ -50,6 +60,8 @@ Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users
 Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
 Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
+
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
