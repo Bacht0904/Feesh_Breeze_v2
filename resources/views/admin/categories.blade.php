@@ -6,7 +6,7 @@
                 <h3>Danh sách loại sản phẩm</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
-                        <a href="{{ route('admin.index') }}">
+                        <a href="{{route('admin.index')}}">
                             <div class="text-tiny">Trang chủ</div>
                         </a>
                     </li>
@@ -32,56 +32,74 @@
                             </div>
                         </form>
                     </div>
-                    <a class="tf-button style-1 w208" href="add-category.html"><i class="icon-plus"></i>Thêm mới</a>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.category.add') }}"><i class="icon-plus"></i>Thêm
+                        mới</a>
                 </div>
                 <div class="wg-table table-all-user">
-                    <table class="table table-striped table-bordered">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Tên loại sản phẩm</th>
-                                <th>Mã loại sản phẩm(Slug)</th>
-                                <th>Sản phẩm</th>
-                                <th>Trạng thái</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>4</td>
-                                <td class="pname">
-                                    <div class="image">
-                                        <img src="1718066463.html" alt="" class="image">
-                                    </div>
-                                    <div class="name">
-                                        <a href="{{ route('admin.categories') }}" class="body-title-2">Category4</a>
-                                    </div>
-                                </td>
-                                <td>category4</td>
-                                <td><a href="#" target="_blank">2</a></td>
-                                <td>
-                                    <div class="list-icon-function">
-                                        <a href="{{ route('admin.categories') }}">
-                                            <div class="item edit">
-                                                <i class="icon-edit-3"></i>
-                                            </div>
-                                        </a>
-                                        <form action="#" method="POST">
-                                            <div class="item text-danger delete">
-                                                <i class="icon-trash-2"></i>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
+                    <div class="table-responsive">
+                        @if(Session::has('status'))
+                            <p class="alert alert-success">{{ Session::get('status') }}</p>
+                        @endif
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>STT</th>
+                                    <th>Tên loại sản phẩm</th>
+                                    <th>slug</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($categories as $category)
+                                    <tr>
+                                        <td>{{ $category->id }}</td>
+                                        <td class="name">
 
-                        </tbody>
-                    </table>
-                </div>
-                <div class="divider"></div>
-                <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
 
+                                            <a href="#" class="body-title-2">{{ $category->name }}</a>
+
+                                        </td>
+                                        <td>{{ $category->slug }}</td>
+                                        <td>{{ $category->status }}</td>
+                                        <td>
+                                            <div class="list-icon-function">
+                                                <form action="{{ route('admin.category.edit', ['id' => $category->id]) }}"
+                                                    method="GET" style="display: inline;">
+                                                    <button style="border: 1px solid transparent;" type="submit"
+                                                        class="item edit">
+                                                        <i class="icon-edit-3"></i>
+                                                    </button>
+                                                </form>
+                                                <form action="{{ route('admin.category.delete', ['id' => $category->id]) }}"
+                                                    method="POST">
+
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button style="border: 1px solid transparent;" type="submit"
+                                                        class="item text-danger delete"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                        <i class="icon-trash-2"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="divider"></div>
+                    <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
+                        {{ $categories->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+    </script>
+@endpush

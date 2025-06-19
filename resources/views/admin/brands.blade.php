@@ -44,9 +44,8 @@
                             <thead>
                                 <tr>
                                     <th>STT</th>
-                                    <th>Ảnh</th>
                                     <th>Tên thương hiệu</th>
-                                    <th>Mã thương hiệu(slug)</th>
+                                    <th>slug</th>
                                     <th>Sản phẩm</th>
                                     <th>Trạng thái</th>
                                 </tr>
@@ -55,14 +54,6 @@
                                 @foreach ($brands as $brand)
                                     <tr>
                                         <td>{{ $brand->id }}</td>
-                                        <td class="image">
-                                            <!-- <img src="{{ asset('uploads/brands') }}/{{ $brand->image }}" alt="{{ $brand->name }}" class="image"> -->
-                                            <!-- <img src="{{ asset('uploads/brands/filename.jpg') }}" alt="Ảnh thương hiệu"> -->
-                                            <img src="{{ asset('uploads/brands/' . $brand->image) }}" alt="{{ $brand->name }}"
-                                                style="width: 80px; height: 80px; object-fit: cover; border-radius: 8px;">
-
-
-                                        </td>
                                         <td class="name">
 
 

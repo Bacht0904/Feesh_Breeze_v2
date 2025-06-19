@@ -274,7 +274,7 @@
                                                         </div>
                                                         <div class="flex items-center justify-between gap20 flex-grow">
                                                             <div class="name">
-                                                                <a href="product-list.html" class="body-text">Kristin Watson</a>
+                                                                <a href="product-list.html" class="body-text">DucVu</a>
                                                             </div>
                                                         </div>
                                                     </li>
@@ -453,7 +453,7 @@
                         @yield('content')
 
                         <div class="bottom-page">
-                            <div class="body-text">Copyright © 2024 SurfsideMedia</div>
+                            <div class="body-text">Feesh_Breeze_V2 2025 © Made by DucVu</div>
                         </div>
                     </div>
 

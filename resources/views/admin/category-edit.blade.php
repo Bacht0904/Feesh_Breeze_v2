@@ -3,7 +3,7 @@
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Thông tin thương hiệu</h3>
+                <h3>Thông tin loại sản phẩm</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{route('admin.index')}}">
@@ -14,33 +14,34 @@
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <a href="{{ route('admin.brands') }}">
-                            <div class="text-tiny">Thương hiệu</div>
+                        <a href="{{ route('admin.categories') }}">
+                            <div class="text-tiny">Loại sản phẩm</div>
                         </a>
                     </li>
                     <li>
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">Thêm thương hiệu</div>
+                        <div class="text-tiny">Chỉnh sửa loại sản phẩm</div>
                     </li>
                 </ul>
             </div>
             <!-- new-category -->
             <div class="wg-box">
-                <form method="POST"  class="form-new-product form-style-1" action="{{ route('admin.brand.store') }}" enctype="multipart/form-data">
+                <form method="POST"  class="form-new-product form-style-1" action="{{ route('admin.category.update') }}" enctype="multipart/form-data">
                     @csrf
+                    @method('PUT')
+                    <input type="hidden" name="id" value={{ $category->id }} />
                     <fieldset class="name">
-                        <div class="body-title">Tên thương hiệu <span class="tf-color-1">*</span></div>
-                        <input class="flex-grow" type="text" placeholder="Brand name" name="name" tabindex="0" value="{{ old('name') }}" aria-required="true" required="">
+                        <div class="body-title">Tên loại sản phẩm<span class="tf-color-1">*</span></div>
+                        <input class="flex-grow" type="text" placeholder="category name" name="name" tabindex="0" value="{{ $category->name }}" aria-required="true" required="">
                     </fieldset>
                     @error('name') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
                     <fieldset class="name">
-                        <div class="body-title">Mã thương hiệu(slug) <span class="tf-color-1">*</span></div>
-                        <input class="flex-grow" type="text" placeholder="Brand Slug" name="slug" tabindex="0" value="{{ old('slug') }}" aria-required="true" required="">
+                        <div class="body-title">Mã loại sản phẩm(slug) <span class="tf-color-1">*</span></div>
+                        <input class="flex-grow" type="text" placeholder="category Slug" name="slug" tabindex="0" value="{{ $category->slug }}" aria-required="true" required="">
                     </fieldset>
                     @error('slug') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
-
                     <div class="bot">
                         <div></div>
                         <button class="tf-button w208" type="submit">Lưu</button>
