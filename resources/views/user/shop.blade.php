@@ -32,33 +32,7 @@
                 <li class="list-item">
                   <a href="#" class="menu-link py-1">Dresses</a>
                 </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Shorts</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Sweatshirts</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Swimwear</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Jackets</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">T-Shirts & Tops</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Jeans</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Trousers</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Men</a>
-                </li>
-                <li class="list-item">
-                  <a href="#" class="menu-link py-1">Jumpers & Cardigans</a>
-                </li>
+
               </ul>
             </div>
           </div>
@@ -120,11 +94,7 @@
             <div class="accordion-body px-0 pb-0">
               <div class="d-flex flex-wrap">
                 <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">XS</a>
-                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">S</a>
-                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">M</a>
-                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">L</a>
-                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">XL</a>
-                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">XXL</a>
+
               </div>
             </div>
           </div>
@@ -151,12 +121,7 @@
             <div class="search-field multi-select accordion-body px-0 pb-0">
               <select class="d-none" multiple name="total-numbers-list">
                 <option value="1">Adidas</option>
-                <option value="2">Balmain</option>
-                <option value="3">Balenciaga</option>
-                <option value="4">Burberry</option>
-                <option value="5">Kenzo</option>
-                <option value="5">Givenchy</option>
-                <option value="5">Zara</option>
+
               </select>
               <div class="search-field__input-wrapper mb-3">
                 <input type="text" name="search_text"
@@ -167,30 +132,6 @@
                 <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
                   <span class="me-auto">Adidas</span>
                   <span class="text-secondary">2</span>
-                </li>
-                <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
-                  <span class="me-auto">Balmain</span>
-                  <span class="text-secondary">7</span>
-                </li>
-                <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
-                  <span class="me-auto">Balenciaga</span>
-                  <span class="text-secondary">10</span>
-                </li>
-                <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
-                  <span class="me-auto">Burberry</span>
-                  <span class="text-secondary">39</span>
-                </li>
-                <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
-                  <span class="me-auto">Kenzo</span>
-                  <span class="text-secondary">95</span>
-                </li>
-                <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
-                  <span class="me-auto">Givenchy</span>
-                  <span class="text-secondary">1092</span>
-                </li>
-                <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
-                  <span class="me-auto">Zara</span>
-                  <span class="text-secondary">48</span>
                 </li>
               </ul>
             </div>
@@ -362,65 +303,52 @@
       </div>
 
       <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
-        @foreach($product as $product)
-        <div class="product-card-wrapper">
+        @foreach($products as $product)
+        <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
             <div class="pc__img-wrapper">
               <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
                 <div class="swiper-wrapper">
                   <div class="swiper-slide">
-                    <a href="details.html"><img loading="lazy" src="{{asset('upload/product')}}/{{$product->img}}" width="330"
-                        height="400" alt="{{$product->name}}" class="pc__img"></a>
+                    <a href="{{ route('products.show', $product->id) }}">
+                      <img loading="lazy" src="{{ asset('upload/product/' . $product->img) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+                    </a>
                   </div>
                   <div class="swiper-slide">
-                    <a href="details.html"><img loading="lazy" src="{{asset('assets/images/products/product_1-1.jpg')}}"
-                        width="330" height="400" alt="{{$product->name}}" class="pc__img"></a>
+                    <a href="{{ route('products.show', $product->id) }}">
+                      <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+                    </a>
                   </div>
                 </div>
-                <span class="pc__img-prev"><svg width="7" height="11" viewBox="0 0 7 11"
-                    xmlns="http://www.w3.org/2000/svg">
+                <span class="pc__img-prev"><svg width="7" height="11">
                     <use href="#icon_prev_sm" />
                   </svg></span>
-                <span class="pc__img-next"><svg width="7" height="11" viewBox="0 0 7 11"
-                    xmlns="http://www.w3.org/2000/svg">
+                <span class="pc__img-next"><svg width="7" height="11">
                     <use href="#icon_next_sm" />
                   </svg></span>
               </div>
-              <button
-                class="pc__atc btn anim_appear-bottom btn position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside"
-                data-aside="cartDrawer" title="Add To Cart">Thêm vào giỏ</button>
+              <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
+                Thêm vào giỏ
+              </button>
             </div>
 
             <div class="pc__info position-relative">
-              <p class="pc__category">{{$product->caterogy->name}}</p>
-              <h6 class="pc__title"><a href="details.html">{{$product->name}}</a></h6>
+              <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
+              <h6 class="pc__title"><a href="{{ route('products.show', $product->id) }}">{{ $product->name }}</a></h6>
               <div class="product-card__price d-flex">
-                <span class="money price">$ {{$product->price}}</span>
+                <span class="money price">$ {{ number_format($product->price, 2) }}</span>
               </div>
               <div class="product-card__review d-flex align-items-center">
                 <div class="reviews-group d-flex">
-                  <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_star" />
-                  </svg>
-                  <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_star" />
-                  </svg>
-                  <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_star" />
-                  </svg>
-                  <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_star" />
-                  </svg>
-                  <svg class="review-star" viewBox="0 0 9 9" xmlns="http://www.w3.org/2000/svg">
-                    <use href="#icon_star" />
-                  </svg>
+                  @for($i = 0; $i < 5; $i++)
+                    <svg class="review-star" viewBox="0 0 9 9">
+                    <use href="#icon_star" /></svg>
+                    @endfor
                 </div>
                 <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
               </div>
-
-              <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
-                title="Add To Wishlist">
-                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
+                <svg width="16" height="16">
                   <use href="#icon_heart" />
                 </svg>
               </button>
@@ -429,6 +357,7 @@
         </div>
         @endforeach
       </div>
+
 
       <nav class="shop-pages d-flex justify-content-between mt-3" aria-label="Page navigation">
         <a href="#" class="btn-link d-inline-flex align-items-center">
@@ -439,9 +368,6 @@
         </a>
         <ul class="pagination mb-0">
           <li class="page-item"><a class="btn-link px-1 mx-2 btn-link_active" href="#">1</a></li>
-          <li class="page-item"><a class="btn-link px-1 mx-2" href="#">2</a></li>
-          <li class="page-item"><a class="btn-link px-1 mx-2" href="#">3</a></li>
-          <li class="page-item"><a class="btn-link px-1 mx-2" href="#">4</a></li>
         </ul>
         <a href="#" class="btn-link d-inline-flex align-items-center">
           <span class="fw-medium me-1">NEXT</span>
