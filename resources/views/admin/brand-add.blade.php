@@ -36,7 +36,7 @@
                     </fieldset>
                     @error('name') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
                     <fieldset class="name">
-                        <div class="body-title">Mã thương hiệu(slug) <span class="tf-color-1">*</span></div>
+                        <div class="body-title">Slug<span class="tf-color-1">*</span></div>
                         <input class="flex-grow" type="text" placeholder="Brand Slug" name="slug" tabindex="0" value="{{ old('slug') }}" aria-required="true" required="">
                     </fieldset>
                     @error('slug') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror

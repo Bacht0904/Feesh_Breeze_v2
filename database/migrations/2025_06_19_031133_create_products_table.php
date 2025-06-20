@@ -16,11 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
             $table->unsignedBigInteger('category_id');
             $table->unsignedBigInteger('brand_id')->nullable();
-            $table->string('image')->nullable();
-            $table->boolean('status')->default(true);
+            $table->enum('status', ['active', 'inactive'])->default('active');
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');
             $table->timestamps();

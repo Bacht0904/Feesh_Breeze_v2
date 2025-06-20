@@ -52,8 +52,14 @@ Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_ca
 Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
 Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
+
 Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
+Route::post('/admin/product/store', [AdminController::class, 'product_store'])->name('admin.product.store');
 Route::get('/admin/product/add', [AdminController::class, 'add_product'])->name('admin.product.add');
+Route::get('/admin/product/{id}/edit', [AdminController::class, 'edit_product'])->name('admin.product.edit');
+Route::put('/admin/product/{id}', [AdminController::class, 'update_product'])->name('admin.product.update');
+Route::delete('/admin/product/{id}/delete', [AdminController::class, 'delete_product'])->name('admin.product.delete');
+
 Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
 Route::get('/admin/slide/add', [AdminController::class, 'add_slide'])->name('admin.slide.add');
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');

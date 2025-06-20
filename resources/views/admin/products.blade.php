@@ -56,24 +56,43 @@
                             @foreach ($products as $product)
                                 <tr>
                                     <td>{{ $product->id }}</td>
-                                    <td class="align-middle text-center">
+                                    <td class="">
                                         <a href="#" class="body-title-2">{{ $product->name }}</a>
                                     </td>
                                     <td class="align-middle text-center">
-                                        <div class="text-tiny">{{ $product->slug }}</div>
+                                        <div class="">{{ $product->slug }}</div>
                                     </td>
-                                    <td>{{ $product->price }}</td>
+                                    <td>
+                                        @if($product->product_details->count())
+                                            {{ number_format($product->product_details->min('price')) }}₫
+                                        @else
+                                            <span class="">Chưa có giá</span>
+                                        @endif
+                                    </td>
                                     <td>{{ $product->category->name ?? 'Chưa có loại' }}</td>
                                     <td>{{ $product->brand->name ?? 'Chưa có thương hiệu' }}</td>
-                                    <td>{{ $product->description }}</td>
+                                    <!-- <td style="max-width: 250px;">{{ Str::limit($product->description, 100) }}</td> -->
+                                    <td
+                                        style="max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                        <span
+                                            title="{{ $product->description }}">{{ Str::limit($product->description, 100) }}</span>
+                                    </td>
+
                                     <td>
-                                        @if($product->image)
-                                            <img src="{{ asset(path: 'uploads/products/thumbnails') }}/{{ $product->image }}" alt="{{ $product->name }} class="image">
+                                        @if($product->product_details->count() && $product->product_details->first()->image)
+                                            <img src="{{ asset($product->product_details->first()->image) }}"
+                                                alt="{{ $product->name }}" style="max-width: 80px; height: auto;">
                                         @else
                                             <span>Không có hình ảnh</span>
                                         @endif
                                     </td>
-                                    <td>{{ $product->status ? 'Còn hàng' : 'Hết hàng' }}</td>
+                                    <td>
+                                        @if($product->product_details->sum('quantity') > 0)
+                                            <span class="badge bg-success">Còn hàng</span>
+                                        @else
+                                            <span class="badge bg-secondary">Hết hàng</span>
+                                        @endif
+                                    </td>
                                     <td>
                                         <div class="list-icon-function">
                                             <a href="#" target="_blank">
@@ -81,7 +100,7 @@
                                                     <i class="icon-eye"></i>
                                                 </div>
                                             </a>
-                                            <a href="#">
+                                            <a href="{{ route('admin.product.edit', $product->id) }}">
                                                 <div class="item edit">
                                                     <i class="icon-edit-3"></i>
                                                 </div>

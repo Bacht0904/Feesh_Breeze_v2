@@ -15,26 +15,26 @@
                         </a></li>
                     <li><i class="icon-chevron-right"></i></li>
                     <li>
-                        <div class="text-tiny">Thêm sản phẩm</div>
+                        <div class="text-tiny">Sửa sản phẩm</div>
                     </li>
                 </ul>
             </div>
 
-            <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data"
-                action="{{ route('admin.product.store') }}">
+            <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data" action="{{ route('admin.product.update', $product->id) }}">
                 @csrf
+                @method('PUT')
                 <div class="wg-box">
                     <fieldset class="name">
                         <div class="body-title mb-10">Tên sản phẩm<span class="tf-color-1">*</span></div>
                         <input class="mb-10" type="text" name="name" placeholder="Nhập tên sản phẩm"
-                            value="{{ old('name') }}" required>
+                            value="{{ $product->name }}" required>
                         <div class="text-tiny">Không được nhập tên sản phẩm quá 100 ký tự.</div>
                     </fieldset>
 
                     <fieldset class="name">
                         <div class="body-title mb-10">Slug<span class="tf-color-1">*</span></div>
                         <input class="mb-10" type="text" name="slug" placeholder="Nhập mã sản phẩm"
-                            value="{{ old('slug') }}" required>
+                            value="{{ $product->slug }}" required>
                     </fieldset>
 
                     <div class="gap22 cols">
@@ -70,35 +70,48 @@
                     <fieldset class="shortdescription">
                         <div class="body-title mb-10">Mô tả<span class="tf-color-1">*</span></div>
                         <textarea class="mb-10 ht-150" name="description" placeholder="Nhập mô tả"
-                            required>{{ old('description') }}</textarea>
+                            required>{{ $product->description }}</textarea>
                     </fieldset>
                     {{-- Form con – biến thể --}}
                     <div class="body-title mb-10">Biến thể sản phẩm</div>
                     <div id="variant-list">
-                        <div class="variant-item gap22 cols mb-16">
-                            <fieldset class="name">
-                                <input type="text" name="variants[0][size]" placeholder="Size" required>
-                            </fieldset>
-                            <fieldset class="name">
-                                <input type="text" name="variants[0][color]" placeholder="Màu sắc" required>
-                            </fieldset>
-                            <fieldset class="name">
-                                <input type="number" name="variants[0][quantity]" placeholder="Số lượng" required>
-                            </fieldset>
-                            <fieldset class="name">
-                                <input type="number" name="variants[0][price]" placeholder="Giá bán" required>
-                            </fieldset>
-                            <fieldset class="name">
-                                <input type="file" name="variants[0][image]" accept="image/*" required>
-                            </fieldset>
-                            <button type="button" class="remove-variant tf-button small danger">Xoá</button>
-                        </div>
+                        @foreach($product->product_details as $index => $detail)
+                            <div class="variant-item gap22 cols mb-16">
+                                <fieldset class="name">
+                                    <input type="text" name="variants[{{ $index }}][size]" value="{{ $detail->size }}"
+                                        placeholder="Size" required>
+                                </fieldset>
+                                <fieldset class="name">
+                                    <input type="text" name="variants[{{ $index }}][color]" value="{{ $detail->color }}"
+                                        placeholder="Màu sắc" required>
+                                </fieldset>
+                                <fieldset class="name">
+                                    <input type="number" name="variants[{{ $index }}][quantity]" value="{{ $detail->quantity }}"
+                                        placeholder="Số lượng" required>
+                                </fieldset>
+                                <fieldset class="name">
+                                    <input type="number" name="variants[{{ $index }}][price]" value="{{ $detail->price }}"
+                                        placeholder="Giá bán" required>
+                                </fieldset>
+                                <fieldset class="name">
+                                    <input type="file" name="variants[{{ $index }}][image]" accept="image/*">
+                                    @if($detail->image)
+                                        <div class="mt-1">
+                                            <small>Ảnh hiện tại: <a href="{{ asset($detail->image) }}"
+                                                    target="_blank">{{ basename($detail->image) }}</a></small>
+                                        </div>
+                                    @endif
+                                </fieldset>
+                                <button type="button" class="remove-variant tf-button small danger">Xoá</button>
+                            </div>
+                        @endforeach
                     </div>
+
                     <button type="button" id="add-variant" class="tf-button outline w-auto">+ Thêm biến thể</button>
                 </div>
 
                 <div class="cols gap10">
-                    <button class="tf-button w-full" type="submit">Thêm sản phẩm</button>
+                    <button class="tf-button w-full" type="submit">Sửa sản phẩm</button>
                 </div>
             </form>
         </div>
@@ -108,15 +121,15 @@
         let variantIndex = 1;
         document.getElementById('add-variant').addEventListener('click', function () {
             const html = `
-                <div class="variant-item gap22 cols mb-16">
-                    <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
-                    <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
-                    <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
-                    <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
-                    <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
-                    <button type="button" class="remove-variant tf-button small danger">Xoá</button>
-                </div>
-            `;
+                        <div class="variant-item gap22 cols mb-16">
+                            <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
+                            <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
+                            <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
+                            <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
+                            <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
+                            <button type="button" class="remove-variant tf-button small danger">Xoá</button>
+                        </div>
+                    `;
             document.getElementById('variant-list').insertAdjacentHTML('beforeend', html);
             variantIndex++;
         });
