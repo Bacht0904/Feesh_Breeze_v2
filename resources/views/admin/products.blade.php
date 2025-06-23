@@ -105,7 +105,7 @@
                                                     <i class="icon-edit-3"></i>
                                                 </div>
                                             </a>
-                                            <form action="#" method="POST" style="display:inline;">
+                                            <form action="{{ route('admin.product.delete',$product->id) }}" method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="item text-danger delete"

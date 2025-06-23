@@ -63,8 +63,14 @@ Route::delete('/admin/product/{id}/delete', [AdminController::class, 'delete_pro
 Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
 Route::get('/admin/slide/add', [AdminController::class, 'add_slide'])->name('admin.slide.add');
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+
 Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
 Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
+Route::post('/admin/coupon/store', [AdminController::class, 'coupon_store'])->name('admin.coupon.store');
+Route::get('/admin/coupon/{id}/edit', [AdminController::class, 'edit_coupon'])->name('admin.coupon.edit');
+Route::put('/admin/coupon/update', [AdminController::class, 'update_coupon'])->name('admin.coupon.update');
+Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coupon'])->name('admin.coupon.delete');
+
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
 
 
