@@ -3,18 +3,18 @@
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Users</h3>
+                <h3>Danh sách tài khoản</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
-                            <div class="text-tiny">Dashboard</div>
+                            <div class="text-tiny">Trang chủ</div>
                         </a>
                     </li>
                     <li>
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">All User</div>
+                        <div class="text-tiny">Danh sách tài khoản</div>
                     </li>
                 </ul>
             </div>
@@ -24,7 +24,7 @@
                     <div class="wg-filter flex-grow">
                         <form class="form-search">
                             <fieldset class="name">
-                                <input type="text" placeholder="Search here..." class="" name="name" tabindex="2" value=""
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value=""
                                     aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
@@ -41,11 +41,10 @@
                             <thead>
                                 <tr>
                                     <th>#</th>
-                                    <th>User</th>
-                                    <th>Phone</th>
+                                    <th>Tài khoản</th>
+                                    <th>Số điện thoại</th>
                                     <th>Email</th>
-                                    <th class="text-center">Total Orders</th>
-                                    <th>Action</th>
+                                    <th>Trạng thái</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -57,12 +56,10 @@
                                         </div>
                                         <div class="name">
                                             <a href="#" class="body-title-2">Admin</a>
-                                            <div class="text-tiny mt-3">ADM</div>
                                         </div>
                                     </td>
                                     <td>1234567890</td>
-                                    <td>admin@surfsidemedia.in</td>
-                                    <td class="text-center"><a href="#" target="_blank">0</a></td>
+                                    <td>admin@gmail.com</td>
                                     <td>
                                         <div class="list-icon-function">
                                             <a href="#">
