@@ -54,12 +54,14 @@ Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.ord
 Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
 
-Route::get('/admin/products', [ProductController::class, 'products'])->name('admin.products');
-Route::post('/admin/product/store', [ProductController::class, 'product_store'])->name('admin.product.store');
-Route::get('/admin/product/add', [ProductController::class, 'add_product'])->name('admin.product.add');
-Route::get('/admin/product/{id}/edit', [ProductController::class, 'edit_product'])->name('admin.product.edit');
-Route::put('/admin/product/{id}', [ProductController::class, 'update_product'])->name('admin.product.update');
-Route::delete('/admin/product/{id}/delete', [ProductController::class, 'delete_product'])->name('admin.product.delete');
+Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
+Route::post('/admin/product/store', [AdminController::class, 'product_store'])->name('admin.product.store');
+Route::get('/admin/product/add', [AdminController::class, 'add_product'])->name('admin.product.add');
+Route::get('/admin/product/{id}/edit', [AdminController::class, 'edit_product'])->name('admin.product.edit');
+Route::put('/admin/product/{id}', [AdminController::class, 'update_product'])->name('admin.product.update');
+Route::delete('/admin/product/{id}/delete', [AdminController::class, 'delete_product'])->name('admin.product.delete');
+
+
 
 Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
 Route::get('/admin/slide/add', [AdminController::class, 'add_slide'])->name('admin.slide.add');
@@ -74,7 +76,7 @@ Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coup
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
 
-
+Route::get('/admin/product/{id}/detail', [AdminController::class, 'product_detail'])->name('admin.product.detail');
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');

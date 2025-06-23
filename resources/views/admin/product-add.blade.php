@@ -96,10 +96,20 @@
                     </div>
                     <button type="button" id="add-variant" class="tf-button outline w-auto">+ Thêm biến thể</button>
                 </div>
-
-                <div class="cols gap10">
-                    <button class="tf-button w-full" type="submit">Thêm sản phẩm</button>
-                </div>
+                <div class="bot">
+                    <div></div>
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul>
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    <div class="cols gap10">
+                        <button class="tf-button w-full" type="submit">Thêm sản phẩm</button>
+                    </div>
             </form>
         </div>
     </div>
@@ -108,15 +118,15 @@
         let variantIndex = 1;
         document.getElementById('add-variant').addEventListener('click', function () {
             const html = `
-                <div class="variant-item gap22 cols mb-16">
-                    <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
-                    <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
-                    <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
-                    <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
-                    <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
-                    <button type="button" class="remove-variant tf-button small danger">Xoá</button>
-                </div>
-            `;
+                    <div class="variant-item gap22 cols mb-16">
+                        <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
+                        <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
+                        <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
+                        <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
+                        <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
+                        <button type="button" class="remove-variant tf-button small danger">Xoá</button>
+                    </div>
+                `;
             document.getElementById('variant-list').insertAdjacentHTML('beforeend', html);
             variantIndex++;
         });
