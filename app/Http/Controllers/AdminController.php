@@ -12,6 +12,7 @@ use Illuminate\Support\Str;
 //use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -47,7 +48,7 @@ class AdminController extends Controller
             'slug' => 'required|string|unique:products,slug',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
-            'description' => 'required|string|max:1024',
+            'description' => 'required|string|max:10000',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.size' => 'required|string',
             'variants.*.color' => 'required|string',
@@ -370,10 +371,10 @@ class AdminController extends Controller
         return view('admin.coupon-edit', compact('coupon'));
     }
 
-    public function update_coupon(Request $request)
+    public function update_coupon(Request $request, $id)
     {
         $request->validate([
-            'code' => 'required|string|unique:coupons,code,' . $request->id,
+            'code' => ['required',Rule::unique('coupons','code')->ignore($id)],//'string|unique:coupons,code,' . $request->id,
             'type' => 'required|in:percent,fixed',
             'value' => 'required|numeric|min:0',
             'status' => 'required|in:active,inactive',
