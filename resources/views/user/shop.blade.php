@@ -265,13 +265,13 @@
       <div class="d-flex justify-content-between mb-4 pb-md-2">
         <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
           <a href="{{ route('home') }} " class="menu-link menu-link_us-s text-uppercase fw-medium">Trang Chủ</a>
-          
+
           <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
           <a href="{{ route('shop') }}" class="menu-link menu-link_us-s text-uppercase fw-medium">Sản Phẩm</a>
         </div>
-        
 
-       
+
+
       </div>
 
       <!-- <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
@@ -388,10 +388,20 @@
               @else
               <span class="text-muted">Chưa có giá</span>
               @endif
+              <p>Size:
+                @foreach($product->product_details as $detail)
+                {{ $detail->size }}
+                @endforeach
+              </p>
+              <!-- @php
+              $sizes = $product->product_details->pluck('size')->unique();
+              @endphp
 
-              @foreach($product->product_details as $detail)
-              <p>Size: {{ $detail->size }}</p>
-              @endforeach
+              <p class="mb-1"> 
+                Size:
+                {{ $sizes->implode(', ') }}
+              </p> -->
+
 
               <div class="product-card__review d-flex align-items-center">
                 <div class="reviews-group d-flex">
