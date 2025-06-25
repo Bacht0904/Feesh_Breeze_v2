@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Product;
@@ -19,6 +20,19 @@ class AdminController extends Controller
     {
         return view('admin.index');
     }
+
+    public function show($Slug)
+    {
+        $product = Product::with(['category', 'brand', 'product_details'])
+            ->where('slug', $Slug)
+            ->firstOrFail();
+
+        if (!$product) {
+            abort(404, view('errors.product-not-found'));
+        }
+        return view('user.product', compact('product'));
+    }
+
 
     public function products()
     {

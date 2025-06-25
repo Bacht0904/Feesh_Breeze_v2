@@ -92,8 +92,9 @@ Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
 Route::get('/shop/category/{slug}', [HomeController::class, 'categoryProducts'])->name('shop.category');
 Route::get('/shop/brand/{slug}', [HomeController::class, 'brandProducts'])->name('shop.brand');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
-Route::get('/product/{slug}/add-to-cart', [HomeController::class, 'addToCart'])->name('product.add.to.cart');
-Route::get('/product/{slug}', [HomeController::class, 'productDetail'])->name('product.detail');
+Route::get('/products', [AdminController::class, 'products'])->name('products');
+
+Route::get('/products/{slug}', [AdminController::class, 'show'])->name('products.show');
 Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
