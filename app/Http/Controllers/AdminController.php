@@ -24,7 +24,7 @@ class AdminController extends Controller
     {
         $products = Product::with(['category', 'brand'])->get();
 
-        $products = Product::with(['product_details'])->orderBy('created_at', 'desc')->paginate(10);
+        $products = Product::with(['product_details'])->orderBy('id', 'asc')->paginate(10);
         return view('admin.products', compact('products'));
     }
 
@@ -150,7 +150,7 @@ class AdminController extends Controller
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $fullPath = $savePath . '/' . $filename;
 
-            // ✅ Resize ảnh đúng cách với ImageManager
+            // Resize ảnh đúng cách với ImageManager
             $manager->read($image)->resize(800, 800)->save($fullPath);
 
             $product->product_details()->create([
@@ -187,9 +187,22 @@ class AdminController extends Controller
         return redirect()->route('admin.products')->with('status', 'Sản phẩm đã được xóa thành công!');
     }
 
+    public function product_search(Request $request)
+    {
+        $search = $request->input('name'); // Đổi 'search' => 'name' để khớp với input name trong form
+
+        $products = Product::where('name', 'like', '%' . $search . '%')
+            ->orWhere('slug', 'like', '%' . $search . '%')
+            ->with(['category', 'brand'])
+            ->paginate(10);
+
+        return view('admin.products', compact('products', 'search'));
+    }
+
+
     public function brands()
     {
-        $brands = Brand::orderBy('id', 'DESC')->paginate(10);
+        $brands = Brand::orderBy('id', 'asc')->paginate(10);
         return view('admin.brands', compact('brands'));
     }
 
@@ -245,9 +258,20 @@ class AdminController extends Controller
         return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được xóa thành công!');
     }
 
+    public function brand_search(Request $request)
+    {
+        $search = $request->input('name'); // Đổi 'search' => 'name' để khớp với input name trong form
+
+        $brands = Brand::where('name', 'like', '%' . $search . '%')
+            ->orWhere('slug', 'like', '%' . $search . '%')
+            ->paginate(10);
+
+        return view('admin.brands', compact('brands', 'search'));
+    }
+
     public function categories()
     {
-        $categories = Category::orderBy('id', 'DESC')->paginate(10);
+        $categories = Category::orderBy('id', 'asc')->paginate(10);
         return view('admin.categories', compact('categories'));
     }
 
@@ -306,6 +330,17 @@ class AdminController extends Controller
 
         return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được xóa thành công!');
     }
+
+    public function category_search(Request $request)
+    {
+        $search = $request->input('name'); // Đổi 'search' => 'name' để khớp với input name trong form
+
+        $categories = Category::where('name', 'like', '%' . $search . '%')
+            ->orWhere('slug', 'like', '%' . $search . '%')
+            ->paginate(10);
+
+        return view('admin.categories', compact('categories', 'search'));
+    }
     public function orders()
     {
         return view('admin.orders');
@@ -338,7 +373,7 @@ class AdminController extends Controller
 
     public function coupons()
     {
-        $coupons = Coupon::orderBy('id', 'DESC')->paginate(10);
+        $coupons = Coupon::orderBy('id', 'asc')->paginate(10);
         return view('admin.coupons', compact('coupons'));
     }
 

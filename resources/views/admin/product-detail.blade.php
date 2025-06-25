@@ -72,25 +72,6 @@
                                         <td>{{ $detail->size }}</td>
                                         <td>{{ $detail->color }}</td>
                                         <td>{{ $detail->quantity }}</td>
-                                        <td>
-                                            <div class="list-icon-function">
-                                                <a href="{{ route('admin.product.edit', ['id' => $product->id]) }}">
-                                                    <div class="item edit">
-                                                        <i class="icon-edit-3"></i>
-                                                    </div>
-                                                </a>
-                                                <form action="{{ route('admin.product.delete', ['id' => $product->id]) }}"
-                                                    method="POST">
-
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="item text-danger delete"
-                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
-                                                        <i class="icon-trash-2"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>

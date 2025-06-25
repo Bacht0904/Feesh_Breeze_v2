@@ -42,6 +42,7 @@ Route::get('/admin/brand/{id}/edit', [AdminController::class, 'edit_brand'])->na
 Route::put('/admin/brand/update', [AdminController::class, 'update_brand'])->name('admin.brand.update');
 Route::delete('/admin/brand/{id}/delete', [AdminController::class, 'delete_brand'])->name('admin.brand.delete');
 Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
+Route::get('/admin/brands/search', [AdminController::class, 'brand_search'])->name('admin.brands.search');
 
 Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
 Route::get('/admin/category/add', [AdminController::class, 'add_category'])->name('admin.category.add');
@@ -60,7 +61,8 @@ Route::get('/admin/product/add', [AdminController::class, 'add_product'])->name(
 Route::get('/admin/product/{id}/edit', [AdminController::class, 'edit_product'])->name('admin.product.edit');
 Route::put('/admin/product/{id}', [AdminController::class, 'update_product'])->name('admin.product.update');
 Route::delete('/admin/product/{id}/delete', [AdminController::class, 'delete_product'])->name('admin.product.delete');
-
+Route::get('/admin/product/{id}/detail', [AdminController::class, 'product_detail'])->name('admin.product.detail');
+Route::get('/admin/products/search', [AdminController::class, 'product_search'])->name('admin.products.search');
 
 
 Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
@@ -75,8 +77,6 @@ Route::put('/admin/coupon/update', [AdminController::class, 'update_coupon'])->n
 Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coupon'])->name('admin.coupon.delete');
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
-
-Route::get('/admin/product/{id}/detail', [AdminController::class, 'product_detail'])->name('admin.product.detail');
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');

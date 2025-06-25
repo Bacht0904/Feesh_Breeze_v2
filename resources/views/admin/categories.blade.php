@@ -47,7 +47,7 @@
                                     <th>Tên loại sản phẩm</th>
                                     <th>slug</th>
                                     <th>Trạng thái</th>
-                                    <th></th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>

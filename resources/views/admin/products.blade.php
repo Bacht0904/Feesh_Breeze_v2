@@ -22,9 +22,9 @@
             <div class="wg-box">
                 <div class="flex items-center justify-between gap10 flex-wrap">
                     <div class="wg-filter flex-grow">
-                        <form class="form-search">
+                        <form class="form-search" method="GET" action="{{ route('admin.products.search') }}">
                             <fieldset class="name">
-                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value=""
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value="{{ request('name') }}"
                                     aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
@@ -125,6 +125,7 @@
                 <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">
 
                     {{ $products->links('pagination::bootstrap-5') }}
+                    <!-- {{ $products->appends(['name' => request('name')])->links() }} -->
                 </div>
             </div>
         </div>
