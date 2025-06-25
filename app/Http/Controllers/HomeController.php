@@ -7,7 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Product_detail; // Nếu cần sử dụng Product_detail trong controller này
+use App\Models\Brand;
+// Nếu cần sử dụng Brand trong controller này
+// Nếu cần sử dụng Product_detail trong controller này
+use App\Models\Product_details; // Nếu cần sử dụng ProductDetail trong controller này
 
 class HomeController extends Controller
 {
@@ -51,11 +54,23 @@ class HomeController extends Controller
 
     public function shop()
     {
-        $products = Product::with('product_details')->get(); // hoặc ->paginate()
-        $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
-        return view('user.shop', compact('categories', 'products'));
+        $products = Product::with('product_details')->get();
+        $categories = Category::all();
+        $brands = Brand::withCount('products')->get();
+
+        $sizes = Product_details::select('size')->distinct()->pluck('size');
+        $colors = Product_details::select('color')->distinct()->pluck('color')->map(function ($color) {
+            $hexMap = config('colormap');
+            return [
+                'name' => $color,
+                'code' => $hexMap[mb_strtolower(trim($color))] ?? '#cccccc',
+            ];
+        });
+
+
+        return view('user.shop', compact('products', 'categories', 'brands', 'colors', 'sizes'));
     }
-    
+
     public function login(Request $request)
     {
         $data = $request->all();
