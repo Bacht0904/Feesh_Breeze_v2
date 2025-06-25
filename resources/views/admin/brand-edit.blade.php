@@ -69,11 +69,19 @@
             });
         });
 
-        function StringToSlug(Text)
-        {
-            return Text.toLowerCase()
-            .replace(/[^\w ]+/g,"")
-            .replace(/ +/g,"-");
-        };
+       function StringToSlug(text) {
+            const from = "áàảãạăắằẳẵặâấầẩẫậđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ";
+            const to = "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyy";
+
+            for (let i = 0; i < from.length; i++) {
+                text = text.replace(new RegExp(from[i], "gi"), to[i]);
+            }
+
+            return text.toLowerCase()
+                .replace(/[^\w\s-]/g, '') // loại bỏ ký tự đặc biệt
+                .trim()
+                .replace(/\s+/g, '-')     // thay khoảng trắng bằng dấu gạch ngang
+                .replace(/-+/g, '-');     // loại bỏ dấu gạch ngang lặp
+        }
     </script>
 @endpush

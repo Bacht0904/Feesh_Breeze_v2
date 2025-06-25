@@ -54,26 +54,34 @@
 
 @push('scripts')
     <script>
-        $(function() {
-            $("#myFile").on("change",function(e) {
-                const photoInp = $("#myFile");
+        $(function () {
+            $("#myFile").on("change", function (e) {
                 const [file] = this.files;
-                if(file){
-                    $("#imgpreview").attr('src',URL.createObjectURL(file));
-                    $("#imgpreview").show();
+                if (file) {
+                    $("#imgpreview").attr('src', URL.createObjectURL(file));
+                    $("#imgpreviewBox").show();
                 }
             });
 
-            $("input[name='name']").on("change",function() {
+
+            $("input[name='name']").on("change", function () {
                 $("input[name='slug']").val(StringToSlug($(this).val()));
             });
         });
 
-        function StringToSlug(Text)
-        {
-            return Text.toLowerCase()
-            .replace(/[^\w ]+/g,"")
-            .replace(/ +/g,"-");
-        };
+       function StringToSlug(text) {
+            const from = "áàảãạăắằẳẵặâấầẩẫậđéèẻẽẹêếềểễệíìỉĩịóòỏõọôốồổỗộơớờởỡợúùủũụưứừửữựýỳỷỹỵ";
+            const to = "aaaaaaaaaaaaaaaaadeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyy";
+
+            for (let i = 0; i < from.length; i++) {
+                text = text.replace(new RegExp(from[i], "gi"), to[i]);
+            }
+
+            return text.toLowerCase()
+                .replace(/[^\w\s-]/g, '') // loại bỏ ký tự đặc biệt
+                .trim()
+                .replace(/\s+/g, '-')     // thay khoảng trắng bằng dấu gạch ngang
+                .replace(/-+/g, '-');     // loại bỏ dấu gạch ngang lặp
+        }
     </script>
 @endpush
