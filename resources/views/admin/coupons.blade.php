@@ -64,7 +64,7 @@
                                                     <i class="icon-edit-3"></i>
                                                 </div>
                                             </a>
-                                            <form action="" method="POST"
+                                            <form action="{{route('admin.coupon.delete',$coupon->id)}}" method="POST"
                                                 style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')

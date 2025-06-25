@@ -373,29 +373,56 @@ class AdminController extends Controller
 
     public function update_coupon(Request $request, $id)
     {
+       
         $request->validate([
-            'code' => ['required',Rule::unique('coupons','code')->ignore($id)],//'string|unique:coupons,code,' . $request->id,
+            'code' => 'string|required', //'string| unique:coupons,code,' //. $request->id,//['required',Rule::unique('coupons','code')->ignore($id)],
             'type' => 'required|in:percent,fixed',
             'value' => 'required|numeric|min:0',
             'status' => 'required|in:active,inactive',
         ]);
 
-        $coupon = Coupon::find($request->id);
-        $coupon->code = $request->code;
-        $coupon->type = $request->type;
-        $coupon->value = $request->value;
-        $coupon->status = $request->status;
-        $coupon->save();
+        $coupon = Coupon::find($id);
+        $data = $request ->all();
+        $status = $coupon ->fill($data) -> save();
+        if($status) {
+            request()->session()->flash('success','Cập nhật mã thành công');
+        }
+        else{
+            request()->session()->flash('error','Vui lòng thử lại !!!');
+        }
+        
+        // $coupon->code = $request->code;
+        // $coupon->type = $request->type;
+        // $coupon->value = $request->value;
+        // $coupon->status = $request->status;
+        // $coupon->save();
 
-        return redirect()->route('admin.coupons')->with('status', 'Coupon đã được cập nhật thành công!');
+        return redirect()->route('admin.coupons');//->with('status', 'Coupon đã được cập nhật thành công!');
     }
 
     public function delete_coupon($id)
     {
-        $coupon = Coupon::find($id);
-        $coupon->delete();
+        // $coupon = Coupon::find($id);
+        // $coupon->delete();
 
-        return redirect()->route('admin.coupons')->with('status', 'Coupon đã được xóa thành công!');
+        $coupon = Coupon::findOrFail($id);
+        if($coupon) {
+            $status =$coupon ->delete();
+            if($status) {
+                request()->session()->flash('success','Xóa mã thành công');
+            }
+            else {
+                request()->session()->flash('error','Lỗi, vui lòng thử lại!!');
+            }
+            return redirect()->route('admin.coupons');
+        }
+        else {
+            request()->session()->flash('error','Không tìm thấy mã giảm giá');
+            return redirect() ->back();
+        }
+        
+
+        
     }
 
     public function settings()
