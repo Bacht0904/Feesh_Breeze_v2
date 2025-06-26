@@ -37,20 +37,36 @@
         <form method="POST" action="{{ route('checkout.process') }}">
           @csrf
 
+          {{-- Họ tên --}}
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="name" id="name" required>
+            <input type="text" class="form-control" name="name" id="name" required value="{{ Auth::user()->name ?? '' }}">
             <label for="name">Họ tên *</label>
           </div>
 
+          {{-- Số điện thoại --}}
           <div class="form-floating mb-3">
-            <input type="text" class="form-control" name="phone" id="phone" required>
+            <input type="text" class="form-control" name="phone" id="phone" required value="{{ Auth::user()->phone ?? '' }}">
             <label for="phone">Số điện thoại *</label>
           </div>
 
-          <div class="form-floating mb-4">
-            <input type="text" class="form-control" name="address" id="address" required>
+          {{-- Địa chỉ giao hàng --}}
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="address" id="address" required value="{{ Auth::user()->address ?? '' }}">
             <label for="address">Địa chỉ giao hàng *</label>
           </div>
+
+          {{-- Mã giảm giá (tuỳ chọn) --}}
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" name="coupon_code" id="coupon_code" >
+            <label for="coupon_code">Mã giảm giá (nếu có)</label>
+          </div>
+
+          {{-- Ghi chú đơn hàng --}}
+          <div class="form-floating mb-4">
+            <textarea class="form-control" placeholder="Ghi chú đơn hàng (tuỳ chọn)" name="note" id="note" style="height: 100px"></textarea>
+            <label for="note">Ghi chú</label>
+          </div>
+
 
           <div class="payment-methods mt-4">
             <h4 class="mb-3">Phương thức thanh toán</h4>

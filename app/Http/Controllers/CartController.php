@@ -18,12 +18,17 @@ class CartController extends Controller
     // 👉 Thêm sản phẩm chi tiết vào giỏ hàng
     public function addDetail(Request $request)
     {
-     
+        $request->validate([
+            'product_detail_id' => 'required|exists:product_details,id',
+            'quantity' => 'required|integer|min:1',
+        ]);
+
 
 
         $detail = Product_details::findOrFail($request->product_detail_id);
         $cart = session()->get('cart', []);
-        $key = $detail->id;
+        $key = $detail->id . '-' . $detail->size . '-' . $detail->color;
+
 
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] += $request->quantity;
@@ -39,7 +44,7 @@ class CartController extends Controller
         }
 
         session()->put('cart', $cart);
-       
+
 
         return back()->with('success', 'Đã thêm vào giỏ hàng!');
     }
