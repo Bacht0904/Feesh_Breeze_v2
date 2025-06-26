@@ -34,9 +34,25 @@ class CheckoutController extends Controller
         }
 
         if ($method === 'vnpay') {
-            // Gắn logic VNPAY nếu có
-            return redirect()->to('https://vnpay.vn');
+            $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+            $shipping = 0;
+            $discount = 0;
+            $total = $subtotal - $discount + $shipping;
+
+            // Lưu tạm dữ liệu vào session để dùng lại sau khi thanh toán thành công
+            session()->put('order_data', [
+                'cart' => $cart,
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'discount' => $discount,
+                'total' => $total,
+                'customer' => $request->only('name', 'phone', 'address', 'email', 'note', 'coupon_code'),
+            ]);
+
+            // Redirect sang VNPAY
+            return redirect()->route('vnpay.payment');
         }
+
 
         // 👉 Nếu là COD: lưu đơn
         try {

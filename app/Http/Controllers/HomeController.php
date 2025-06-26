@@ -22,9 +22,10 @@ class HomeController extends Controller
      */
     public function welcome()
     {
+        $featuredProducts = Product::with('product_details')->latest()->take(8)->get();
         $products = Product::with('product_details')->get(); // hoặc ->paginate()
         $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
-        return view('welcome', compact('categories', 'products'));
+        return view('welcome', compact('categories', 'products', 'featuredProducts'));
     }
     public function showLoginForm()
     {
