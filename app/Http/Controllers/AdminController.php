@@ -5,6 +5,7 @@ use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
@@ -309,7 +310,8 @@ class AdminController extends Controller
     }
     public function orders()
     {
-        return view('admin.orders');
+        $orders = Order::orderBy('created_at','desc')->paginate(12);
+        return view('admin.orders', compact('orders'));
     }
 
     public function order_detail()
@@ -429,4 +431,7 @@ class AdminController extends Controller
     {
         return view('admin.settings');
     }
+
+
+  
 }
