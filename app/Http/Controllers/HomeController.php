@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+use App\Models\Category;
+use App\Models\Product;
+use App\Models\Product_detail; // Nếu cần sử dụng Product_detail trong controller này
 
 class HomeController extends Controller
 {
-    
+
     /**
      * Show the application dashboard.
      *
@@ -16,9 +19,11 @@ class HomeController extends Controller
      */
     public function welcome()
     {
-        return view('welcome');
+        $products = Product::with('product_details')->get(); // hoặc ->paginate()
+        $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
+        return view('welcome', compact('categories', 'products'));
     }
-      public function showLoginForm()
+    public function showLoginForm()
     {
         return view('auth.login');
     }
@@ -30,29 +35,45 @@ class HomeController extends Controller
     public function index()
     {
         if (Auth::check()) {
-            return view('welcome');
+            $products = Product::with('product_details')->get(); // hoặc ->paginate()
+            $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
+            return view('welcome', compact('categories', 'products'));
         } else {
-            return redirect()->route('welcome');
+            $products = Product::with('product_details')->get(); // hoặc ->paginate()
+            $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
+            return view('welcome', compact('categories', 'products'));
         }
     }
+    public function showProfile()
+    {
+        return view('auth.profile');
+    }
 
-    public function login(Request $request){
-        $data= $request->all();
-        if(Auth::attempt(['email' => $data['email'], 'password' => $data['password'],'status'=>'active'])){
-            Session::put('user',$data['email']);
-            request()->session()->flash('success','Đăng nhập thành công');
+    public function shop()
+    {
+        $products = Product::with('product_details')->get(); // hoặc ->paginate()
+        $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
+        return view('user.shop', compact('categories', 'products'));
+    }
+    
+    public function login(Request $request)
+    {
+        $data = $request->all();
+        if (Auth::attempt(['email' => $data['email'], 'password' => $data['password'], 'status' => 'active'])) {
+            Session::put('user', $data['email']);
+            request()->session()->flash('success', 'Đăng nhập thành công');
             return redirect()->route('home');
-        }
-        else{
-            request()->session()->flash('error','Email hoặc mật khẩu không đúng!');
+        } else {
+            request()->session()->flash('error', 'Email hoặc mật khẩu không đúng!');
             return redirect()->back();
         }
     }
 
-    public function logout(){
+    public function logout()
+    {
         Session::forget('user');
         Auth::logout();
-        request()->session()->flash('success','Đăng xuất thành công');
+        request()->session()->flash('success', 'Đăng xuất thành công');
         return back();
     }
 
@@ -74,5 +95,4 @@ class HomeController extends Controller
 
         return redirect()->route('welcome');
     }
-  
 }

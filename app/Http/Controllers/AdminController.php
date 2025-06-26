@@ -4,11 +4,16 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Coupon;
+use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
-use Intervention\Image\Laravel\Facades\Image;
+//use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -44,7 +49,7 @@ class AdminController extends Controller
             'slug' => 'required|string|unique:products,slug',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
-            'description' => 'required|string|max:1024',
+            'description' => 'required|string|max:10000',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.size' => 'required|string',
             'variants.*.color' => 'required|string',
@@ -61,13 +66,17 @@ class AdminController extends Controller
         $product->description = $request->description;
         $product->save(); // cần trước khi tạo product_detail
 
-        foreach ($request->variants as $variant) {
-            $image = $variant['image'];
+        $manager = new ImageManager(new Driver());
 
+        foreach ($request->variants as $variant) {
+            if (!isset($variant['image']) || !$variant['image']->isValid()) {
+                continue; // Bỏ qua nếu không có ảnh hợp lệ
+            }
+
+            $image = $variant['image'];
             $uploadFolder = 'uploads/products/';
             $savePath = public_path($uploadFolder);
 
-            // Tạo thư mục nếu chưa tồn tại
             if (!file_exists($savePath)) {
                 mkdir($savePath, 0777, true);
             }
@@ -75,8 +84,10 @@ class AdminController extends Controller
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $fullPath = $savePath . '/' . $filename;
 
-            // Resize và lưu ảnh
-            Image::read($image)->resize(800, 800)->save($fullPath);
+            // Resize ảnh và lưu
+            $manager->read($image->getRealPath())
+                ->resize(800, 800)
+                ->save($fullPath);
 
             $product->product_details()->create([
                 'image' => $uploadFolder . $filename,
@@ -86,6 +97,7 @@ class AdminController extends Controller
                 'quantity' => $variant['quantity'],
             ]);
         }
+
 
         return redirect()->route('admin.products')->with('success', 'Đã thêm sản phẩm thành công!');
     }
@@ -125,43 +137,40 @@ class AdminController extends Controller
         // Xóa các chi tiết sản phẩm cũ
         $product->product_details()->delete();
 
+        $manager = new ImageManager(new Driver());
+
         foreach ($request->variants as $variant) {
-            $image = $variant['image'] ?? null;
+            $image = $variant['image'];
 
-            if ($image) {
-                $uploadFolder = 'uploads/products/';
-                $savePath = public_path($uploadFolder);
+            $uploadFolder = 'uploads/products/';
+            $savePath = public_path($uploadFolder);
 
-                // Tạo thư mục nếu chưa có
-                if (!file_exists($savePath)) {
-                    mkdir($savePath, 0777, true);
-                }
-
-                $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-                $fullPath = $savePath . '/' . $filename;
-
-                // Resize và lưu ảnh
-                Image::read($image)->resize(800, 800)->save($fullPath);
-
-                $product->product_details()->create([
-                    'image' => $uploadFolder . $filename,
-                    'price' => $variant['price'],
-                    'size' => $variant['size'],
-                    'color' => $variant['color'],
-                    'quantity' => $variant['quantity'],
-                ]);
-            } else {
-                // Nếu không có ảnh, chỉ lưu các thông tin khác
-                $product->product_details()->create([
-                    'price' => $variant['price'],
-                    'size' => $variant['size'],
-                    'color' => $variant['color'],
-                    'quantity' => $variant['quantity'],
-                ]);
+            if (!file_exists($savePath)) {
+                mkdir($savePath, 0777, true);
             }
+
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $fullPath = $savePath . '/' . $filename;
+
+            // ✅ Resize ảnh đúng cách với ImageManager
+            $manager->read($image)->resize(800, 800)->save($fullPath);
+
+            $product->product_details()->create([
+                'image' => $uploadFolder . $filename,
+                'price' => $variant['price'],
+                'size' => $variant['size'],
+                'color' => $variant['color'],
+                'quantity' => $variant['quantity'],
+            ]);
         }
 
         return redirect()->route('admin.products')->with('success', 'Đã cập nhật sản phẩm thành công!');
+    }
+
+    public function product_detail($id)
+    {
+        $product = Product::with(['product_details'])->findOrFail($id);
+        return view('admin.product-detail', compact('product'));
     }
 
     public function delete_product($id)
@@ -301,7 +310,8 @@ class AdminController extends Controller
     }
     public function orders()
     {
-        return view('admin.orders');
+        $orders = Order::orderBy('created_at','desc')->paginate(12);
+        return view('admin.orders', compact('orders'));
     }
 
     public function order_detail()
@@ -331,16 +341,97 @@ class AdminController extends Controller
 
     public function coupons()
     {
-        return view('admin.coupons');
+        $coupons = Coupon::orderBy('id', 'DESC')->paginate(10);
+        return view('admin.coupons', compact('coupons'));
     }
 
     public function add_coupon()
     {
+
         return view('admin.coupon-add');
+    }
+
+    public function coupon_store(Request $request)
+    {
+        $request->validate([
+            'code' => 'required|string|unique:coupons,code',
+            'type' => 'required|in:percent,fixed',
+            'value' => 'required|numeric|min:0',
+        ]);
+        $coupon = new Coupon();
+        $coupon->code = $request->code;
+        $coupon->type = $request->type;
+        $coupon->value = $request->value;
+        $coupon->save();
+
+        return redirect()->route('admin.coupons')->with('status', 'Coupon đã được thêm thành công!');
+    }
+
+    public function edit_coupon($id)
+    {
+        $coupon = Coupon::find($id);
+        return view('admin.coupon-edit', compact('coupon'));
+    }
+
+    public function update_coupon(Request $request, $id)
+    {
+       
+        $request->validate([
+            'code' => 'string|required', //'string| unique:coupons,code,' //. $request->id,//['required',Rule::unique('coupons','code')->ignore($id)],
+            'type' => 'required|in:percent,fixed',
+            'value' => 'required|numeric|min:0',
+            'status' => 'required|in:active,inactive',
+        ]);
+
+        $coupon = Coupon::find($id);
+        $data = $request ->all();
+        $status = $coupon ->fill($data) -> save();
+        if($status) {
+            request()->session()->flash('success','Cập nhật mã thành công');
+        }
+        else{
+            request()->session()->flash('error','Vui lòng thử lại !!!');
+        }
+        
+        // $coupon->code = $request->code;
+        // $coupon->type = $request->type;
+        // $coupon->value = $request->value;
+        // $coupon->status = $request->status;
+        // $coupon->save();
+
+        return redirect()->route('admin.coupons');//->with('status', 'Coupon đã được cập nhật thành công!');
+    }
+
+    public function delete_coupon($id)
+    {
+        // $coupon = Coupon::find($id);
+        // $coupon->delete();
+
+        $coupon = Coupon::findOrFail($id);
+        if($coupon) {
+            $status =$coupon ->delete();
+            if($status) {
+                request()->session()->flash('success','Xóa mã thành công');
+            }
+            else {
+                request()->session()->flash('error','Lỗi, vui lòng thử lại!!');
+            }
+            return redirect()->route('admin.coupons');
+        }
+        else {
+            request()->session()->flash('error','Không tìm thấy mã giảm giá');
+            return redirect() ->back();
+        }
+        
+
+        
     }
 
     public function settings()
     {
         return view('admin.settings');
     }
+
+
+  
 }

@@ -41,22 +41,34 @@
                                     <th style="width:70px">#</th>
                                     <th class="text-center">Tên khách hàng</th>
                                     <th class="text-center">Số điện thoại</th>
+                                    <th class="text-center">Số lượng sản phẩm</th>
                                     <th class="text-center">Tổng tiền</th>
+                                    <th class="text-center">Phương Thức Thanh Toán</th>
+                                    <th class="text-center">Trạng Thái Thanh Toán</th>
                                     <th class="text-center">Ngày đặt</th>
-                                    <th class="text-center">Số lượng</th>
+                                    <th class="text-center">Địa Chỉ</th>                                   
                                     <th class="text-center">Trạng thái đơn hàng</th>
+
                                     <th class="text-center">Xem chi tiết</th>
                                 </tr>
                             </thead>
                             <tbody>
+                                @foreach ($orders as $order )
+                                                                   
                                 <tr>
-                                    <td class="text-center">1</td>
-                                    <td class="text-center">Divyansh Kumar</td>
-                                    <td class="text-center">1234567891</td>
-                                    <td class="text-center">$208.12</td>
-                                    <td class="text-center">2024-07-11 00:54:14</td>
-                                    <td class="text-center">2</td>
-                                    <td></td>
+                                    <td class="text-center">{{$order ->id}}</td>
+                                    <td class="text-center">{{$order ->name}}</td>
+                                    <td class="text-center">{{$order ->phone}}</td>
+                                    <td class="text-center">{{$order ->order_items}}</td>
+                                    <td class="text-center">{{number_format($order ->suptotal,0,',','.')}} VND</td>
+                                    <td class="text-center">{{$order ->payment_method}}</td>
+                                    <td class="text-center">{{$order ->payment_status}}</td>
+                                    <td class="text-center">{{$order ->order_date}}</td>
+                                    <td class="text-center">{{$order ->address}}</td>
+                                    <td class="text-center">{{$order ->status}}</td>
+                                   
+                                    
+                                    
                                     <td class="text-center">
                                         <a href="{{ route('admin.order.detail') }}">
                                             <div class="list-icon-function view-icon">
@@ -67,7 +79,7 @@
                                         </a>
                                     </td>
                                 </tr>
-
+                                @endforeach
                             </tbody>
                         </table>
                     </div>

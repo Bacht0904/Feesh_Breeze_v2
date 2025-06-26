@@ -3,7 +3,7 @@
     <div class="main-content-inner">
         <div class="main-content-wrap">
             <div class="flex items-center flex-wrap justify-between gap20 mb-27">
-                <h3>Thông tin phiếu giảm giá</h3>
+                <h3>Chỉnh sửa phiếu giảm giá</h3>
                 <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                     <li>
                         <a href="{{ route('admin.index') }}">
@@ -22,21 +22,20 @@
                         <i class="icon-chevron-right"></i>
                     </li>
                     <li>
-                        <div class="text-tiny">Thêm phiếu giảm giá</div>
+                        <div class="text-tiny">Sửa phiếu giảm giá</div>
                     </li>
                 </ul>
             </div>
             <div class="wg-box">
-                <form class="form-new-product form-style-1" method="POST" action="{{ route('admin.coupon.store') }}">
+                <form class="form-new-product form-style-1" method="POST" action="{{ route('admin.coupon.update',$coupon->id) }}">
                      @csrf
+                    @method('PUT')
                     <fieldset class="name">
                         <div class="body-title">Mã giảm giá<span class="tf-color-1">*</span></div>
                         <input class="flex-grow" type="text" placeholder="Nhập mã giảm giá" name="code" tabindex="0"
-                            value="" aria-required="true" required="">
+                            value="{{ $coupon->code }}" aria-required="true" required="">
                     </fieldset>
-                    @error('code')
-                        <span class="text-danger">{{$message}}</span>
-                    @enderror
+                    @error('code') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
                     <fieldset class="category">
                         <div class="body-title">Loại giảm giá</div>
                         <div class="select flex-grow">
@@ -53,9 +52,9 @@
                     <fieldset class="name">
                         <div class="body-title">Giá trị giảm<span class="tf-color-1">*</span></div>
                         <input class="flex-grow" type="text" placeholder="Nhập giá trị giảm" name="value" tabindex="0"
-                            value="" aria-required="true" required="">
+                            value="{{ $coupon->value }}" aria-required="true" required="">
                     </fieldset>
-                    <!-- <fieldset class="category">
+                    <fieldset class="category">
                         <div class="body-title">Trạng thái</div>
                         <div class="select flex-grow">
                             <select class="" name="status">
@@ -67,7 +66,7 @@
                     </fieldset>
                     @error('status')
                         <span class="text-danger">{{$message}}</span>
-                    @enderror -->
+                    @enderror
 
                     <div class="bot">
                         <div></div>
