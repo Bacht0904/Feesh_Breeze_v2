@@ -37,14 +37,18 @@ class HomeController extends Controller
     }
     public function index()
     {
+
+        $featuredProducts = Product::latest()->take(8)->get();
+
+
         if (Auth::check()) {
             $products = Product::with('product_details')->get(); // hoặc ->paginate()
             $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
-            return view('welcome', compact('categories', 'products'));
+            return view('welcome', compact('categories', 'products', 'featuredProducts'));
         } else {
             $products = Product::with('product_details')->get(); // hoặc ->paginate()
             $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
-            return view('welcome', compact('categories', 'products'));
+            return view('welcome', compact('categories', 'products', 'featuredProducts'));
         }
     }
     public function showProfile()

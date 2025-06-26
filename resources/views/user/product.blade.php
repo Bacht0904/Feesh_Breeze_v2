@@ -86,3 +86,68 @@
   });
 </script>
 @endpush
+@push('scripts')
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if(session('added_to_cart'))
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: '🎉 Đã thêm vào giỏ!',
+        text: "{{ session('added_to_cart') }}",
+        timer: 2000,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+        customClass: {
+          popup: 'shadow rounded',
+        }
+      });
+    </script>
+  @endif
+@endpush
+@push('styles')
+<style> 
+  .product-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .swiper-product-detail img {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .swiper-button-next, .swiper-button-prev {
+    color: #000;
+  } 
+  .swiper-button-next:hover, .swiper-button-prev:hover {
+    color: #007bff;
+  }
+  .form-select, .form-control {
+    width: 100%;
+  }
+  .form-select {
+    max-width: 300px;
+  }
+
+
+
+  .form-check-label {
+    cursor: pointer;
+  }
+</style>
+@endpush
+
+{{-- Chú ý: Đảm bảo rằng bạn đã định nghĩa route 'cart.addDetail' trong routes/web.php --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã truyền biến $product từ controller đến view này --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt Swiper.js để sử dụng tính năng slide ảnh --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt SweetAlert2 để hiển thị thông báo thành công khi thêm vào giỏ hàng --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã định nghĩa route 'cart.addDetail' trong routes/web.php --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã truyền biến $product từ controller đến view này --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt Swiper.js để sử dụng tính năng slide ảnh --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt SweetAlert2 để hiển thị thông báo thành công khi thêm vào giỏ hàng --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã định nghĩa route 'cart.addDetail' trong routes/web.php --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã truyền biến $product từ controller đến view này --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt Swiper.js để sử dụng tính năng slide ảnh --}}
+{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt SweetAlert2 để hiển thị thông báo thành công khi thêm vào giỏ hàng --}}

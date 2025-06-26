@@ -355,10 +355,9 @@
                     @endphp
 
                     <a href="{{ $productUrl }}">
-                      <img loading="lazy" src="{{ asset('/' . $detail->image) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
-
-
+                      <img loading="lazy" src="{{ asset('/' . $firstDetail->image) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
                     </a>
+
                   </div>
                   <!-- <div class="swiper-slide">
                     <a href="{{ $productUrl }}">
@@ -366,17 +365,27 @@
                     </a>
                   </div> -->
                 </div>
-                <span class="pc__img-prev"><svg width="7" height="11">
-                    <use href="#icon_prev_sm" />
-                  </svg></span>
-                <span class="pc__img-next"><svg width="7" height="11">
-                    <use href="#icon_next_sm" />
-                  </svg></span>
+
               </div>
 
-              <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
+              @if ($firstDetail)
+              <form action="{{ route('cart.addDetail') }}" method="POST">
+                @csrf
+                <input type="hidden" name="product_detail_id" value="{{ $firstDetail->id }}">
+                <input type="hidden" name="quantity" value="1">
+
+                <button type="submit" class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium " data-aside="cartDrawer">
+                  Thêm vào giỏ
+                </button>
+              </form>
+
+              @endif
+
+              <!-- <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
                 Thêm vào giỏ
-              </button>
+              </button> -->
+
+
             </div>
 
             <div class="pc__info position-relative">
@@ -388,19 +397,14 @@
               @else
               <span class="text-muted">Chưa có giá</span>
               @endif
-              <p>Size:
-                @foreach($product->product_details as $detail)
-                {{ $detail->size }}
-                @endforeach
-              </p>
-              <!-- @php
+              @php
               $sizes = $product->product_details->pluck('size')->unique();
               @endphp
 
-              <p class="mb-1"> 
+              <p class="mb-1">
                 Size:
                 {{ $sizes->implode(', ') }}
-              </p> -->
+              </p>
 
 
               <div class="product-card__review d-flex align-items-center">
@@ -446,3 +450,24 @@
   </section>
 </main>
 @endsection
+@push('scripts')
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if(session('added_to_cart'))
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: '🎉 Đã thêm vào giỏ!',
+        text: "{{ session('added_to_cart') }}",
+        timer: 2000,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+        customClass: {
+          popup: 'shadow rounded',
+        }
+      });
+    </script>
+  @endif
+@endpush
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}"> 

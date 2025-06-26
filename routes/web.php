@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
@@ -108,8 +109,6 @@ Route::post('/password/confirm', [HomeController::class, 'confirm'])->name('pass
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
-Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
-
 
 Route::post('/cart/add-detail', [CartController::class, 'addDetail'])->name('cart.addDetail');
 Route::get('/cart/remove/{slug}', [CartController::class, 'remove'])->name('cart.remove');
@@ -118,3 +117,7 @@ Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name(
 Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
+
+
+Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
