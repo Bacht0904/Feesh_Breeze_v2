@@ -269,15 +269,18 @@
 
             <div class="logo">
                 <a href="{{route('home')}}">
-                    <img src="{{asset('(assets/images/logo.jpg')}}"  class="logo__image d-block" />
+                    <img src="{{asset('(assets/images/1750827198_685b80be46421.jpg')}}" class="logo__image d-block" />
                 </a>
             </div>
 
-            <a href="#" class="header-tools__item header-tools__cart js-open-aside" data-aside="cartDrawer">
+            <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart" data-aside="cartDrawer">
                 <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_cart" />
                 </svg>
-                <span class="cart-amount d-block position-absolute js-cart-items-count">3</span>
+
+                <span class="cart-amount d-block position-absolute">
+                    {{ $cartItemCount ?? 0 }}
+                </span>
             </a>
         </div>
 
@@ -388,15 +391,15 @@
         <div class="container">
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
-                    <a href="{{ route('home') }}">    
-                        <img src="{{ asset('images/logo.jpg') }}" class="logo__image" >
+                    <a href="{{ route('home') }}">
+                        <img src="{{ asset('images/1750827198_685b80be46421.jpg') }}" class="logo__image">
 
                     </a>
                 </div>
 
                 <nav class="navigation">
                     <ul class="navigation__list list-unstyled d-flex">
-                          <li class="navigation__item">
+                        <li class="navigation__item">
                             <a href="{{ route('home') }} " class="navigation__link">Trang Chủ</a>
                         </li>
                         <li class="navigation__item">
@@ -461,14 +464,14 @@
                         </div>
                     </div>
 
-                   @guest
+                    @guest
                     <div class="header-tools__item">
                         <a href="{{ route('login') }}" class="header-tools__link">
-                           
+
                             <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
                         </a>
                     </div>
-                    @else   
+                    @else
                     <div class="header-tools__item">
                         <a href="{{ route('profile') }}" class="header-tools__link">
                             <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
@@ -485,12 +488,14 @@
                         </svg>
                     </a>
 
-                    <a href="{{route('cart')}}" class="header-tools__item header-tools__cart">
-                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
+                    <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart" data-aside="cartDrawer">
+                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_cart" />
                         </svg>
-                        <span class="cart-amount d-block position-absolute js-cart-items-count">3</span>
+
+                        <span class="cart-amount d-block position-absolute">
+                            {{ $cartItemCount ?? 0 }}
+                        </span>
                     </a>
                 </div>
             </div>
@@ -506,7 +511,7 @@
                 <div class="footer-column footer-store-info col-12 mb-4 mb-lg-0">
                     <div class="logo">
                         <a href="{{ route('home') }}">
-                            <img src="{{asset('assets/images/logo.jpg')}}"  class="logo__image d-block" />
+                            <img src="{{asset('assets/images/logo.jpg')}}" class="logo__image d-block" />
                         </a>
                     </div>
                     <p class="footer-address">65 Huỳnh Thúc Kháng, P.Bến Nghé, Q.1, Tp.HCM</p>
@@ -606,15 +611,6 @@
             </div>
         </div>
 
-        <!-- <div class="footer-bottom">
-            <div class="container d-md-flex align-items-center">
-                <span class="footer-copyright me-auto">©2024 Surfside Media</span>
-                <div class="footer-settings d-md-flex align-items-center">
-                    <a href="privacy-policy.html">Privacy Policy</a> &nbsp;|&nbsp; <a href="terms-conditions.html">Terms &amp;
-                        Conditions</a>
-                </div>
-            </div>
-        </div> -->
     </footer>
 
 

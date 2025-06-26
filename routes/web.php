@@ -6,7 +6,9 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CheckoutController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
@@ -42,6 +44,7 @@ Route::get('/admin/brand/{id}/edit', [AdminController::class, 'edit_brand'])->na
 Route::put('/admin/brand/update', [AdminController::class, 'update_brand'])->name('admin.brand.update');
 Route::delete('/admin/brand/{id}/delete', [AdminController::class, 'delete_brand'])->name('admin.brand.delete');
 Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
+Route::get('/admin/brands/search', [AdminController::class, 'brand_search'])->name('admin.brands.search');
 
 Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
 Route::get('/admin/category/add', [AdminController::class, 'add_category'])->name('admin.category.add');
@@ -60,7 +63,8 @@ Route::get('/admin/product/add', [AdminController::class, 'add_product'])->name(
 Route::get('/admin/product/{id}/edit', [AdminController::class, 'edit_product'])->name('admin.product.edit');
 Route::put('/admin/product/{id}', [AdminController::class, 'update_product'])->name('admin.product.update');
 Route::delete('/admin/product/{id}/delete', [AdminController::class, 'delete_product'])->name('admin.product.delete');
-
+Route::get('/admin/product/{id}/detail', [AdminController::class, 'product_detail'])->name('admin.product.detail');
+Route::get('/admin/products/search', [AdminController::class, 'product_search'])->name('admin.products.search');
 
 
 Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
@@ -76,8 +80,6 @@ Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coup
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
 
-Route::get('/admin/product/{id}/detail', [AdminController::class, 'product_detail'])->name('admin.product.detail');
-
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
 Route::post('/login', [HomeController::class, 'login'])->name('login');
@@ -92,8 +94,9 @@ Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
 Route::get('/shop/category/{slug}', [HomeController::class, 'categoryProducts'])->name('shop.category');
 Route::get('/shop/brand/{slug}', [HomeController::class, 'brandProducts'])->name('shop.brand');
 Route::get('/search', [HomeController::class, 'search'])->name('search');
-Route::get('/product/{slug}/add-to-cart', [HomeController::class, 'addToCart'])->name('product.add.to.cart');
-Route::get('/product/{slug}', [HomeController::class, 'productDetail'])->name('product.detail');
+Route::get('/products', [AdminController::class, 'products'])->name('products');
+
+Route::get('/products/{slug}', [AdminController::class, 'show'])->name('products.show');
 Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
@@ -104,6 +107,17 @@ Route::get('/password/reset/{token}', [HomeController::class, 'showResetFormWith
 Route::get('/password/confirm', [HomeController::class, 'showConfirmForm'])->name('password.confirm');
 Route::post('/password/confirm', [HomeController::class, 'confirm'])->name('password.confirm.submit');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
+Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
-Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
+
+Route::post('/cart/add-detail', [CartController::class, 'addDetail'])->name('cart.addDetail');
+Route::get('/cart/remove/{slug}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
+Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
+
+
+Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');

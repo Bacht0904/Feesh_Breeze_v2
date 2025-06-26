@@ -29,11 +29,15 @@
             aria-labelledby="accordion-heading-1" data-bs-parent="#categories-list">
             <div class="accordion-body px-0 pb-0 pt-3">
               <ul class="list list-inline mb-0">
+                @foreach ($categories as $category)
                 <li class="list-item">
-                  <a href="#" class="menu-link py-1">Dresses</a>
+                  <a href="{{ route('shop.category', $category->slug) }}" class="menu-link py-1">
+                    {{ $category->name }}
+                  </a>
                 </li>
-
+                @endforeach
               </ul>
+
             </div>
           </div>
         </div>
@@ -54,21 +58,24 @@
               </svg>
             </button>
           </h5>
+
           <div id="accordion-filter-2" class="accordion-collapse collapse show border-0"
             aria-labelledby="accordion-heading-1" data-bs-parent="#color-filters">
             <div class="accordion-body px-0 pb-0">
-              <div class="d-flex flex-wrap">
-                <a href="#" class="swatch-color js-filter" style="color: #0a2472"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #d7bb4f"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #282828"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #b1d6e8"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #9c7539"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #d29b48"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #e6ae95"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #d76b67"></a>
-                <a href="#" class="swatch-color swatch_active js-filter" style="color: #bababa"></a>
-                <a href="#" class="swatch-color js-filter" style="color: #bfdcc4"></a>
+              <div class="d-flex flex-wrap gap-2 mb-3">
+                @foreach ($colors as $color)
+                @if (!empty($color['code']))
+                <a href="#"
+                  class="swatch-color js-filter position-relative rounded-circle border border-light shadow-sm"
+                  style="background-color: {{ $color['code'] }}; width: 32px; height: 32px;"
+                  title="{{ ucfirst($color['name']) }}">
+                  <span class="visually-hidden">{{ ucfirst($color['name']) }}</span>
+                </a>
+                @endif
+                @endforeach
               </div>
+
+
             </div>
           </div>
         </div>
@@ -93,46 +100,41 @@
             aria-labelledby="accordion-heading-size" data-bs-parent="#size-filters">
             <div class="accordion-body px-0 pb-0">
               <div class="d-flex flex-wrap">
-                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">XS</a>
-
+                @foreach ($sizes as $size)
+                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">{{ strtoupper($size) }}</a>
+                @endforeach
               </div>
+
             </div>
           </div>
         </div>
       </div>
 
-
       <div class="accordion" id="brand-filters">
         <div class="accordion-item mb-4 pb-3">
-          <h5 class="accordion-header" id="accordion-heading-brand">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
-              data-bs-target="#accordion-filter-brand" aria-expanded="true" aria-controls="accordion-filter-brand">
-              Brands
-              <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-                <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                  <path
-                    d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
-                </g>
+          <h5 class="accordion-header" id="heading-brand">
+            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
+              data-bs-toggle="collapse" data-bs-target="#filter-brand"
+              aria-expanded="true" aria-controls="filter-brand">
+              Thương hiệu
+              <span class="badge bg-secondary ms-2">({{ count($brands) }})</span>
+              <svg class="accordion-button__icon type2" viewBox="0 0 10 6">
+                <use href="#icon_arrow" />
               </svg>
             </button>
           </h5>
-          <div id="accordion-filter-brand" class="accordion-collapse collapse show border-0"
-            aria-labelledby="accordion-heading-brand" data-bs-parent="#brand-filters">
-            <div class="search-field multi-select accordion-body px-0 pb-0">
-              <select class="d-none" multiple name="total-numbers-list">
-                <option value="1">Adidas</option>
-
-              </select>
+          <div id="filter-brand" class="accordion-collapse collapse show border-0" aria-labelledby="heading-brand" data-bs-parent="#brand-filters">
+            <div class="accordion-body px-0 pb-0">
               <div class="search-field__input-wrapper mb-3">
-                <input type="text" name="search_text"
-                  class="search-field__input form-control form-control-sm border-light border-2"
-                  placeholder="Search" />
+                <input type="text" class="form-control form-control-sm border-light border-2" placeholder="Tìm thương hiệu...">
               </div>
               <ul class="multi-select__list list-unstyled">
-                <li class="search-suggestion__item multi-select__item text-primary js-search-select js-multi-select">
-                  <span class="me-auto">Adidas</span>
-                  <span class="text-secondary">2</span>
+                @foreach ($brands as $brand)
+                <li class="multi-select__item js-search-select js-multi-select text-primary">
+                  <span class="me-auto">{{ $brand->name }}</span>
+                  <span class="text-secondary">{{ $brand->products_count ?? 0 }}</span>
                 </li>
+                @endforeach
               </ul>
             </div>
           </div>
@@ -262,47 +264,17 @@
 
       <div class="d-flex justify-content-between mb-4 pb-md-2">
         <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-          <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">Home</a>
+          <a href="{{ route('home') }} " class="menu-link menu-link_us-s text-uppercase fw-medium">Trang Chủ</a>
+
           <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-          <a href="#" class="menu-link menu-link_us-s text-uppercase fw-medium">The Shop</a>
+          <a href="{{ route('shop') }}" class="menu-link menu-link_us-s text-uppercase fw-medium">Sản Phẩm</a>
         </div>
 
-        <div class="shop-acs d-flex align-items-center justify-content-between justify-content-md-end flex-grow-1">
-          <select class="shop-acs__select form-select w-auto border-0 py-0 order-1 order-md-0" aria-label="Sort Items"
-            name="total-number">
-            <option selected>Default Sorting</option>
-            <option value="1">Featured</option>
-            <option value="2">Best selling</option>
-            <option value="3">Alphabetically, A-Z</option>
-            <option value="3">Alphabetically, Z-A</option>
-            <option value="3">Price, low to high</option>
-            <option value="3">Price, high to low</option>
-            <option value="3">Date, old to new</option>
-            <option value="3">Date, new to old</option>
-          </select>
 
-          <div class="shop-asc__seprator mx-3 bg-light d-none d-md-block order-md-0"></div>
 
-          <div class="col-size align-items-center order-1 d-none d-lg-flex">
-            <span class="text-uppercase fw-medium me-2">View</span>
-            <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid" data-cols="2">2</button>
-            <button class="btn-link fw-medium me-2 js-cols-size" data-target="products-grid" data-cols="3">3</button>
-            <button class="btn-link fw-medium js-cols-size" data-target="products-grid" data-cols="4">4</button>
-          </div>
-
-          <div class="shop-filter d-flex align-items-center order-0 order-md-3 d-lg-none">
-            <button class="btn-link btn-link_f d-flex align-items-center ps-0 js-open-aside" data-aside="shopFilter">
-              <svg class="d-inline-block align-middle me-2" width="14" height="10" viewBox="0 0 14 10" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
-                <use href="#icon_filter" />
-              </svg>
-              <span class="text-uppercase fw-medium d-inline-block align-middle">Filter</span>
-            </button>
-          </div>
-        </div>
       </div>
 
-      <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
+      <!-- <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
         @foreach($products as $product)
         <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
@@ -335,9 +307,17 @@
             <div class="pc__info position-relative">
               <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
               <h6 class="pc__title"><a href="{{ route('products.show', $product->id) }}">{{ $product->name }}</a></h6>
-              <div class="product-card__price d-flex">
-                <span class="money price">$ {{ number_format($product->price, 2) }}</span>
-              </div>
+              @if ($product->product_details->first())
+              <span class="money price">
+                ${{ number_format($product->product_details->first()->price, 2) }}
+              </span>
+              @else
+              <span class="text-muted">Chưa có giá</span>
+              @endif
+              @foreach($product->product_details as $detail)
+              <p>Size: {{ $detail->size }}</p>
+              @endforeach
+
               <div class="product-card__review d-flex align-items-center">
                 <div class="reviews-group d-flex">
                   @for($i = 0; $i < 5; $i++)
@@ -347,6 +327,96 @@
                 </div>
                 <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
               </div>
+              <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
+                <svg width="16" height="16">
+                  <use href="#icon_heart" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+        @endforeach
+      </div> -->
+      <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
+        @foreach($products as $product)
+        @php
+        $firstDetail = $product->product_details->first();
+        $productUrl = route('products.show', $product->id);
+        @endphp
+
+        <div class="col-6 col-md-4">
+          <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+            <div class="pc__img-wrapper">
+              <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    @php
+                    $productUrl = route('products.show', $product->slug); // nếu show theo slug
+                    @endphp
+
+                    <a href="{{ $productUrl }}">
+                      <img loading="lazy" src="{{ asset('/' . $firstDetail->image) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+                    </a>
+
+                  </div>
+                  <!-- <div class="swiper-slide">
+                    <a href="{{ $productUrl }}">
+                      <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+                    </a>
+                  </div> -->
+                </div>
+
+              </div>
+
+              @if ($firstDetail)
+              <form action="{{ route('cart.addDetail') }}" method="POST">
+                @csrf
+                <input type="hidden" name="product_detail_id" value="{{ $firstDetail->id }}">
+                <input type="hidden" name="quantity" value="1">
+
+                <button type="submit" class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium " data-aside="cartDrawer">
+                  Thêm vào giỏ
+                </button>
+              </form>
+
+              @endif
+
+              <!-- <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
+                Thêm vào giỏ
+              </button> -->
+
+
+            </div>
+
+            <div class="pc__info position-relative">
+              <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
+              <h6 class="pc__title"><a href="{{ $productUrl }}">{{ $product->name }}</a></h6>
+
+              @if($firstDetail)
+              <span class="money price">${{ number_format($firstDetail->price, 2) }}</span>
+              @else
+              <span class="text-muted">Chưa có giá</span>
+              @endif
+              @php
+              $sizes = $product->product_details->pluck('size')->unique();
+              @endphp
+
+              <p class="mb-1">
+                Size:
+                {{ $sizes->implode(', ') }}
+              </p>
+
+
+              <div class="product-card__review d-flex align-items-center">
+                <div class="reviews-group d-flex">
+                  @for($i = 0; $i < 5; $i++)
+                    <svg class="review-star" viewBox="0 0 9 9">
+                    <use href="#icon_star" /></svg>
+                    @endfor
+                </div>
+                <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
+              </div>
+
               <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
                 <svg width="16" height="16">
                   <use href="#icon_heart" />
@@ -380,3 +450,24 @@
   </section>
 </main>
 @endsection
+@push('scripts')
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if(session('added_to_cart'))
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: '🎉 Đã thêm vào giỏ!',
+        text: "{{ session('added_to_cart') }}",
+        timer: 2000,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+        customClass: {
+          popup: 'shadow rounded',
+        }
+      });
+    </script>
+  @endif
+@endpush
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}"> 
