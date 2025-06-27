@@ -101,7 +101,8 @@
             <div class="accordion-body px-0 pb-0">
               <div class="d-flex flex-wrap">
                 @foreach ($sizes as $size)
-                <a href="#" class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">{{ strtoupper($size) }}</a>
+                <a href="#"
+                  class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">{{ strtoupper($size) }}</a>
                 @endforeach
               </div>
 
@@ -113,9 +114,8 @@
       <div class="accordion" id="brand-filters">
         <div class="accordion-item mb-4 pb-3">
           <h5 class="accordion-header" id="heading-brand">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button"
-              data-bs-toggle="collapse" data-bs-target="#filter-brand"
-              aria-expanded="true" aria-controls="filter-brand">
+            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
+              data-bs-target="#filter-brand" aria-expanded="true" aria-controls="filter-brand">
               Thương hiệu
               <span class="badge bg-secondary ms-2">({{ count($brands) }})</span>
               <svg class="accordion-button__icon type2" viewBox="0 0 10 6">
@@ -123,10 +123,12 @@
               </svg>
             </button>
           </h5>
-          <div id="filter-brand" class="accordion-collapse collapse show border-0" aria-labelledby="heading-brand" data-bs-parent="#brand-filters">
+          <div id="filter-brand" class="accordion-collapse collapse show border-0" aria-labelledby="heading-brand"
+            data-bs-parent="#brand-filters">
             <div class="accordion-body px-0 pb-0">
               <div class="search-field__input-wrapper mb-3">
-                <input type="text" class="form-control form-control-sm border-light border-2" placeholder="Tìm thương hiệu...">
+                <input type="text" class="form-control form-control-sm border-light border-2"
+                  placeholder="Tìm thương hiệu...">
               </div>
               <ul class="multi-select__list list-unstyled">
                 @foreach ($brands as $brand)
@@ -177,18 +179,18 @@
 
     <div class="shop-list flex-grow-1">
       <div class="swiper-container js-swiper-slider slideshow slideshow_small slideshow_split" data-settings='{
-            "autoplay": {
-              "delay": 5000
-            },
-            "slidesPerView": 1,
-            "effect": "fade",
-            "loop": true,
-            "pagination": {
-              "el": ".slideshow-pagination",
-              "type": "bullets",
-              "clickable": true
-            }
-          }'>
+        "autoplay": {
+          "delay": 5000
+        },
+        "slidesPerView": 1,
+        "effect": "fade",
+        "loop": true,
+        "pagination": {
+          "el": ".slideshow-pagination",
+          "type": "bullets",
+          "clickable": true
+        }
+        }'>
         <div class="swiper-wrapper">
           <div class="swiper-slide">
             <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
@@ -275,20 +277,88 @@
       </div>
 
       <!-- <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
+      @foreach($products as $product)
+      <div class="col-6 col-md-4">
+        <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+        <div class="pc__img-wrapper">
+          <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+            <a href="{{ route('products.show', $product->id) }}">
+              <img loading="lazy" src="{{ asset('upload/product/' . $product->img) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+            </a>
+            </div>
+            <div class="swiper-slide">
+            <a href="{{ route('products.show', $product->id) }}">
+              <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+            </a>
+            </div>
+          </div>
+          <span class="pc__img-prev"><svg width="7" height="11">
+            <use href="#icon_prev_sm" />
+            </svg></span>
+          <span class="pc__img-next"><svg width="7" height="11">
+            <use href="#icon_next_sm" />
+            </svg></span>
+          </div>
+          <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
+          Thêm vào giỏ
+          </button>
+        </div>
+
+        <div class="pc__info position-relative">
+          <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
+          <h6 class="pc__title"><a href="{{ route('products.show', $product->id) }}">{{ $product->name }}</a></h6>
+          @if ($product->product_details->first())
+          <span class="money price">
+          ${{ number_format($product->product_details->first()->price, 2) }}
+          </span>
+          @else
+          <span class="text-muted">Chưa có giá</span>
+          @endif
+          @foreach($product->product_details as $detail)
+          <p>Size: {{ $detail->size }}</p>
+          @endforeach
+
+          <div class="product-card__review d-flex align-items-center">
+          <div class="reviews-group d-flex">
+            @for($i = 0; $i < 5; $i++)
+            <svg class="review-star" viewBox="0 0 9 9">
+            <use href="#icon_star" /></svg>
+            @endfor
+          </div>
+          <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
+          </div>
+          <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
+          <svg width="16" height="16">
+            <use href="#icon_heart" />
+          </svg>
+          </button>
+        </div>
+        </div>
+      </div>
+      @endforeach
+      </div> -->
+      <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
         @foreach($products as $product)
+        @php
+        $firstDetail = $product->product_details->first();
+        $productUrl = route('products.show', $product->slug); // dùng slug
+        $uniqueSizes = $product->product_details->pluck('size')->unique()->filter()->values();
+        @endphp
+
         <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
             <div class="pc__img-wrapper">
               <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
                 <div class="swiper-wrapper">
                   <div class="swiper-slide">
-                    <a href="{{ route('products.show', $product->id) }}">
-                      <img loading="lazy" src="{{ asset('upload/product/' . $product->img) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
-                    </a>
-                  </div>
-                  <div class="swiper-slide">
-                    <a href="{{ route('products.show', $product->id) }}">
-                      <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+                    <a href="{{ $productUrl }}">
+                      <img loading="lazy"
+                        src="{{ asset($firstDetail?->image ?? 'images/default.jpg') }}"
+                        width="330" height="400"
+                        alt="{{ $product->name }}"
+                        class="pc__img">
                     </a>
                   </div>
                 </div>
@@ -299,74 +369,6 @@
                     <use href="#icon_next_sm" />
                   </svg></span>
               </div>
-              <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
-                Thêm vào giỏ
-              </button>
-            </div>
-
-            <div class="pc__info position-relative">
-              <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
-              <h6 class="pc__title"><a href="{{ route('products.show', $product->id) }}">{{ $product->name }}</a></h6>
-              @if ($product->product_details->first())
-              <span class="money price">
-                ${{ number_format($product->product_details->first()->price, 2) }}
-              </span>
-              @else
-              <span class="text-muted">Chưa có giá</span>
-              @endif
-              @foreach($product->product_details as $detail)
-              <p>Size: {{ $detail->size }}</p>
-              @endforeach
-
-              <div class="product-card__review d-flex align-items-center">
-                <div class="reviews-group d-flex">
-                  @for($i = 0; $i < 5; $i++)
-                    <svg class="review-star" viewBox="0 0 9 9">
-                    <use href="#icon_star" /></svg>
-                    @endfor
-                </div>
-                <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
-              </div>
-              <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                <svg width="16" height="16">
-                  <use href="#icon_heart" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        @endforeach
-      </div> -->
-      <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
-        @foreach($products as $product)
-        @php
-        $firstDetail = $product->product_details->first();
-        $productUrl = route('products.show', $product->id);
-        @endphp
-
-        <div class="col-6 col-md-4">
-          <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-            <div class="pc__img-wrapper">
-              <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
-                <div class="swiper-wrapper">
-                  <div class="swiper-slide">
-                    @php
-                    $productUrl = route('products.show', $product->slug); // nếu show theo slug
-                    @endphp
-
-                    <a href="{{ $productUrl }}">
-                      <img loading="lazy" src="{{ asset('/' . $firstDetail->image) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
-                    </a>
-
-                  </div>
-                  <!-- <div class="swiper-slide">
-                    <a href="{{ $productUrl }}">
-                      <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
-                    </a>
-                  </div> -->
-                </div>
-
-              </div>
 
               @if ($firstDetail)
               <form action="{{ route('cart.addDetail') }}" method="POST">
@@ -374,18 +376,13 @@
                 <input type="hidden" name="product_detail_id" value="{{ $firstDetail->id }}">
                 <input type="hidden" name="quantity" value="1">
 
-                <button type="submit" class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium " data-aside="cartDrawer">
+                <button type="submit"
+                  class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium"
+                  data-aside="cartDrawer">
                   Thêm vào giỏ
                 </button>
               </form>
-
               @endif
-
-              <!-- <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
-                Thêm vào giỏ
-              </button> -->
-
-
             </div>
 
             <div class="pc__info position-relative">
@@ -397,15 +394,12 @@
               @else
               <span class="text-muted">Chưa có giá</span>
               @endif
-              @php
-              $sizes = $product->product_details->pluck('size')->unique();
-              @endphp
 
-              <p class="mb-1">
-                Size:
-                {{ $sizes->implode(', ') }}
-              </p>
-
+              <div class="mb-2">
+                @foreach($uniqueSizes as $size)
+                <span class="badge bg-light text-dark border me-1 mb-1">{{ $size }}</span>
+                @endforeach
+              </div>
 
               <div class="product-card__review d-flex align-items-center">
                 <div class="reviews-group d-flex">
@@ -417,7 +411,8 @@
                 <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
               </div>
 
-              <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
+              <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
+                title="Add To Wishlist">
                 <svg width="16" height="16">
                   <use href="#icon_heart" />
                 </svg>
@@ -451,23 +446,23 @@
 </main>
 @endsection
 @push('scripts')
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  @if(session('added_to_cart'))
-    <script>
-      Swal.fire({
-        icon: 'success',
-        title: '🎉 Đã thêm vào giỏ!',
-        text: "{{ session('added_to_cart') }}",
-        timer: 2000,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end',
-        customClass: {
-          popup: 'shadow rounded',
-        }
-      });
-    </script>
-  @endif
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('added_to_cart'))
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: '🎉 Đã thêm vào giỏ!',
+    text: "{{ session('added_to_cart') }}",
+    timer: 2000,
+    showConfirmButton: false,
+    toast: true,
+    position: 'top-end',
+    customClass: {
+      popup: 'shadow rounded',
+    }
+  });
+</script>
+@endif
 @endpush
 @push('styles')
-  <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}"> 
+<link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">

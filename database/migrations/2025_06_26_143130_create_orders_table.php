@@ -18,13 +18,18 @@ return new class extends Migration
             $table->string('id_shipping');
             $table->timestamp('order_date');
             $table->decimal('suptotal',10,2);
-            $table->enum('payment_method',allowed: ['Tiền Mặt','Chuyển Khoản'])->default('Tiền Mặt');
-            $table->enum(column:'payment_status',allowed: ['Đã Thanh Toán','Chưa Thanh Toán'])->default('Chưa Thanh Toán');
-            $table->string(column:'name');
+            $table->enum('payment_method', ['Tiền Mặt','Chuyển Khoản'])->default('Tiền Mặt');
+            $table->enum('payment_status', ['Đã Thanh Toán','Chưa Thanh Toán'])->default('Chưa Thanh Toán');
+            $table->string('name');
             $table->string('phone');
             $table->string('address');
-            $table->double('order_items');
-            $table->enum('status',allowed: ['Đã Duyệt','Đang Giao','Đã Giao','Đã Hủy'])->default('Đã Duyệt');       
+            $table->string('email')->nullable();
+            $table->string('note')->nullable();
+            $table->string('coupon_code')->nullable();
+            $table->decimal('coupon_discount',10,2)->default(0);
+            $table->decimal('shipping_fee',10,2)->default(0);
+            $table->decimal('total',10,2)->default(0);
+            $table->enum('status', ['Chờ Xác Nhận','Đã Xác Nhận','Chờ Lấy Hàng','Đã Lấy Hàng','Đang Giao','Đã Giao','Giao Thành Công','Xác Nhận Hủy','Đã Hủy'])->default('Chờ Xác Nhận');       
             $table->timestamps();
         });
     }

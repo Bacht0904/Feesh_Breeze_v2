@@ -9,6 +9,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\VNPayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
@@ -52,6 +53,7 @@ Route::post('/admin/category/store', [AdminController::class, 'category_store'])
 Route::get('/admin/category/{id}/edit', [AdminController::class, 'edit_category'])->name('admin.category.edit');
 Route::put('/admin/category/update', [AdminController::class, 'update_category'])->name('admin.category.update');
 Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_category'])->name('admin.category.delete');
+Route::get('/admin/categories/search', [AdminController::class, 'category_search'])->name('admin.categories.search');
 
 Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
 Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
@@ -69,7 +71,19 @@ Route::get('/admin/products/search', [AdminController::class, 'product_search'])
 
 Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
 Route::get('/admin/slide/add', [AdminController::class, 'add_slide'])->name('admin.slide.add');
+Route::post('/admin/slide/store', [AdminController::class, 'slide_store'])->name('admin.slide.store');
+Route::get('/admin/slide/{id}/edit', [AdminController::class, 'edit_slide'])->name('admin.slide.edit');
+Route::put('/admin/slide/{id}', [AdminController::class, 'update_slide'])->name('admin.slide.update');
+Route::delete('/admin/slide/{id}/delete', [AdminController::class, 'delete_slide'])->name('admin.slide.delete');
+Route::put('/admin/slide/{id}/toggle', [AdminController::class, 'toggle_slide_status'])->name('admin.slide.toggle');
+
+
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+Route::get('/admin/user/add', [AdminController::class, 'add_user'])->name('admin.user.add');
+Route::post('/admin/user/store', [AdminController::class, 'userstore'])->name('admin.user.store');
+Route::get('/admin/user/{id}/edit', [AdminController::class, 'edit_user'])->name('admin.user.edit');
+Route::put('/admin/user/update', [AdminController::class, 'update_user'])->name('admin.user.update');
+Route::delete('/admin/user/{id}/delete', [AdminController::class, 'delete_user'])->name('admin.user.delete');
 
 Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
 Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
@@ -96,6 +110,9 @@ Route::get('/shop/brand/{slug}', [HomeController::class, 'brandProducts'])->name
 Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/products', [AdminController::class, 'products'])->name('products');
 
+Route::get('/password/change', [AdminController::class, 'changePassword'])->name('auth.password.change');
+Route::post('/passwords/change/store', [AdminController::class, 'changePasswordStore'])->name('auth.password.change.store');
+
 Route::get('/products/{slug}', [AdminController::class, 'show'])->name('products.show');
 Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
@@ -117,7 +134,12 @@ Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name(
 Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
-
+Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
+Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+
+Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
+Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
+

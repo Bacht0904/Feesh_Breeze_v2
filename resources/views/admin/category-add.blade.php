@@ -26,7 +26,6 @@
                     </li>
                 </ul>
             </div>
-            <!-- new-category -->
             <div class="wg-box">
                 <form method="POST" class="form-new-product form-style-1" action="{{ route('admin.category.store') }}"
                     enctype="multipart/form-data">
