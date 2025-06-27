@@ -13,27 +13,43 @@ class UserSeeder extends Seeder
     public function run()
     {
         $users = [
-            ['Nguyễn Văn A', 'a@example.com', 'staff'],
-            ['Trần Thị B', 'b@example.com', 'user'],
-            ['Lê Hữu C', 'c@example.com', 'admin'],
-            ['Phạm Minh D', 'd@example.com', 'user'],
-            ['Đặng Hoàng E', 'danghoange@example.com', 'staff'],
-            ['Bùi Văn F', 'buivanf@example.com', 'admin'],
-            ['Hoàng Gia G', 'hoanggiag@example.com', 'admin'],
-            ['Võ Ngọc H', 'vongoch@example.com', 'admin'],
-            ['Đỗ Kim I', 'dokimi@example.com', 'admin'],
-            ['Tạ Quang J', 'taquangj@example.com', 'admin'],
+            [
+                'name' => 'Admin Master',
+                'email' => 'admin@gmail.com',
+                'phone' => '0909123456',
+                'address' => 'Hà Nội, Việt Nam',
+                'role' => 'admin',
+                'status' => 'active',
+                'avatar' => 'avatars/admin.png',
+                'password' => Hash::make('admin123'),
+            ],
+            [
+                'name' => 'Nguyễn Vân',
+                'email' => 'van@gmail.com',
+                'phone' => '0988765432',
+                'address' => 'Tp. Hồ Chí Minh',
+                'role' => 'user',
+                'status' => 'active',
+                'avatar' => 'avatars/user1.png',
+                'password' => Hash::make('12345678'),
+            ],
+            [
+                'name' => 'Lê Thị Xuân',
+                'email' => 'ltxuan@gmail.com',
+                'phone' => '0912123456',
+                'address' => 'Đà Nẵng',
+                'role' => 'user',
+                'status' => 'inactive',
+                'avatar' => 'avatars/user2.jpg',
+                'password' => Hash::make('12345678'),
+            ]
         ];
 
-        foreach ($users as $user) {
-            User::create([
-                'name' => $user[0],
-                'email' => $user[1],
-                'password' => Hash::make('12345'),
-                'role' => $user[2],
-                'status' => 'active',
-                'avatar' => 'default-avatar.png',
-            ]);
+        foreach ($users as $data) {
+            $data['remember_token'] = Str::random(10);
+            $data['email_verified_at'] = now();
+            $data['verification_code'] = Str::upper(Str::random(6));
+            User::create($data);
         }
     }
 }
