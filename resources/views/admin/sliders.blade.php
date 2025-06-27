@@ -32,51 +32,76 @@
                             </div>
                         </form>
                     </div>
-                    <a class="tf-button style-1 w208" href="{{ route('admin.slide.add') }}"><i class="icon-plus"></i>Thêm mới</a>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.slide.add') }}"><i class="icon-plus"></i>Thêm
+                        mới</a>
                 </div>
                 <div class="wg-table table-all-user">
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Hình ảnh</th>
-                                <th>Dòng giới thiệu</th>
                                 <th>Tiêu đề</th>
+                                <th>Hình ảnh</th>
                                 <th>Mô tả</th>
                                 <th>Link</th>
+                                <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>3</td>
-                                <td class="pname">
-                                    <div class="image">
-                                        <img src="1718066840.html" alt="" class="image">
-                                    </div>
-                                </td>
-                                <td>New Arrivals</td>
-                                <td>Night Spring</td>
-                                <td>Dresses</td>
-                                <td>https://www.google.com</td>
-                                <td>
-                                    <div class="list-icon-function">
-                                        <a href="http://localhost:8000/admin/slider/3/edit">
-                                            <div class="item edit">
-                                                <i class="icon-edit-3"></i>
-                                            </div>
-                                        </a>
-                                        <form action="http://localhost:8000/admin/slider/3/delete" method="POST">
-                                            <input type="hidden" name="_token"
-                                                value="8LNRTO4LPXHvbK2vgRcXqMeLgqtqNGjzWSNru7Xx" autocomplete="off"> <input
-                                                type="hidden" name="_method" value="DELETE">
-                                            <div class="item text-danger delete">
-                                                <i class="icon-trash-2"></i>
-                                            </div>
+                            @foreach ($slides as $slide)
+                                <tr>
+                                    <td>{{ $slide->id }}</td>
+                                    <td class="body-title-2">{{ $slide->title }}</td>
+                                    <td class="pname">
+                                        <div class="image">
+                                            <img src="{{ asset($slide->image) }}" width="100" alt="Ảnh slide" class="image">
+                                        </div>
+                                    </td>
+                                    <td class="body-title-2">{{ $slide->description }}</td>
+                                    <td class="body-title-2">{{ $slide->link }}</td>
+                                    <!-- <td>
+                                                @if($slide->status == 'active')
+                                                    <span class="badge bg-success">Hoạt động</span>
+                                                @else
+                                                    <span class="badge bg-secondary">Không hoạt động</span>
+                                                @endif
+                                            </td> -->
+                                    <!-- Trong vòng lặp slide -->
+                                    <td>
+                                        <form action="{{ route('admin.slide.toggle', $slide->id) }}" method="POST"
+                                            style="display:inline;">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                class="badge {{ $slide->status == 'active' ? 'bg-success' : 'bg-secondary' }}">
+                                                {{ $slide->status == 'active' ? 'Hoạt động' : 'Không hoạt động' }}
+                                            </button>
                                         </form>
-                                    </div>
-                                </td>
-                            </tr>
+                                    </td>
+
+                                    <td>
+                                        <div class="list-icon-function">
+                                            <form action="{{ route('admin.slide.edit', $slide->id) }}" method="GET"
+                                                style="display: inline;">
+                                                <button style="border: 1px solid transparent;" type="submit" class="item edit">
+                                                    <i class="icon-edit-3"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('admin.slide.delete', $slide->id) }}" method="POST">
+
+                                                @csrf
+                                                @method('DELETE')
+                                                <button style="border: 1px solid transparent;" type="submit"
+                                                    class="item text-danger delete"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                    <i class="icon-trash-2"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

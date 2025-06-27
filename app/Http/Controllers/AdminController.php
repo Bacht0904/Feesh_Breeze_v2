@@ -4,13 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\Product;
 use App\Models\Brand;
+use App\Models\Slide;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Order;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
+use App\Rules\MatchOldPassword;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 //use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -22,6 +27,28 @@ class AdminController extends Controller
     {
         return view('admin.index');
     }
+
+    public function changePassword()
+    {
+        if (!Auth::check()) {
+        return redirect()->route('login')->with('error', 'Bạn cần đăng nhập trước khi tiếp tục.');
+    }
+        return view('auth.password.change');
+
+
+    }
+    // public function changPasswordStore(Request $request)
+    // {
+    //     $request->validate([
+    //         'current_password' => ['required', new MatchOldPassword],
+    //         'new_password' => ['required'],
+    //         'new_confirm_password' => ['same:new_password'],
+    //     ]);
+
+    //     User::find(auth()->user()->id)->update(['password' => Hash::make($request->new_password)]);
+
+    //     return redirect()->route('admin')->with('success', 'thay đổi mật khẩu thành công');
+    // }
 
     public function show($Slug)
     {
@@ -253,7 +280,6 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required',
             'slug' => 'required|unique:brands,slug',
-            'image' => 'mimes:png,jpg,jpeg|max:2048'
         ]);
 
         $brand = Brand::find($request->id);
@@ -375,7 +401,8 @@ class AdminController extends Controller
 
     public function sliders()
     {
-        return view('admin.sliders');
+        $slides = Slide::orderBy('id', 'asc')->paginate(10);
+        return view('admin.sliders', compact('slides'));
     }
 
     public function add_slide()
@@ -383,9 +410,163 @@ class AdminController extends Controller
         return view('admin.slide-add');
     }
 
+    public function slide_store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'required|string|max:1024',
+            'link' => 'required|url',
+        ]);
+
+        $slide = new Slide();
+        $slide->title = $request->title;
+        $slide->description = $request->description;
+        $slide->link = $request->link;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $uploadFolder = 'uploads/slides/';
+            $savePath = public_path($uploadFolder);
+
+            if (!file_exists($savePath)) {
+                mkdir($savePath, 0777, true);
+            }
+
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $fullPath = $savePath . '/' . $filename;
+
+            // Resize ảnh và lưu
+            $manager = new ImageManager(new Driver());
+            $manager->read($image->getRealPath())
+                ->resize(800, 400)
+                ->save($fullPath);
+
+            $slide->image = $uploadFolder . $filename;
+        }
+
+        $slide->save();
+
+        return redirect()->route('admin.sliders')->with('status', 'Slide đã được thêm thành công!');
+    }
+
+    public function edit_slide($id)
+    {
+        $slide = Slide::find($id);
+        return view('admin.slide-edit', compact('slide'));
+    }
+
+    public function update_slide(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'image' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
+            'description' => 'required|string|max:1024',
+            'link' => 'required|url',
+        ]);
+
+        $slide = Slide::find($request->id);
+        $slide->title = $request->title;
+        $slide->description = $request->description;
+        $slide->link = $request->link;
+
+        if ($request->hasFile('image')) {
+            // Xóa ảnh cũ nếu có
+            if ($slide->image && File::exists(public_path($slide->image))) {
+                File::delete(public_path($slide->image));
+            }
+
+            $image = $request->file('image');
+            $uploadFolder = 'uploads/slides/';
+            $savePath = public_path($uploadFolder);
+
+            if (!file_exists($savePath)) {
+                mkdir($savePath, 0777, true);
+            }
+
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $fullPath = $savePath . '/' . $filename;
+
+            // Resize ảnh và lưu
+            $manager = new ImageManager(new Driver());
+            $manager->read($image->getRealPath())
+                ->resize(800, 400)
+                ->save($fullPath);
+
+            $slide->image = $uploadFolder . $filename;
+        }
+
+        $slide->save();
+
+        return redirect()->route('admin.sliders')->with('status', 'Slide đã được cập nhật thành công!');
+    }
+
+    public function toggle_slide_status($id)
+    {
+        $slide = Slide::findOrFail($id);
+        $slide->status = $slide->status === 'active' ? 'inactive' : 'active';
+        $slide->save();
+
+        return redirect()->route('admin.sliders')->with('status', 'Trạng thái đã được cập nhật!');
+    }
+
+    public function delete_slide($id)
+    {
+        $slide = Slide::find($id);
+
+        // Xóa ảnh nếu có
+        if ($slide->image && File::exists(public_path($slide->image))) {
+            File::delete(public_path($slide->image));
+        }
+
+        $slide->delete();
+
+        return redirect()->route('admin.sliders')->with('status', 'Slide đã được xóa thành công!');
+    }
+
     public function users()
     {
-        return view('admin.users');
+        $users = User::orderBy('id', 'asc')->paginate(10);
+        return view('admin.users', compact('users'));
+    }
+
+    public function add_user()
+    {
+        return view('admin.user-add');
+    }
+
+    public function user_search(Request $request)
+    {
+        $search = $request->input('name'); // Đổi 'search' => 'name' để khớp với input name trong form
+
+        $users = User::where('name', 'like', '%' . $search . '%')
+            ->orWhere('email', 'like', '%' . $search . '%')
+            ->paginate(10);
+
+        return view('admin.users', compact('users', 'search'));
+    }
+
+    public function user_edit($id)
+    {
+        $user = User::find($id);
+        return view('admin.user-edit', compact('user'));
+    }
+
+    public function userstore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return redirect()->route('admin.users')->with('status', 'Người dùng đã được thêm thành công!');
     }
 
     public function coupons()

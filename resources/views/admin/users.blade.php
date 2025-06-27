@@ -32,7 +32,8 @@
                             </div>
                         </form>
                     </div>
-
+                    <a class="tf-button style-1 w208" href="{{ route('admin.user.add') }}"><i class="icon-plus"></i>Thêm
+                        mới</a>
                 </div>
                 <div class="wg-table table-all-user">
 
@@ -44,32 +45,34 @@
                                     <th>Tài khoản</th>
                                     <th>Số điện thoại</th>
                                     <th>Email</th>
-                                    <th>Trạng thái</th>
+                                    <th>Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td>1</td>
-                                    <td class="pname">
-                                        <div class="image">
-                                            <img src="user-1.html" alt="" class="image">
-                                        </div>
-                                        <div class="name">
-                                            <a href="#" class="body-title-2">Admin</a>
-                                        </div>
-                                    </td>
-                                    <td>1234567890</td>
-                                    <td>admin@gmail.com</td>
-                                    <td>
-                                        <div class="list-icon-function">
-                                            <a href="#">
-                                                <div class="item edit">
-                                                    <i class="icon-edit-3"></i>
-                                                </div>
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                @foreach ($users as $user)
+                                    <tr>
+                                        <td>{{ $user->id }}</td>
+                                        <td class="pname">
+                                            <div class="image">
+                                                <img src="{{ $user->avatar }}" alt="" class="image">
+                                            </div>
+                                            <div class="name">
+                                                <a href="#" class="body-title-2">{{ $user->name }}</a>
+                                            </div>
+                                        </td>
+                                        <td>{{ $user->phone }}</td>
+                                        <td>{{ $user->email }}</td>
+                                        <td>
+                                            <div class="list-icon-function">
+                                                <a href="#">
+                                                    <div class="item edit">
+                                                        <i class="icon-edit-3"></i>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @endforeach
                             </tbody>
                         </table>
                     </div>
