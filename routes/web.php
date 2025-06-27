@@ -134,7 +134,8 @@ Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name(
 Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
-
+Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
+Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');

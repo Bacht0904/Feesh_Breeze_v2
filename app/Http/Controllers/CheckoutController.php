@@ -7,101 +7,102 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\OrderDetail;
-use Illuminate\Support\Facades\Session;
-
 
 class CheckoutController extends Controller
 {
     public function show()
     {
-
         $cart = session('cart', []);
-        return view('user.checkout', compact('cart'));
+        $empty = empty($cart);
+
+        return view('user.checkout', compact('cart', 'empty'));
     }
 
     public function process(Request $request)
     {
         $cart = session('cart', []);
+
         if (empty($cart)) {
             return back()->with('error', 'Giỏ hàng của bạn đang trống!');
         }
 
         $method = $request->payment_method;
 
-        if ($method === 'momo') {
-            // Gắn logic Momo nếu có
-            return redirect()->to('https://momo.vn');
-        }
+        $totals = $this->calculateTotals($cart);
 
-        if ($method === 'vnpay') {
-            $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-            $shipping = 0;
-            $discount = 0;
-            $total = $subtotal - $discount + $shipping;
+        return match ($method) {
+            'momo' => redirect()->to('https://momo.vn'),
+            'vnpay' => $this->handleVnPay($request, $cart, $totals),
+            'cod' => $this->handleCashOnDelivery($request, $cart, $totals),
+            default => back()->with('error', 'Phương thức thanh toán không hợp lệ!'),
+        };
+    }
 
-            // Lưu tạm dữ liệu vào session để dùng lại sau khi thanh toán thành công
-            session()->put('order_data', [
-                'cart' => $cart,
-                'subtotal' => $subtotal,
-                'shipping' => $shipping,
-                'discount' => $discount,
-                'total' => $total,
-                'customer' => $request->only('name', 'phone', 'address', 'email', 'note', 'coupon_code'),
-            ]);
+    protected function calculateTotals(array $cart): array
+    {
+        $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        $shipping = 0;
+        $discount = 0;
+        $total = $subtotal + $shipping - $discount;
 
-            // Redirect sang VNPAY
-            return redirect()->route('vnpay.payment');
-        }
+        return compact('subtotal', 'shipping', 'discount', 'total');
+    }
 
+    protected function handleVnPay(Request $request, array $cart, array $totals)
+    {
+        session()->put('order_data', [
+            'cart' => $cart,
+            ...$totals,
+            'customer' => $request->only('name', 'phone', 'address', 'email', 'note', 'coupon_code'),
+        ]);
 
-        // 👉 Nếu là COD: lưu đơn
+        return redirect()->route('vnpay.payment');
+    }
+
+    protected function handleCashOnDelivery(Request $request, array $cart, array $totals)
+    {
+      
         try {
-            DB::beginTransaction();
-
-            $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-            $shipping = 0;
-            $discount = 0;
-            $total = $subtotal - $discount + $shipping;
-
-            $order = Order::create([
-                'id_user' => Auth::id() ?? 'guest',
-                'id_payment' => 'PMT' . time(),
-                'id_shipping' => 'SHIP' . time(),
-                'order_date' => now(),
-                'suptotal' => $subtotal,
-                'payment_method' => 'Tiền Mặt',
-                'payment_status' => 'Chưa Thanh Toán',
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'email' => $request->email,
-                'note' => $request->note,
-                'coupon_code' => $request->coupon_code,
-                'coupon_discount' => $discount,
-                'shipping_fee' => $shipping,
-                'total' => $total,
-                'status' => 'Chờ Xác Nhận',
-            ]);
-
-            foreach ($cart as $detailId => $item) {
-                OrderDetail::create([
-                    'order_id' => $order->id,
-                    'product_detail_id' => $detailId,
-                    'product_name' => $item['product_name'],
-                    'size' => $item['size'],
-                    'color' => $item['color'],
-                    'price' => $item['price'],
-                    'quantity' => $item['quantity'],
+            DB::transaction(function () use ($request, $cart, $totals) {
+                $order = Order::create([
+                    'id_user'         => Auth::id() ?? 'guest',
+                    'id_payment'      => 'PMT' . now()->timestamp,
+                    'id_shipping'     => 'SHIP' . now()->timestamp,
+                    'order_date'      => now(),
+                    'suptotal'        => $totals['subtotal'],
+                    'payment_method'  => 'Tiền Mặt',
+                    'payment_status'  => 'Chưa Thanh Toán',
+                    'name'            => $request->name,
+                    'phone'           => $request->phone,
+                    'address'         => $request->address,
+                    'email'           => $request->email,
+                    'note'            => $request->note,
+                    'coupon_code'     => $request->coupon_code,
+                    'coupon_discount' => $totals['discount'],
+                    'shipping_fee'    => $totals['shipping'],
+                    'total'           => $totals['total'],
+                    'status'          => 'Chờ Xác Nhận',
                 ]);
-            }
 
-            DB::commit();
-            session()->forget('cart');
+                foreach ($cart as $item) {
+                    OrderDetail::create([
+                        'order_id'          => $order->id,
+                        'product_detail_id' => $item['product_detail_id'],
+                        'product_name'      => $item['product_name'],
+                        'size'              => $item['size'],
+                        'color'             => $item['color'],
+                        'price'             => $item['price'],
+                        'quantity'          => $item['quantity'],
+                    ]);
+                }
+
+                session()->forget('cart');
+               
+            });
 
             return redirect()->route('checkout')->with('success', '🎉 Đặt hàng thành công!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Lỗi khi đặt hàng: ' . $e->getMessage());
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Đặt hàng thất bại: ' . $e->getMessage());
         }
     }
 }

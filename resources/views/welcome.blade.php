@@ -183,7 +183,7 @@
                                         </div>
                                     </div>
                                 </div>
-                               
+
                                 <div class="swiper-slide product-card product-card_style3">
                                     <div class="pc__img-wrapper">
                                         <a href="details.html">
@@ -256,15 +256,41 @@
 
                             <div
                                 class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
-                                @if ($firstDetail)
+                                <!-- @if ($firstDetail)
                                 <form action="{{ route('cart.addDetail') }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="product_detail_id" value="{{ $firstDetail->id }}">
                                     <input type="hidden" name="quantity" value="1">
-                                    <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside"
+                                    <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium "
                                         data-aside="cartDrawer" title="Add To Cart">Thêm vào giỏ</button>
                                 </form>
+                                @endif -->
+                                @if ($firstDetail)
+                                {{-- Nút cũ --}}
+
+                                <button type="button" class="btn-link btn-link_lg text-uppercase fw-medium"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addToCartModal"
+                                    data-product-id="{{ $firstDetail->id }}"
+                                    data-product-name="{{ $product->name }}"
+                                    data-aside="cartDrawer">
+                                    Thêm vào giỏ
+                                </button>
+
+
+
+                                <!-- {{-- Nút mở popup --}}S
+                                <button type="button"
+                                    class="btn btn-sm btn-outline-dark"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addToCartModal"
+                                    data-product-id="{{ $firstDetail->id }}"
+                                    data-product-name="{{ $product->name }}">
+                                    Tuỳ chọn size/số lượng
+                                </button> -->
                                 @endif
+
+
                                 <button class="pc__btn-wl bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
                                     <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
                                         xmlns="http://www.w3.org/2000/svg">
@@ -279,9 +305,71 @@
                 @endforeach
             </div>
         </section>
-
-    </div>
     </div>
 
 </main>
 @endsection
+<!-- Modal -->
+<div class="modal fade" id="addToCartModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="modalAddToCartForm" action="{{ route('cart.addDetail') }}" method="POST">
+                @csrf
+                <input type="hidden" name="product_detail_id" id="modalProductId">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productName">Chọn chi tiết sản phẩm</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="size" class="form-label">Size</label>
+                        <select name="size" class="form-select">
+                            <option value="S">S</option>
+                            <option value="M" selected>M</option>
+                            <option value="L">L</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="quantity" class="form-label">Số lượng</label>
+                        <input type="number" class="form-control" name="quantity" value="1" min="1">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-dark">Thêm vào giỏ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    const modal = document.getElementById('addToCartModal');
+    modal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        document.getElementById('modalProductId').value = button.getAttribute('data-product-id');
+        document.getElementById('productName').textContent = button.getAttribute('data-product-name');
+    });
+</script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- nếu bạn chưa có -->
+
+<script>
+$(document).ready(function () {
+    $('#modalAddToCartForm').on('submit', function (e) {
+        e.preventDefault();
+
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function (res) {
+                // ✅ Xử lý khi thành công
+                alert(res.message || 'Đã thêm vào giỏ hàng!');
+                $('#addToCartModal').modal('hide');
+            },
+            error: function (err) {
+                alert('❌ Có lỗi xảy ra khi thêm vào giỏ hàng.');
+                console.error(err.responseText);
+            }
+        });
+    });
+});
+</script>
