@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Slide;
 use App\Models\Category;
 use App\Models\Coupon;
+use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Hash;
 //use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -88,7 +90,7 @@ class AdminController extends Controller
             'slug' => 'required|string|unique:products,slug',
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
-            'description' => 'required|string|max:1024',
+            'description' => 'required|string|max:10000',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.size' => 'required|string',
             'variants.*.color' => 'required|string',
@@ -383,7 +385,8 @@ class AdminController extends Controller
     }
     public function orders()
     {
-        return view('admin.orders');
+        $orders = Order::orderBy('created_at','desc')->paginate(12);
+        return view('admin.orders', compact('orders'));
     }
 
     public function order_detail()
@@ -600,35 +603,65 @@ class AdminController extends Controller
         return view('admin.coupon-edit', compact('coupon'));
     }
 
-    public function update_coupon(Request $request)
+    public function update_coupon(Request $request, $id)
     {
+       
         $request->validate([
-            'code' => 'required|string|unique:coupons,code,' . $request->id,
+            'code' => 'string|required', //'string| unique:coupons,code,' //. $request->id,//['required',Rule::unique('coupons','code')->ignore($id)],
             'type' => 'required|in:percent,fixed',
             'value' => 'required|numeric|min:0',
             'status' => 'required|in:active,inactive',
         ]);
 
-        $coupon = Coupon::find($request->id);
-        $coupon->code = $request->code;
-        $coupon->type = $request->type;
-        $coupon->value = $request->value;
-        $coupon->status = $request->status;
-        $coupon->save();
+        $coupon = Coupon::find($id);
+        $data = $request ->all();
+        $status = $coupon ->fill($data) -> save();
+        if($status) {
+            request()->session()->flash('success','Cập nhật mã thành công');
+        }
+        else{
+            request()->session()->flash('error','Vui lòng thử lại !!!');
+        }
+        
+        // $coupon->code = $request->code;
+        // $coupon->type = $request->type;
+        // $coupon->value = $request->value;
+        // $coupon->status = $request->status;
+        // $coupon->save();
 
-        return redirect()->route('admin.coupons')->with('status', 'Coupon đã được cập nhật thành công!');
+        return redirect()->route('admin.coupons');//->with('status', 'Coupon đã được cập nhật thành công!');
     }
 
     public function delete_coupon($id)
     {
-        $coupon = Coupon::find($id);
-        $coupon->delete();
+        // $coupon = Coupon::find($id);
+        // $coupon->delete();
 
-        return redirect()->route('admin.coupons')->with('status', 'Coupon đã được xóa thành công!');
+        $coupon = Coupon::findOrFail($id);
+        if($coupon) {
+            $status =$coupon ->delete();
+            if($status) {
+                request()->session()->flash('success','Xóa mã thành công');
+            }
+            else {
+                request()->session()->flash('error','Lỗi, vui lòng thử lại!!');
+            }
+            return redirect()->route('admin.coupons');
+        }
+        else {
+            request()->session()->flash('error','Không tìm thấy mã giảm giá');
+            return redirect() ->back();
+        }
+        
+
+        
     }
 
     public function settings()
     {
         return view('admin.settings');
     }
+
+
+  
 }

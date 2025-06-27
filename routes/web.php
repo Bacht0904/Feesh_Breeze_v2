@@ -6,7 +6,10 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\VNPayController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Hash;
@@ -86,7 +89,7 @@ Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.c
 Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
 Route::post('/admin/coupon/store', [AdminController::class, 'coupon_store'])->name('admin.coupon.store');
 Route::get('/admin/coupon/{id}/edit', [AdminController::class, 'edit_coupon'])->name('admin.coupon.edit');
-Route::put('/admin/coupon/update', [AdminController::class, 'update_coupon'])->name('admin.coupon.update');
+Route::put('/admin/coupon/update/{id}', [AdminController::class, 'update_coupon',])->name('admin.coupon.update');
 Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coupon'])->name('admin.coupon.delete');
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
@@ -121,6 +124,21 @@ Route::get('/password/reset/{token}', [HomeController::class, 'showResetFormWith
 Route::get('/password/confirm', [HomeController::class, 'showConfirmForm'])->name('password.confirm');
 Route::post('/password/confirm', [HomeController::class, 'confirm'])->name('password.confirm.submit');
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
-Route::get('/cart', [HomeController::class, 'cart'])->name('cart');
+Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
-Route::get('/checkout', [HomeController::class, 'checkout'])->name('checkout');
+
+Route::post('/cart/add-detail', [CartController::class, 'addDetail'])->name('cart.addDetail');
+Route::get('/cart/remove/{slug}', [CartController::class, 'remove'])->name('cart.remove');
+Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
+Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
+Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
+
+
+Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
+Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+
+Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
+Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
+

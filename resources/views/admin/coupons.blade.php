@@ -55,7 +55,7 @@
                                     <td>{{ $coupon->id }}</td>
                                     <td>{{ $coupon->code }}</td>
                                     <td>{{ $coupon->type }}</td>
-                                    <td>{{ $coupon->value }}</td>
+                                    <td>{{number_format( $coupon->value,'0',',','.' )}}</td>
                                     <td>{{ $coupon->status ? 'Kích hoạt' : 'Không kích hoạt' }}</td>
                                     <td>
                                         <div class="list-icon-function">
@@ -64,7 +64,7 @@
                                                     <i class="icon-edit-3"></i>
                                                 </div>
                                             </a>
-                                            <form action="" method="POST"
+                                            <form action="{{route('admin.coupon.delete',$coupon->id)}}" method="POST"
                                                 style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')

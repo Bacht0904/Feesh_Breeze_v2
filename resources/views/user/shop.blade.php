@@ -265,13 +265,13 @@
       <div class="mb-3 pb-2 pb-xl-3"></div>
 
       <div class="d-flex justify-content-between mb-4 pb-md-2">
-      <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
-        <a href="{{ route('home') }} " class="menu-link menu-link_us-s text-uppercase fw-medium">Trang Chủ</a>
-
-        <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
-        <a href="{{ route('shop') }}" class="menu-link menu-link_us-s text-uppercase fw-medium">Sản Phẩm</a>
-      </div>
-
+        <div class="breadcrumb mb-0 d-none d-md-block flex-grow-1">
+          <a href="{{ route('home') }} " class="menu-link menu-link_us-s text-uppercase fw-medium">Trang Chủ</a>
+          
+          <span class="breadcrumb-separator menu-link fw-medium ps-1 pe-1">/</span>
+          <a href="{{ route('shop') }}" class="menu-link menu-link_us-s text-uppercase fw-medium">Sản Phẩm</a>
+        </div>
+        
 
 
       </div>
@@ -356,58 +356,54 @@
         $productUrl = route('products.show', $product->slug); // nếu show theo slug
         @endphp
 
-          <a href="{{ $productUrl }}">
-          <img loading="lazy" src="{{ asset('/' . $detail->image) }}" width="330" height="400"
-          alt="{{ $product->name }}" class="pc__img">
+                    <a href="{{ $productUrl }}">
+                      <img loading="lazy" src="{{ asset('/' . $detail->image) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
 
 
-          </a>
-          </div>
-          <!-- <div class="swiper-slide">
-          <a href="{{ $productUrl }}">
-          <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
-          </a>
-          </div> -->
-        </div>
-        <span class="pc__img-prev"><svg width="7" height="11">
-          <use href="#icon_prev_sm" />
-          </svg></span>
-        <span class="pc__img-next"><svg width="7" height="11">
-          <use href="#icon_next_sm" />
-          </svg></span>
-        </div>
+                    </a>
+                  </div>
+                  <!-- <div class="swiper-slide">
+                    <a href="{{ $productUrl }}">
+                      <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
+                    </a>
+                  </div> -->
+                </div>
+                <span class="pc__img-prev"><svg width="7" height="11">
+                    <use href="#icon_prev_sm" />
+                  </svg></span>
+                <span class="pc__img-next"><svg width="7" height="11">
+                    <use href="#icon_next_sm" />
+                  </svg></span>
+              </div>
 
-        <button
-        class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside"
-        data-aside="cartDrawer">
-        Thêm vào giỏ
-        </button>
-        </div>
+              <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
+                Thêm vào giỏ
+              </button>
+            </div>
 
         <div class="pc__info position-relative">
         <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
         <h6 class="pc__title"><a href="{{ $productUrl }}">{{ $product->name }}</a></h6>
 
-        @if($firstDetail)
-        <span class="money price">${{ number_format($firstDetail->price, 2) }}</span>
-      @else
-        <span class="text-muted">Chưa có giá</span>
-      @endif
-        <p>Size:
-        @foreach($product->product_details as $detail)
-        {{ $detail->size }}
-      @endforeach
-        </p>
-        <div class="product-card__review d-flex align-items-center">
-        <div class="reviews-group d-flex">
-          @for($i = 0; $i < 5; $i++)
-        <svg class="review-star" viewBox="0 0 9 9">
-        <use href="#icon_star" />
-        </svg>
-        @endfor
-        </div>
-        <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
-        </div>
+              @if($firstDetail)
+              <span class="money price">${{ number_format($firstDetail->price, 2) }}</span>
+              @else
+              <span class="text-muted">Chưa có giá</span>
+              @endif
+
+              @foreach($product->product_details as $detail)
+              <p>Size: {{ $detail->size }}</p>
+              @endforeach
+
+              <div class="product-card__review d-flex align-items-center">
+                <div class="reviews-group d-flex">
+                  @for($i = 0; $i < 5; $i++)
+                    <svg class="review-star" viewBox="0 0 9 9">
+                    <use href="#icon_star" /></svg>
+                    @endfor
+                </div>
+                <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
+              </div>
 
         <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
         title="Add To Wishlist">
@@ -443,3 +439,24 @@
     </section>
   </main>
 @endsection
+@push('scripts')
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  @if(session('added_to_cart'))
+    <script>
+      Swal.fire({
+        icon: 'success',
+        title: '🎉 Đã thêm vào giỏ!',
+        text: "{{ session('added_to_cart') }}",
+        timer: 2000,
+        showConfirmButton: false,
+        toast: true,
+        position: 'top-end',
+        customClass: {
+          popup: 'shadow rounded',
+        }
+      });
+    </script>
+  @endif
+@endpush
+@push('styles')
+  <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}"> 
