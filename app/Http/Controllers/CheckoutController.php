@@ -92,6 +92,7 @@ class CheckoutController extends Controller
                         'size'              => $item['size'],
                         'color'             => $item['color'],
                         'price'             => $item['price'],
+                        'image'             => $item['image'] ?? null,
                         'quantity'          => $item['quantity'],
                     ]);
                 }
@@ -217,6 +218,7 @@ class CheckoutController extends Controller
                             'size'              => $item['size'],
                             'color'             => $item['color'],
                             'price'             => $item['price'],
+                            'image'             => $item['image'] ?? null,
                             'quantity'          => $item['quantity'],
                         ]);
                     }
