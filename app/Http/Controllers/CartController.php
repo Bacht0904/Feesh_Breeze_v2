@@ -11,9 +11,11 @@ class CartController extends Controller
     // 👉 Hiển thị giỏ hàng
     public function cart()
     {
+
         $cart = session()->get('cart', []);
         return view('user.cart', compact('cart'));
     }
+    
 
     // 👉 Thêm sản phẩm chi tiết vào giỏ hàng
     public function addDetail(Request $request)
@@ -25,8 +27,7 @@ class CartController extends Controller
 
         $detail = Product_details::findOrFail($request->product_detail_id);
         $cart   = session()->get('cart', []);
-
-        $key = "{$detail->id}-{$detail->size}-{$detail->color}";
+        $key    = "{$detail->id}-{$detail->size}-{$detail->color}";
 
         if (isset($cart[$key])) {
             $cart[$key]['quantity'] += $request->quantity;
@@ -41,11 +42,20 @@ class CartController extends Controller
                 'image'             => $detail->image,
             ];
         }
-
         session()->put('cart', $cart);
 
+        // Nếu là AJAX request thì trả về JSON
+        if ($request->ajax()) {
+            return response()->json([
+                'message'   => 'Đã thêm vào giỏ hàng!',
+                'cartCount' => array_sum(array_column($cart, 'quantity')),
+            ]);
+        }
+
+        // Ngược lại redirect bình thường
         return back()->with('success', 'Đã thêm vào giỏ hàng!');
     }
+
 
 
     // 👉 Xóa sản phẩm khỏi giỏ hàng
@@ -62,18 +72,37 @@ class CartController extends Controller
     // 👉 Cập nhật số lượng
     public function update(Request $request)
     {
-        $cart = session()->get('cart', []);
-        foreach ($request->quantities as $key => $qty) {
-            $qty = (int) $qty;
-            if ($qty <= 0) {
-                unset($cart[$key]);
-            } elseif (isset($cart[$key])) {
-                $cart[$key]['quantity'] = $qty;
-            }
+        $newCart = [];
+
+        foreach ($request->quantities as $oldKey => $qty) {
+            $qty = max(1, (int) $qty);
+
+            // Lấy product_detail_id mới mà user chọn
+            $newDetailId = $request->input("product_detail_ids.$oldKey");
+            $detail = Product_details::with('product')->find($newDetailId);
+
+            if (!$detail) continue;
+
+            // Ghi lại bằng key mới (đổi biến thể => key đổi)
+            $newCart[$newDetailId] = [
+                'product_id'         => $detail->product_id,
+                'product_detail_id'  => $detail->id,
+                'product_name'       => $detail->product->name,
+                'size'               => $detail->size,
+                'color'              => $detail->color,
+                'price'              => $detail->price,
+                'quantity'           => $qty,
+                'image'              => $detail->image,
+            ];
         }
-        session()->put('cart', $cart);
-        return redirect()->route('cart')->with('success', 'Giỏ hàng đã được cập nhật!');
+
+        session()->put('cart', $newCart);
+
+        return redirect()->route('cart')->with('success', '🛒 Giỏ hàng đã được cập nhật!');
     }
+
+
+
 
     // 👉 Xóa sạch giỏ hàng
     public function clear()

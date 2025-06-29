@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('id_shipping');
             $table->timestamp('order_date');
             $table->decimal('suptotal',10,2);
-            $table->enum('payment_method', ['Tiền Mặt','Chuyển Khoản'])->default('Tiền Mặt');
+            $table->enum('payment_method', ['Tiền Mặt','MOMO','Chuyển Khoản'])->default('Tiền Mặt');
             $table->enum('payment_status', ['Đã Thanh Toán','Chưa Thanh Toán'])->default('Chưa Thanh Toán');
             $table->string('name');
             $table->string('phone');

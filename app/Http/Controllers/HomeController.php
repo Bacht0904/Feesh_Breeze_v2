@@ -89,13 +89,7 @@ class HomeController extends Controller
         }
     }
 
-    public function logout()
-    {
-        Session::forget('user');
-        Auth::logout();
-        request()->session()->flash('success', 'Đăng xuất thành công');
-        return back();
-    }
+  
 
     public function register(Request $request)
     {
@@ -114,5 +108,14 @@ class HomeController extends Controller
         Auth::login($user);
 
         return redirect()->route('welcome');
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+       return redirect('/');
+
     }
 }

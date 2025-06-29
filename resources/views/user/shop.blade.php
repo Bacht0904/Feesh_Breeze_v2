@@ -275,70 +275,34 @@
 
 
       </div>
+      <div class="shop-header d-flex justify-content-between align-items-center mb-3 mb-md-4">
+        <h2 class="section-title text-uppercase mb-0">Tất cả sản phẩm</h2>
+        <div class="shop-header__actions d-flex align-items-center">
+          <div class="shop-header__sort me-3">
+            <label for="sort-select" class="form-label visually-hidden">Sắp xếp theo</label>
+            <select id="sort-select" class="form-select form-select-sm">
+              <option value="default" selected>Mặc định</option>
+              <option value="price_asc">Giá: Thấp đến Cao</option>
+              <option value="price_desc">Giá: Cao đến Thấp</option>
+              <option value="newest">Mới nhất</option>
+            </select>
+          </div>
 
-      <!-- <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
-      @foreach($products as $product)
-      <div class="col-6 col-md-4">
-        <div class="product-card mb-3 mb-md-4 mb-xxl-5">
-        <div class="pc__img-wrapper">
-          <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
-          <div class="swiper-wrapper">
-            <div class="swiper-slide">
-            <a href="{{ route('products.show', $product->id) }}">
-              <img loading="lazy" src="{{ asset('upload/product/' . $product->img) }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
-            </a>
-            </div>
-            <div class="swiper-slide">
-            <a href="{{ route('products.show', $product->id) }}">
-              <img loading="lazy" src="{{ asset('assets/images/products/product_1-1.jpg') }}" width="330" height="400" alt="{{ $product->name }}" class="pc__img">
-            </a>
-            </div>
-          </div>
-          <span class="pc__img-prev"><svg width="7" height="11">
-            <use href="#icon_prev_sm" />
-            </svg></span>
-          <span class="pc__img-next"><svg width="7" height="11">
-            <use href="#icon_next_sm" />
-            </svg></span>
-          </div>
-          <button class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium js-add-cart js-open-aside" data-aside="cartDrawer">
-          Thêm vào giỏ
+          <button class="btn btn-sm btn-outline-secondary js-toggle-view" data-view="grid"
+            title="Xem dạng lưới">
+            <svg width="16" height="16">
+              <use href="#icon_grid" />
+            </svg>
           </button>
-        </div>
 
-        <div class="pc__info position-relative">
-          <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
-          <h6 class="pc__title"><a href="{{ route('products.show', $product->id) }}">{{ $product->name }}</a></h6>
-          @if ($product->product_details->first())
-          <span class="money price">
-          ${{ number_format($product->product_details->first()->price, 2) }}
-          </span>
-          @else
-          <span class="text-muted">Chưa có giá</span>
-          @endif
-          @foreach($product->product_details as $detail)
-          <p>Size: {{ $detail->size }}</p>
-          @endforeach
-
-          <div class="product-card__review d-flex align-items-center">
-          <div class="reviews-group d-flex">
-            @for($i = 0; $i < 5; $i++)
-            <svg class="review-star" viewBox="0 0 9 9">
-            <use href="#icon_star" /></svg>
-            @endfor
-          </div>
-          <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
-          </div>
-          <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-          <svg width="16" height="16">
-            <use href="#icon_heart" />
-          </svg>
+          <button class="btn btn-sm btn-outline-secondary js-toggle-view ms-2" data-view="list"
+            title="Xem dạng danh sách">
+            <svg width="16" height="16">
+              <use href="#icon_list" />
+            </svg>
           </button>
-        </div>
         </div>
       </div>
-      @endforeach
-      </div> -->
       <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
         @foreach($products as $product)
         @php
@@ -362,12 +326,7 @@
                     </a>
                   </div>
                 </div>
-                <span class="pc__img-prev"><svg width="7" height="11">
-                    <use href="#icon_prev_sm" />
-                  </svg></span>
-                <span class="pc__img-next"><svg width="7" height="11">
-                    <use href="#icon_next_sm" />
-                  </svg></span>
+
               </div>
 
               @if ($firstDetail)
@@ -411,12 +370,13 @@
                 <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
               </div>
 
-              <button class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
+              <button type="button" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" data-id="{{ $firstDetail->id }}"
                 title="Add To Wishlist">
                 <svg width="16" height="16">
                   <use href="#icon_heart" />
                 </svg>
               </button>
+
             </div>
           </div>
         </div>
@@ -462,7 +422,84 @@
     }
   });
 </script>
+
 @endif
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  // CSRF cho AJAX
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
+  // Xử lý click nút yêu thích
+  $(document).on('click', '.js-add-wishlist', function() {
+    const btn = $(this);
+    const id = btn.data('id');
+
+    $.post("{{ route('wishlist.add') }}", {
+        product_detail_id: id
+      })
+      .done(res => {
+        showToast('success', res.message || 'Đã thêm vào yêu thích!');
+        btn.toggleClass('active');
+      })
+      .fail(err => {
+        const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
+        showToast('danger', msg);
+      });
+  });
+
+  // Hiển thị toast
+  function showToast(type, message) {
+    $('.toast').toast('hide'); // tránh toast trùng
+    const toast = $(`
+      <div class="toast align-items-center text-white bg-${type} border-0 position-fixed top-0 end-0 m-3 shadow"
+           role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="3000">
+        <div class="d-flex">
+          <div class="toast-body">${message}</div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Đóng"></button>
+        </div>
+      </div>`);
+    $('body').append(toast);
+    const bs = new bootstrap.Toast(toast[0]);
+    bs.show();
+    toast.on('hidden.bs.toast', () => toast.remove());
+  }
+</script>
+<script>
+  // Xử lý chuyển từ wishlist sang giỏ hàng
+  $(document).on('submit', 'form.js-move-to-cart', function(e) {
+    e.preventDefault();
+    const form = $(this);
+    const originalId = form.find('input[name="original_product_detail_id"]').val();
+
+    $.post("{{ route('wishlist.moveToCart') }}", form.serialize())
+      .done(res => {
+        showToast('success', res.message || 'Đã chuyển sang giỏ hàng!');
+        form.closest('.list-group-item').remove();
+      })
+      .fail(err => {
+        const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
+        showToast('danger', msg);
+      });
+  });
+</script>
+
+<script>
+  setTimeout(() => {
+    const alert = document.getElementById('flash-alert');
+    if (alert) {
+      const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+      bsAlert.close();
+    }
+  }, 3000);
+</script>
 @endpush
+
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
+@endpush
