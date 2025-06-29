@@ -37,10 +37,32 @@
                 <td>
                   <div class="shopping-cart__product-item__detail">
                     <h5>{{ $item['product_name'] }}</h5>
-                    <ul class="shopping-cart__product-item__options">
-                      <li>Màu: {{ $item['color'] }}</li>
-                      <li>Size: {{ $item['size'] }}</li>
-                    </ul>
+                    @php
+
+                    $product = null;
+                    if (isset($item['product_id'])) {
+                    $product = \App\Models\Product::with('product_details')->find($item['product_id']);
+                    } elseif (isset($item['product_detail_id'])) {
+                    $product = \App\Models\Product::whereHas('product_details', function ($q) use ($item) {
+                    $q->where('id', $item['product_detail_id']);
+                    })->with('product_details')->first();
+                    }
+                    @endphp
+
+
+
+                    <select name="product_detail_ids[{{ $id }}]"
+                      class="form-select form-select-sm"
+                      style="width: 280px; height: 38px; line-height: 1.5; padding: 0.25rem 0.5rem;"
+                      required>
+                      @foreach ($product->product_details as $variant)
+                      <option value="{{ $variant->id }}" @selected($variant->id == $item['product_detail_id'])>
+                        {{ Str::limit("Size {$variant->size} – Màu: {$variant->color}", 50) }}
+                      </option>
+                      @endforeach
+                    </select>
+
+
                   </div>
                 </td>
                 <td>{{ number_format($item['price'], 0) }} đ</td>
@@ -66,7 +88,7 @@
           Cập nhật giỏ hàng
         </button>
         <a href="{{ route('checkout') }}" class="btn btn-primary w-100 w-md-auto">
-          Tiến hành thanh toán
+          Đặt hàng
         </a>
       </div>
     </form>
