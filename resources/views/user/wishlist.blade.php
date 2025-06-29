@@ -2,220 +2,107 @@
 
 @section('content')
 <main class="pt-90">
-    <div class="mb-4 pb-4"></div>
-    <section class="shop-checkout container">
-      <h2 class="page-title">Wishlist</h2>
-      <div class="checkout-steps">
-        <a href="shop_cart.html" class="checkout-steps__item active">
-          <span class="checkout-steps__item-number">01</span>
-          <span class="checkout-steps__item-title">
-            <span>Shopping Bag</span>
-            <em>Manage Your Items List</em>
-          </span>
-        </a>
-        <a href="shop_checkout.html" class="checkout-steps__item">
-          <span class="checkout-steps__item-number">02</span>
-          <span class="checkout-steps__item-title">
-            <span>Shipping and Checkout</span>
-            <em>Checkout Your Items List</em>
-          </span>
-        </a>
-        <a href="shop_order_complete.html" class="checkout-steps__item">
-          <span class="checkout-steps__item-number">03</span>
-          <span class="checkout-steps__item-title">
-            <span>Confirmation</span>
-            <em>Review And Submit Your Order</em>
-          </span>
-        </a>
-      </div>
-      <div class="shopping-cart">
-        <div class="cart-table__wrapper">
-          <table class="cart-table">
-            <thead>
-              <tr>
-                <th>Product</th>
-                <th></th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Subtotal</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <div class="shopping-cart__product-item">
-                    <img loading="lazy" src="assets/images/cart-item-1.html" width="120" height="120" alt="" />
-                  </div>
-                </td>
-                <td>
-                  <div class="shopping-cart__product-item__detail">
-                    <h4>Zessi Dresses</h4>
-                    <ul class="shopping-cart__product-item__options">
-                      <li>Color: Yellow</li>
-                      <li>Size: L</li>
-                    </ul>
-                  </div>
-                </td>
-                <td>
-                  <span class="shopping-cart__product-price">$99</span>
-                </td>
-                <td>
-                  <div class="qty-control position-relative">
-                    <input type="number" name="quantity" value="3" min="1" class="qty-control__number text-center">
-                    <div class="qty-control__reduce">-</div>
-                    <div class="qty-control__increase">+</div>
-                  </div><!-- .qty-control -->
-                </td>
-                <td>
-                  <span class="shopping-cart__subtotal">$297</span>
-                </td>
-                <td>
-                  <a href="#" class="remove-cart">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="#767676" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M0.259435 8.85506L9.11449 0L10 0.885506L1.14494 9.74056L0.259435 8.85506Z" />
-                      <path d="M0.885506 0.0889838L9.74057 8.94404L8.85506 9.82955L0 0.97449L0.885506 0.0889838Z" />
-                    </svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="shopping-cart__product-item">
-                    <img loading="lazy" src="assets/images/cart-item-2.html" width="120" height="120" alt="" />
-                  </div>
-                </td>
-                <td>
-                  <div class="shopping-cart__product-item__detail">
-                    <h4>Kirby T-Shirt</h4>
-                    <ul class="shopping-cart__product-item__options">
-                      <li>Color: Yellow</li>
-                      <li>Size: L</li>
-                    </ul>
-                  </div>
-                </td>
-                <td>
-                  <span class="shopping-cart__product-price">$99</span>
-                </td>
-                <td>
-                  <div class="qty-control position-relative">
-                    <input type="number" name="quantity" value="3" min="1" class="qty-control__number text-center">
-                    <div class="qty-control__reduce">-</div>
-                    <div class="qty-control__increase">+</div>
-                  </div><!-- .qty-control -->
-                </td>
-                <td>
-                  <span class="shopping-cart__subtotal">$297</span>
-                </td>
-                <td>
-                  <a href="#" class="remove-cart">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="#767676" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M0.259435 8.85506L9.11449 0L10 0.885506L1.14494 9.74056L0.259435 8.85506Z" />
-                      <path d="M0.885506 0.0889838L9.74057 8.94404L8.85506 9.82955L0 0.97449L0.885506 0.0889838Z" />
-                    </svg>
-                  </a>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <div class="shopping-cart__product-item">
-                    <img loading="lazy" src="assets/images/cart-item-3.html" width="120" height="120" alt="" />
-                  </div>
-                </td>
-                <td>
-                  <div class="shopping-cart__product-item__detail">
-                    <h4>Cobleknit Shawl</h4>
-                    <ul class="shopping-cart__product-item__options">
-                      <li>Color: Yellow</li>
-                      <li>Size: L</li>
-                    </ul>
-                  </div>
-                </td>
-                <td>
-                  <span class="shopping-cart__product-price">$99</span>
-                </td>
-                <td>
-                  <div class="qty-control position-relative">
-                    <input type="number" name="quantity" value="3" min="1" class="qty-control__number text-center">
-                    <div class="qty-control__reduce">-</div>
-                    <div class="qty-control__increase">+</div>
-                  </div><!-- .qty-control -->
-                </td>
-                <td>
-                  <span class="shopping-cart__subtotal">$297</span>
-                </td>
-                <td>
-                  <a href="#" class="remove-cart">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="#767676" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M0.259435 8.85506L9.11449 0L10 0.885506L1.14494 9.74056L0.259435 8.85506Z" />
-                      <path d="M0.885506 0.0889838L9.74057 8.94404L8.85506 9.82955L0 0.97449L0.885506 0.0889838Z" />
-                    </svg>
-                  </a>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div class="cart-table-footer">
-            <form action="#" class="position-relative bg-body">
-              <input class="form-control" type="text" name="coupon_code" placeholder="Coupon Code">
-              <input class="btn-link fw-medium position-absolute top-0 end-0 h-100 px-4" type="submit"
-                value="APPLY COUPON">
-            </form>
-            <button class="btn btn-light">UPDATE CART</button>
-          </div>
+  <section class="shop-checkout container">
+    <h2 class="page-title mb-4">Danh sách yêu thích</h2>
+
+    @if (session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert" id="success-alert">
+      {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+    </div>
+    @elseif (session('error'))
+    <div class="alert alert-danger alert-dismissible fade show" role="alert" id="error-alert">
+      {{ session('error') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
+    </div>
+    @endif
+
+
+
+    <ul class="list-group">
+      @forelse($items as $detail)
+      @php $product = $detail->product; @endphp
+      <li class="list-group-item py-3 px-2 d-flex align-items-center justify-content-between flex-wrap flex-md-nowrap">
+        {{-- Hình ảnh --}}
+        <div class="me-3">
+          <a href="{{ route('products.show', $product->slug) }}">
+            <img src="{{ asset($detail->image) }}"
+              alt="{{ $product->name }}"
+              width="90" height="90"
+              style="object-fit:cover; border-radius:6px;">
+          </a>
         </div>
-        <div class="shopping-cart__totals-wrapper">
-          <div class="sticky-content">
-            <div class="shopping-cart__totals">
-              <h3>Cart Totals</h3>
-              <table class="cart-totals">
-                <tbody>
-                  <tr>
-                    <th>Subtotal</th>
-                    <td>$1300</td>
-                  </tr>
-                  <tr>
-                    <th>Shipping</th>
-                    <td>
-                      <div class="form-check">
-                        <input class="form-check-input form-check-input_fill" type="checkbox" value=""
-                          id="free_shipping">
-                        <label class="form-check-label" for="free_shipping">Free shipping</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input form-check-input_fill" type="checkbox" value="" id="flat_rate">
-                        <label class="form-check-label" for="flat_rate">Flat rate: $49</label>
-                      </div>
-                      <div class="form-check">
-                        <input class="form-check-input form-check-input_fill" type="checkbox" value=""
-                          id="local_pickup">
-                        <label class="form-check-label" for="local_pickup">Local pickup: $8</label>
-                      </div>
-                      <div>Shipping to AL.</div>
-                      <div>
-                        <a href="#" class="menu-link menu-link_us-s">CHANGE ADDRESS</a>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th>VAT</th>
-                    <td>$19</td>
-                  </tr>
-                  <tr>
-                    <th>Total</th>
-                    <td>$1319</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="mobile_fixed-btn_wrapper">
-              <div class="button-wrapper container">
-                <button class="btn btn-primary btn-checkout">PROCEED TO CHECKOUT</button>
-              </div>
-            </div>
-          </div>
+
+        {{-- Tên và chi tiết --}}
+        <div class="flex-grow-1 me-3">
+          <h6 class="mb-1">
+            <a href="{{ route('products.show', $product->slug) }}"
+              class="text-decoration-none text-dark"
+              title="{{ $product->name }}">
+              {{ \Illuminate\Support\Str::limit($product->name, 20) }}
+            </a>
+          </h6>
         </div>
-      </div>
-    </section>
-  </main>
+
+        {{-- Hành động --}}
+        <div class="d-flex align-items-stretch">
+          {{-- Form thêm vào giỏ --}}
+          <form action="{{ route('wishlist.moveToCart') }}" method="POST" class="d-flex align-items-stretch">
+            @csrf
+            <input type="hidden" name="original_product_detail_id" value="{{ $detail->id }}">
+
+            {{-- Dropdown --}}
+            <select name="product_detail_id"
+              class="form-select form-select-sm"
+              style="width: 280px; height: 38px; line-height: 1.5; padding: 0.25rem 0.5rem;"
+              required>
+              @foreach ($product->product_details as $variant)
+              <option value="{{ $variant->id }}">
+                {{ Str::limit("Size {$variant->size} – " . number_format($variant->price, 0) . " VNĐ – Màu: {$variant->color}", 50) }}
+              </option>
+              @endforeach
+            </select>
+
+            {{-- Button Thêm --}}
+            <button type="submit"
+              class="btn btn-sm btn-primary"
+              style="height: 38px; border-radius: 0; border-left: 1px solid #ccc;">
+              Thêm vào giỏ
+            </button>
+          </form>
+
+          {{-- Form nút Xóa --}}
+          <form action="{{ route('wishlist.remove', $detail->id) }}" method="POST" class="d-flex">
+            @csrf @method('DELETE')
+            <button type="submit"
+              class="btn btn-sm text-white"
+              style="background-color: #dc3545; height: 38px; border-radius: 0; margin-left: 2px;">
+              Xóa
+            </button>
+          </form>
+        </div>
+
+
+
+      </li>
+      @empty
+      <li class="list-group-item text-center py-4">
+        Bạn chưa có sản phẩm yêu thích nào.
+      </li>
+      @endforelse
+    </ul>
+
+  </section>
+</main>
 @endsection
+@push('scripts')
+<script>
+    setTimeout(() => {
+        const alert = document.getElementById('success-alert');
+        if (alert) {
+            const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+            bsAlert.close(); // kích hoạt fade và tự tắt
+        }
+    }, 3000); // 3 giây
+</script>
+@endpush

@@ -46,7 +46,7 @@ class LoginController extends Controller
     {
         return view('auth.login');      
     }
-
+    
     /**
      * Get the guard to be used during authentication.
      *
