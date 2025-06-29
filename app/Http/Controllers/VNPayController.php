@@ -29,31 +29,31 @@ class VNPayController extends Controller
             return redirect('/')->with('error', 'Không tìm thấy thông tin đơn hàng.');
         }
 
-        $vnp_Url        = env('VNP_URL');
-        $vnp_Returnurl  = env('VNP_RETURN_URL');
-        $vnp_TmnCode    = env('VNP_TMN_CODE');
+        $vnp_Url = env('VNP_URL');
+        $vnp_Returnurl = env('VNP_RETURN_URL');
+        $vnp_TmnCode = env('VNP_TMN_CODE');
         $vnp_HashSecret = env('VNP_HASH_SECRET');
 
-        $vnp_TxnRef     = time();
-        $vnp_Amount     = $order['total'] * 100;
+        $vnp_TxnRef = time();
+        $vnp_Amount = $order['total'] * 100;
 
         $inputData = [
-            'vnp_Version'    => '2.1.0',
-            'vnp_TmnCode'    => $vnp_TmnCode,
-            'vnp_Amount'     => $vnp_Amount,
-            'vnp_Command'    => 'pay',
+            'vnp_Version' => '2.1.0',
+            'vnp_TmnCode' => $vnp_TmnCode,
+            'vnp_Amount' => $vnp_Amount,
+            'vnp_Command' => 'pay',
             'vnp_CreateDate' => now()->format('YmdHis'),
-            'vnp_CurrCode'   => 'VND',
-            'vnp_IpAddr'     => $request->ip(),
-            'vnp_Locale'     => 'vn',
-            'vnp_OrderInfo'  => 'Thanh toán đơn hàng #' . $vnp_TxnRef,
-            'vnp_OrderType'  => 'other',
-            'vnp_ReturnUrl'  => $vnp_Returnurl,
-            'vnp_TxnRef'     => $vnp_TxnRef,
+            'vnp_CurrCode' => 'VND',
+            'vnp_IpAddr' => $request->ip(),
+            'vnp_Locale' => 'vn',
+            'vnp_OrderInfo' => 'Thanh toán đơn hàng #' . $vnp_TxnRef,
+            'vnp_OrderType' => 'other',
+            'vnp_ReturnUrl' => $vnp_Returnurl,
+            'vnp_TxnRef' => $vnp_TxnRef,
         ];
 
-        ksort($input);
-        $query = http_build_query($input);
+        ksort($inputData);
+        $query = http_build_query($inputData);
 
         $vnp_SecureHash = hash_hmac('sha512', urldecode($query), $vnp_HashSecret);
         $paymentUrl = $vnp_Url . '?' . $query . '&vnp_SecureHash=' . $vnp_SecureHash;
@@ -74,7 +74,8 @@ class VNPayController extends Controller
 
         if ($receivedHash === $calcHash && $request->vnp_ResponseCode == '00') {
             $order = session('order_data');
-            if (!$order) return view('payment.failed')->with('error', 'Không tìm thấy phiên đơn hàng.');
+            if (!$order)
+                return view('payment.failed')->with('error', 'Không tìm thấy phiên đơn hàng.');
 
             try {
                 DB::beginTransaction();

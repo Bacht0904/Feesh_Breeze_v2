@@ -33,6 +33,7 @@ class CheckoutController extends Controller
             return redirect()->to('https://momo.vn');
         }
 
+
         if ($method === 'vnpay') {
             $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
             $shipping = 0;
@@ -51,57 +52,55 @@ class CheckoutController extends Controller
 
             // Redirect sang VNPAY
             return redirect()->route('vnpay.payment');
-        }
+        } elseif ($method === 'cod') {
+            try {
+                DB::beginTransaction();
 
+                $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+                $shipping = 0;
+                $discount = 0;
+                $total = $subtotal - $discount + $shipping;
 
-        // 👉 Nếu là COD: lưu đơn
-        try {
-            DB::beginTransaction();
-
-            $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
-            $shipping = 0;
-            $discount = 0;
-            $total = $subtotal - $discount + $shipping;
-
-            $order = Order::create([
-                'id_user' => Auth::id() ?? 'guest',
-                'id_payment' => 'PMT' . time(),
-                'id_shipping' => 'SHIP' . time(),
-                'order_date' => now(),
-                'suptotal' => $subtotal,
-                'payment_method' => 'Tiền Mặt',
-                'payment_status' => 'Chưa Thanh Toán',
-                'name' => $request->name,
-                'phone' => $request->phone,
-                'address' => $request->address,
-                'email' => $request->email,
-                'note' => $request->note,
-                'coupon_code' => $request->coupon_code,
-                'coupon_discount' => $discount,
-                'shipping_fee' => $shipping,
-                'total' => $total,
-                'status' => 'Chờ Xác Nhận',
-            ]);
-
-            foreach ($cart as $detailId => $item) {
-                OrderDetail::create([
-                    'order_id' => $order->id,
-                    'product_detail_id' => $detailId,
-                    'product_name' => $item['product_name'],
-                    'size' => $item['size'],
-                    'color' => $item['color'],
-                    'price' => $item['price'],
-                    'quantity' => $item['quantity'],
+                $order = Order::create([
+                    'id_user' => Auth::id() ?? 'guest',
+                    'id_payment' => 'PMT' . time(),
+                    'id_shipping' => 'SHIP' . time(),
+                    'order_date' => now(),
+                    'suptotal' => $subtotal,
+                    'payment_method' => 'Tiền Mặt',
+                    'payment_status' => 'Chưa Thanh Toán',
+                    'name' => $request->name,
+                    'phone' => $request->phone,
+                    'address' => $request->address,
+                    'email' => $request->email,
+                    'note' => $request->note,
+                    'coupon_code' => $request->coupon_code,
+                    'coupon_discount' => $discount,
+                    'shipping_fee' => $shipping,
+                    'total' => $total,
+                    'status' => 'Chờ Xác Nhận',
                 ]);
+
+                foreach ($cart as $detailId => $item) {
+                    OrderDetail::create([
+                        'order_id' => $order->id,
+                        'product_detail_id' => $detailId,
+                        'product_name' => $item['product_name'],
+                        'size' => $item['size'],
+                        'color' => $item['color'],
+                        'price' => $item['price'],
+                        'quantity' => $item['quantity'],
+                    ]);
+                }
+
+                DB::commit();
+                session()->forget('cart');
+
+                return redirect()->route('checkout')->with('success', '🎉 Đặt hàng thành công!');
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return back()->with('error', 'Lỗi khi đặt hàng: ' . $e->getMessage());
             }
-
-            DB::commit();
-            session()->forget('cart');
-
-            return redirect()->route('checkout')->with('success', '🎉 Đặt hàng thành công!');
-        } catch (\Exception $e) {
-            DB::rollBack();
-            return back()->with('error', 'Lỗi khi đặt hàng: ' . $e->getMessage());
         }
     }
 }

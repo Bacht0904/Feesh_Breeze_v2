@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{config('app.name','Laravel')}}</title>
+    <title>{{config('app.name', 'Laravel')}}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="surfside media" />
@@ -181,7 +181,8 @@
         </symbol>
         <symbol id="icon_close" viewBox="0 0 12 12">
             <path d="M0.311322 10.6261L10.9374 0L12 1.06261L1.37393 11.6887L0.311322 10.6261Z" fill="currentColor" />
-            <path d="M1.06261 0.106781L11.6887 10.7329L10.6261 11.7955L0 1.16939L1.06261 0.106781Z" fill="currentColor" />
+            <path d="M1.06261 0.106781L11.6887 10.7329L10.6261 11.7955L0 1.16939L1.06261 0.106781Z"
+                fill="currentColor" />
         </symbol>
         <symbol id="icon_view" viewBox="0 0 18 18">
             <path
@@ -274,7 +275,8 @@
             </div>
 
             <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart" data-aside="cartDrawer">
-                <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
                     <use href="#icon_cart" />
                 </svg>
 
@@ -448,13 +450,18 @@
                                     <div class="sub-menu search-suggestion">
                                         <h6 class="sub-menu__title fs-base">Liên kết nhanh</h6>
                                         <ul class="sub-menu__list list-unstyled">
-                                            <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">Sản phẩm mới</a>
+                                            <li class="sub-menu__item"><a href="shop2.html"
+                                                    class="menu-link menu-link_us-s">Sản phẩm mới</a>
                                             </li>
-                                            <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Đầm</a></li>
-                                            <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Phụ kiện</a>
+                                            <li class="sub-menu__item"><a href="#"
+                                                    class="menu-link menu-link_us-s">Đầm</a></li>
+                                            <li class="sub-menu__item"><a href="shop3.html"
+                                                    class="menu-link menu-link_us-s">Phụ kiện</a>
                                             </li>
-                                            <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Footwear</a></li>
-                                            <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Áo nỉ</a></li>
+                                            <li class="sub-menu__item"><a href="#"
+                                                    class="menu-link menu-link_us-s">Footwear</a></li>
+                                            <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Áo
+                                                    nỉ</a></li>
                                         </ul>
                                     </div>
 
@@ -465,22 +472,22 @@
                     </div>
 
                     @guest
-                    <div class="header-tools__item">
-                        <a href="{{ route('login') }}" class="header-tools__link">
+                        <div class="header-tools__item">
+                            <a href="{{ route('login') }}" class="header-tools__link">
 
-                            <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
-                        </a>
-                    </div>
+                                <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
+                            </a>
+                        </div>
                     @else
-                    <div class="header-tools__item">
-                        <a href="{{ route('profile') }}" class="header-tools__link">
-                            <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_user" />
-                            </svg>
-                            <span class="d-block text-uppercase fw-medium"></span>
-                        </a>
-                    </div>
+                        <div class="header-tools__item">
+                            <a href="{{ route('profile') }}" class="header-tools__link">
+                                <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <use href="#icon_user" />
+                                </svg>
+                                <span class="d-block text-uppercase fw-medium"></span>
+                            </a>
+                        </div>
                     @endguest
                     <a href="{{ route('wishlist') }} " class="header-tools__item">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -488,8 +495,10 @@
                         </svg>
                     </a>
 
-                    <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart" data-aside="cartDrawer">
-                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart"
+                        data-aside="cartDrawer">
+                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_cart" />
                         </svg>
 
@@ -497,6 +506,32 @@
                             {{ $cartItemCount ?? 0 }}
                         </span>
                     </a>
+                    @if (Auth::check() && Auth::user()->role == 'admin')
+                        <div class="header-tools__item">
+                            <a href="{{ route('admin.index') }}" class="header-tools__link">
+
+                                <span class="d-block text-uppercase fw-medium">Quản Lý</span>
+                            </a>
+                        </div>
+                        <form method="post" action="{{route('logout')}}" id="logout-form">
+                            @csrf
+                            <a href="{{route('logout')}}" class=""
+                                onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                <div class="icon"><i class="icon-settings"></i></div>
+                                <div class="text">Đăng xuất</div>
+                            </a>
+                        </form>
+                    @elseif(Auth::check())
+                        <form method="post" action="{{route('logout')}}" id="logout-form">
+                            @csrf
+                            <a href="{{route('logout')}}" class=""
+                                onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                <div class="icon"><i class="icon-settings"></i></div>
+                                <div class="text">Đăng xuất</div>
+                            </a>
+                        </form>
+                    @endif
+
                 </div>
             </div>
         </div>
@@ -566,19 +601,24 @@
                 <div class="footer-column footer-menu mb-4 mb-lg-0">
                     <h6 class="sub-menu__title text-uppercase">Company</h6>
                     <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="about-2.html" class="menu-link menu-link_us-s">Về Chúng Tôi</a></li>
+                        <li class="sub-menu__item"><a href="about-2.html" class="menu-link menu-link_us-s">Về Chúng
+                                Tôi</a></li>
                         <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Tuyển dụng</a></li>
                         <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Đối tác</a></li>
-                        <li class="sub-menu__item"><a href="blog_list1.html" class="menu-link menu-link_us-s">Blog</a></li>
-                        <li class="sub-menu__item"><a href="contact-2.html" class="menu-link menu-link_us-s">Liên hệ với chúng tôi</a></li>
+                        <li class="sub-menu__item"><a href="blog_list1.html" class="menu-link menu-link_us-s">Blog</a>
+                        </li>
+                        <li class="sub-menu__item"><a href="contact-2.html" class="menu-link menu-link_us-s">Liên hệ với
+                                chúng tôi</a></li>
                     </ul>
                 </div>
 
                 <div class="footer-column footer-menu mb-4 mb-lg-0">
                     <h6 class="sub-menu__title text-uppercase">Shop</h6>
                     <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">Sản Phẩm Mới</a></li>
-                        <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Phụ kiện</a></li>
+                        <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">Sản Phẩm
+                                Mới</a></li>
+                        <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Phụ kiện</a>
+                        </li>
                         <li class="sub-menu__item"><a href="shop4.html" class="menu-link menu-link_us-s">Nam</a></li>
                         <li class="sub-menu__item"><a href="shop5.html" class="menu-link menu-link_us-s">Nữ</a></li>
                         <li class="sub-menu__item"><a href="shop1.html" class="menu-link menu-link_us-s">Tất Cả</a></li>
@@ -588,12 +628,16 @@
                 <div class="footer-column footer-menu mb-4 mb-lg-0">
                     <h6 class="sub-menu__title text-uppercase">Hỗ Trợ</h6>
                     <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Chăm Sóc Khách Hàng</a></li>
-                        <li class="sub-menu__item"><a href="account_dashboard.html" class="menu-link menu-link_us-s">Tài Khoản Của Tôi</a>
+                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Chăm Sóc Khách Hàng</a>
                         </li>
-                        <li class="sub-menu__item"><a href="store_location.html" class="menu-link menu-link_us-s">Tìm cửa hàng</a>
+                        <li class="sub-menu__item"><a href="account_dashboard.html" class="menu-link menu-link_us-s">Tài
+                                Khoản Của Tôi</a>
                         </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Pháp lý & Quyền riêng tư</a></li>
+                        <li class="sub-menu__item"><a href="store_location.html" class="menu-link menu-link_us-s">Tìm
+                                cửa hàng</a>
+                        </li>
+                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Pháp lý & Quyền riêng
+                                tư</a></li>
                         <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Thẻ quà tặng</a></li>
                     </ul>
                 </div>
