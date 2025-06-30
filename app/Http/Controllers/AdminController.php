@@ -8,6 +8,7 @@ use App\Models\Slide;
 use App\Models\Category;
 use App\Models\Coupon;
 use App\Models\Order;
+use App\Models\Contact;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -26,6 +27,7 @@ class AdminController extends Controller
 {
     public function index()
     {
+        $user = Auth::user();
         $orders = Order::orderBy('created_at', 'desc')->get()->take(10);
         $dashboardDatas = DB::select("Select sum(total) as totalAmount,
                                             sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
@@ -70,6 +72,8 @@ class AdminController extends Controller
         $totalConfirmedAmount = collect($monthlyDatas)->sum('totalConfirmedAmount');
         $totalDeliveredAmount = collect($monthlyDatas)->sum('totalDeliveredAmount');
 
+        $contactCount = Contact::count();
+
         return view('admin.index', compact(
             'orders',
             'dashboardDatas',
@@ -80,7 +84,9 @@ class AdminController extends Controller
             'totalAmount',
             'totalOrderedAmount',
             'totalConfirmedAmount',
-            'totalDeliveredAmount'
+            'totalDeliveredAmount',
+            'contactCount',
+            'user'
         ));
 
     }
@@ -589,6 +595,7 @@ class AdminController extends Controller
 
     public function add_user()
     {
+        
         return view('admin.user-add');
     }
 
@@ -603,7 +610,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
-            'phone' => 'required|string|max:10',
+            'phone' => ['required', 'regex:/^0[0-9]{9}$/'],
             'address' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
             'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
@@ -619,7 +626,7 @@ class AdminController extends Controller
         $user->status = 'active';      // Gán mặc định
 
         if ($request->hasFile('avatar')) {
-            $image = $request->file('avatar');
+            $avatar = $request->file('avatar');
             $uploadFolder = 'uploads/users/';
             $savePath = public_path($uploadFolder);
 
@@ -627,16 +634,18 @@ class AdminController extends Controller
                 mkdir($savePath, 0777, true);
             }
 
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $avatar->getClientOriginalExtension();
             $fullPath = $savePath . '/' . $filename;
 
             $manager = new ImageManager(new Driver());
-            $manager->read($image->getRealPath())
+            $manager->read($avatar->getRealPath())
                 ->resize(800, 400)
                 ->save($fullPath);
 
-            $user->image = $uploadFolder . $filename;
+            $user->avatar = $uploadFolder . $filename; // 🔄 sửa từ "image" thành "avatar"
         }
+
+
 
         $user->save();
 
@@ -665,7 +674,7 @@ class AdminController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $request->id,
-            'phone' => 'required|string|max:10',
+            'phone' => ['required', 'regex:/^0[0-9]{9}$/'],
             'address' => 'required|string|max:255',
             'password' => 'nullable|string|min:8|confirmed',
             'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
@@ -688,7 +697,7 @@ class AdminController extends Controller
         }
 
         if ($request->hasFile('avatar')) {
-            $image = $request->file('avatar');
+            $avatar = $request->file('avatar');
             $uploadFolder = 'uploads/users/';
             $savePath = public_path($uploadFolder);
 
@@ -696,16 +705,17 @@ class AdminController extends Controller
                 mkdir($savePath, 0777, true);
             }
 
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $filename = time() . '_' . uniqid() . '.' . $avatar->getClientOriginalExtension();
             $fullPath = $savePath . '/' . $filename;
 
             $manager = new ImageManager(new Driver());
-            $manager->read($image->getRealPath())
+            $manager->read($avatar->getRealPath())
                 ->resize(800, 400)
                 ->save($fullPath);
 
-            $user->image = $uploadFolder . $filename;
+            $user->avatar = $uploadFolder . $filename;
         }
+
 
         $user->save();
 

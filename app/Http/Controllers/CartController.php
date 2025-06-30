@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductDetail;
 use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Product_details; // Đổi tên model cho chuẩn (không _)
@@ -25,7 +26,7 @@ class CartController extends Controller
             'quantity'          => 'required|integer|min:1',
         ]);
 
-        $detail = Product_details::findOrFail($request->product_detail_id);
+        $detail = ProductDetail::findOrFail($request->product_detail_id);
         $cart   = session()->get('cart', []);
         $key    = "{$detail->id}-{$detail->size}-{$detail->color}";
 
@@ -79,7 +80,7 @@ class CartController extends Controller
 
             // Lấy product_detail_id mới mà user chọn
             $newDetailId = $request->input("product_detail_ids.$oldKey");
-            $detail = Product_details::with('product')->find($newDetailId);
+            $detail = ProductDetail::with('product')->find($newDetailId);
 
             if (!$detail) continue;
 

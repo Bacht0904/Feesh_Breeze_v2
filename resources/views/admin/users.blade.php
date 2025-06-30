@@ -24,8 +24,8 @@
                     <div class="wg-filter flex-grow">
                         <form class="form-search" action="{{ route('admin.users.search') }}" method="GET">
                             <fieldset class="name">
-                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value="{{ request()->input('name', '') }}"
-                                    aria-required="true" required="">
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2"
+                                    value="{{ request()->input('name', '') }}" aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
                                 <button class="" type="submit"><i class="icon-search"></i></button>
@@ -86,11 +86,8 @@
                                         <td>{{ $user->phone }}</td>
                                         <td>{{ $user->address }}</td>
                                         <td>
-                                            @if ($user->avatar)
-                                                <img src="{{ asset($user->avatar) }}" alt="Avatar" width="50">
-                                            @else
-                                                <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar" width="50">
-                                            @endif
+                                            <img src="{{ asset($user->avatar ?? 'images/default-avatar.png') }}" alt="Avatar"
+                                                width="60" height="60" class="rounded-circle">
                                         </td>
                                         @auth
                                             @if (Auth::user()->role === 'admin')
@@ -121,7 +118,6 @@
                             </tbody>
                         </table>
                     </div>
-
                 </div>
                 <div class="divider"></div>
                 <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">

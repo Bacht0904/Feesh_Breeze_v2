@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ContactController;
+use App\Models\Contact;
+use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
@@ -12,13 +15,14 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ReviewController;
-
-
 
 
 Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
+
+
+    
+
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 Route::get('/admin/password/reset', [AdminController::class, 'showResetForm'])->name('admin.password.reset');
 Route::post('/admin/password/email', [AdminController::class, 'sendResetLinkEmail'])->name('admin.password.email');
@@ -93,6 +97,7 @@ Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coup
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
 
+
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
 Route::post('/login', [HomeController::class, 'login'])->name('login');
@@ -125,7 +130,12 @@ Route::post('/password/reset', [HomeController::class, 'reset'])->name('password
 Route::get('/password/reset/{token}', [HomeController::class, 'showResetFormWithToken'])->name('password.reset.token');
 Route::get('/password/confirm', [HomeController::class, 'showConfirmForm'])->name('password.confirm');
 Route::post('/password/confirm', [HomeController::class, 'confirm'])->name('password.confirm.submit');
-Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+
+Route::get('/contact', [UserController::class, 'contact'])->name('contact');
+Route::get('/admin/contacts', [ContactController::class, 'contacts'])->name('admin.contacts');
+Route::post('/contact/store', [ContactController::class, 'contactStore'])->name('contact.store');
+Route::delete('/contact/delete/{id}', [ContactController::class, 'deleteContact'])->name('contact.delete');
+
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
 

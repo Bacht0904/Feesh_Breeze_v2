@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Product_details as ProductDetail;
+use App\Models\ProductDetail;
 use App\Models\Product;
 
 class ReviewController extends Controller

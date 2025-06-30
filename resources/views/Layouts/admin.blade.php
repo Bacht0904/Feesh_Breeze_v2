@@ -121,12 +121,12 @@
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.orders') }}" class="">
-                                                <div class="text">Danh sách hóa đơn</div>
+                                                <div class="text">Danh sách đơn hàng</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.order.tracking') }}" class="">
-                                                <div class="text">Trạng thái hóa đơn</div>
+                                                <div class="text">Trạng thái đơn hàng</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -252,11 +252,11 @@
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
                                                 <span class="image">
-                                                    <img src="images/avatar/user-1.png" alt="">
+                                                    <img src="{{ asset(Auth::user()->avatar) }}" alt="Avatar người dùng">
                                                 </span>
                                                 <span class="flex flex-column">
-                                                    <span class="body-title mb-2">Kristin Watson</span>
-                                                    <span class="text-tiny">Admin</span>
+                                                    <span class="body-title mb-2">{{ Auth::user()->name }}</span>
+                                                    <span class="text-tiny">{{ Auth::user()->role }}</span>
                                                 </span>
                                             </span>
                                         </button>
@@ -271,12 +271,12 @@
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#" class="user-item">
+                                                <a href="{{ route('admin.contacts') }}" class="user-item">
                                                     <div class="icon">
                                                         <i class="icon-mail"></i>
                                                     </div>
                                                     <div class="body-title-2">Liên hệ</div>
-                                                    <div class="number">27</div>
+                                                    <div class="number">{{ $contactCount }}</div>
                                                 </a>
                                             </li>
                                             <li>

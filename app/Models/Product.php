@@ -22,7 +22,7 @@ class Product extends Model
 
     public function product_details()
     {
-        return $this->hasMany(Product_details::class, 'product_id');
+        return $this->hasMany(ProductDetail::class, 'product_id');
     }
     public function category()
     {
