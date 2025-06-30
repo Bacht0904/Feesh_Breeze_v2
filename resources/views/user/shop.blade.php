@@ -310,7 +310,7 @@
         $productUrl = route('products.show', $product->slug); // dùng slug
         $uniqueSizes = $product->product_details->pluck('size')->unique()->filter()->values();
         @endphp
-
+        @if ( $firstDetail->quantity > 0)
         <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
             <div class="pc__img-wrapper">
@@ -380,6 +380,8 @@
             </div>
           </div>
         </div>
+        @endif
+
         @endforeach
       </div>
 
