@@ -11,9 +11,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\OrderController;
 
 
 
@@ -139,6 +137,14 @@ Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.t
 Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
 Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/account-orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/account-orders/{id}', [OrderController::class, 'show'])->name('orders.details');
+});
+
+
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
 
@@ -155,4 +161,3 @@ Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist
 Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 Route::get('/wishlist/clear', [WishlistController::class, 'clear'])->name('wishlist.clear');
 Route::post('/wishlist/move-to-cart', [WishlistController::class, 'moveToCart'])->name('wishlist.moveToCart');
-
