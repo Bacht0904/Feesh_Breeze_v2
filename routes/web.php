@@ -12,6 +12,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 
 
 
@@ -77,7 +78,7 @@ Route::put('/admin/slide/{id}/toggle', [AdminController::class, 'toggle_slide_st
 
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
 Route::get('/admin/user/add', [AdminController::class, 'add_user'])->name('admin.user.add');
-Route::post('/admin/user/store', [AdminController::class, 'userstore'])->name('admin.user.store');
+Route::post('/admin/user/store', [AdminController::class, 'user_store'])->name('admin.user.store');
 Route::get('/admin/user/{id}/edit', [AdminController::class, 'edit_user'])->name('admin.user.edit');
 Route::put('/admin/user/update', [AdminController::class, 'update_user'])->name('admin.user.update');
 Route::delete('/admin/user/{id}/delete', [AdminController::class, 'delete_user'])->name('admin.user.delete');
@@ -143,6 +144,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/account-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/account-orders/{id}', [OrderController::class, 'show'])->name('orders.details');
 });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account', [UserController::class, 'index'])->name('account');
+    Route::post('/account/update', [UserController::class, 'update'])->name('account.update');
+    Route::post('/account/change-password', [UserController::class, 'changePassword'])->name('account.changePassword');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reviews/create/{product_detail}', [ReviewController::class, 'create'])->name('review');
+    Route::match(['GET', 'POST'], '/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+});
+
 
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');

@@ -11,6 +11,7 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Rules\MatchOldPassword;
@@ -25,14 +26,69 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.index');
+        $orders = Order::orderBy('created_at', 'desc')->get()->take(10);
+        $dashboardDatas = DB::select("Select sum(total) as totalAmount,
+                                            sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
+                                            sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount,
+                                            sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount,
+                                            count(*) as total,
+                                            sum(if(status = 'Chờ Xác Nhận', 1, 0)) as totalOrdered,
+                                            sum(if(status = 'Đã Xác Nhận', 1, 0)) as totalConfirmed,
+                                            sum(if(status = 'Đã Giao', 1, 0)) as totalDelivered
+                                            from orders
+                                            ");
+        $monthlyDatas = DB::select("Select 
+                                            M.id as month_No, 
+                                            M.name as monthName, 
+                                            Ifnull(D.totalAmount, 0) as totalAmount, 
+                                            Ifnull(D.totalOrderedAmount, 0) as totalOrderedAmount, 
+                                            Ifnull(D.totalConfirmedAmount, 0) as totalConfirmedAmount, 
+                                            Ifnull(D.totalDeliveredAmount, 0) as totalDeliveredAmount 
+                                            from month_names M 
+                                            left join (
+                                            Select 
+                                                date_format(created_at, '%b') as monthName, 
+                                                month(created_at) as monthNo, 
+                                                sum(total) as totalAmount, 
+                                                sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount, 
+                                                sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount, 
+                                                sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount 
+                                            from orders 
+                                            where year(created_at) = year(now()) 
+                                            group by year(created_at), month(created_at), date_format(created_at, '%b') 
+                                            order by month(created_at)
+                                            ) D on D.monthNo = M.id");
+
+        $amountM = implode(',', collect($monthlyDatas)->pluck('totalAmount')->toArray());
+        $orderedAmountM = implode(',', collect($monthlyDatas)->pluck('totalOrderedAmount')->toArray());
+        $confirmedAmountM = implode(',', collect($monthlyDatas)->pluck('totalConfirmedAmount')->toArray());
+        $deliveredAmountM = implode(',', collect($monthlyDatas)->pluck('totalDeliveredAmount')->toArray());
+
+        $totalAmount = collect($monthlyDatas)->sum('totalAmount');
+        $totalOrderedAmount = collect($monthlyDatas)->sum('totalOrderedAmount');
+        $totalConfirmedAmount = collect($monthlyDatas)->sum('totalConfirmedAmount');
+        $totalDeliveredAmount = collect($monthlyDatas)->sum('totalDeliveredAmount');
+
+        return view('admin.index', compact(
+            'orders',
+            'dashboardDatas',
+            'amountM',
+            'orderedAmountM',
+            'confirmedAmountM',
+            'deliveredAmountM',
+            'totalAmount',
+            'totalOrderedAmount',
+            'totalConfirmedAmount',
+            'totalDeliveredAmount'
+        ));
+
     }
 
     public function changePassword()
     {
         if (!Auth::check()) {
-        return redirect()->route('login')->with('error', 'Bạn cần đăng nhập trước khi tiếp tục.');
-    }
+            return redirect()->route('login')->with('error', 'Bạn cần đăng nhập trước khi tiếp tục.');
+        }
         return view('auth.password.change');
 
 
@@ -385,7 +441,7 @@ class AdminController extends Controller
     }
     public function orders()
     {
-        $orders = Order::orderBy('created_at','desc')->paginate(12);
+        $orders = Order::orderBy('created_at', 'desc')->paginate(12);
         return view('admin.orders', compact('orders'));
     }
 
@@ -535,38 +591,120 @@ class AdminController extends Controller
         return view('admin.user-add');
     }
 
-    public function user_search(Request $request)
-    {
-        $search = $request->input('name'); // Đổi 'search' => 'name' để khớp với input name trong form
-
-        $users = User::where('name', 'like', '%' . $search . '%')
-            ->orWhere('email', 'like', '%' . $search . '%')
-            ->paginate(10);
-
-        return view('admin.users', compact('users', 'search'));
-    }
-
-    public function user_edit($id)
+    public function edit_user($id)
     {
         $user = User::find($id);
         return view('admin.user-edit', compact('user'));
     }
 
-    public function userstore(Request $request)
+    public function user_store(Request $request)
     {
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
+            'phone' => 'required|string|max:10',
+            'address' => 'required|string|max:255',
             'password' => 'required|string|min:8|confirmed',
+            'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
         $user = new User();
         $user->name = $request->name;
         $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
         $user->password = Hash::make($request->password);
+        $user->role = 'staff';         // Gán mặc định
+        $user->status = 'active';      // Gán mặc định
+
+        if ($request->hasFile('avatar')) {
+            $image = $request->file('avatar');
+            $uploadFolder = 'uploads/users/';
+            $savePath = public_path($uploadFolder);
+
+            if (!file_exists($savePath)) {
+                mkdir($savePath, 0777, true);
+            }
+
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $fullPath = $savePath . '/' . $filename;
+
+            $manager = new ImageManager(new Driver());
+            $manager->read($image->getRealPath())
+                ->resize(800, 400)
+                ->save($fullPath);
+
+            $user->image = $uploadFolder . $filename;
+        }
+
         $user->save();
 
         return redirect()->route('admin.users')->with('status', 'Người dùng đã được thêm thành công!');
+    }
+
+
+    public function update_user(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email,' . $request->id,
+            'phone' => 'required|string|max:10',
+            'address' => 'required|string|max:255',
+            'password' => 'nullable|string|min:8|confirmed',
+            'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
+
+        $user = User::find($request->id);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->role = $request->role;
+        $user->status = $request->status;
+
+        // Gán mặc định
+        $user->role = 'staff';
+        $user->status = 'active';
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('avatar')) {
+            $image = $request->file('avatar');
+            $uploadFolder = 'uploads/users/';
+            $savePath = public_path($uploadFolder);
+
+            if (!file_exists($savePath)) {
+                mkdir($savePath, 0777, true);
+            }
+
+            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+            $fullPath = $savePath . '/' . $filename;
+
+            $manager = new ImageManager(new Driver());
+            $manager->read($image->getRealPath())
+                ->resize(800, 400)
+                ->save($fullPath);
+
+            $user->image = $uploadFolder . $filename;
+        }
+
+        $user->save();
+
+        return redirect()->route('admin.users')->with('status', 'Người dùng đã được cập nhật thành công!');
+    }
+
+
+    public function delete_user($id)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->delete();
+            return redirect()->route('admin.users')->with('status', 'Người dùng đã được xóa thành công!');
+        } else {
+            return redirect()->route('admin.users')->with('error', 'Người dùng không tồn tại!');
+        }
     }
 
     public function coupons()
@@ -605,7 +743,7 @@ class AdminController extends Controller
 
     public function update_coupon(Request $request, $id)
     {
-       
+
         $request->validate([
             'code' => 'string|required', //'string| unique:coupons,code,' //. $request->id,//['required',Rule::unique('coupons','code')->ignore($id)],
             'type' => 'required|in:percent,fixed',
@@ -614,15 +752,14 @@ class AdminController extends Controller
         ]);
 
         $coupon = Coupon::find($id);
-        $data = $request ->all();
-        $status = $coupon ->fill($data) -> save();
-        if($status) {
-            request()->session()->flash('success','Cập nhật mã thành công');
+        $data = $request->all();
+        $status = $coupon->fill($data)->save();
+        if ($status) {
+            request()->session()->flash('success', 'Cập nhật mã thành công');
+        } else {
+            request()->session()->flash('error', 'Vui lòng thử lại !!!');
         }
-        else{
-            request()->session()->flash('error','Vui lòng thử lại !!!');
-        }
-        
+
         // $coupon->code = $request->code;
         // $coupon->type = $request->type;
         // $coupon->value = $request->value;
@@ -638,23 +775,21 @@ class AdminController extends Controller
         // $coupon->delete();
 
         $coupon = Coupon::findOrFail($id);
-        if($coupon) {
-            $status =$coupon ->delete();
-            if($status) {
-                request()->session()->flash('success','Xóa mã thành công');
-            }
-            else {
-                request()->session()->flash('error','Lỗi, vui lòng thử lại!!');
+        if ($coupon) {
+            $status = $coupon->delete();
+            if ($status) {
+                request()->session()->flash('success', 'Xóa mã thành công');
+            } else {
+                request()->session()->flash('error', 'Lỗi, vui lòng thử lại!!');
             }
             return redirect()->route('admin.coupons');
+        } else {
+            request()->session()->flash('error', 'Không tìm thấy mã giảm giá');
+            return redirect()->back();
         }
-        else {
-            request()->session()->flash('error','Không tìm thấy mã giảm giá');
-            return redirect() ->back();
-        }
-        
 
-        
+
+
     }
 
     public function settings()
@@ -663,5 +798,5 @@ class AdminController extends Controller
     }
 
 
-  
+
 }
