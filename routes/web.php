@@ -12,6 +12,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 
 
 
@@ -143,6 +144,16 @@ Route::middleware('auth')->group(function () {
     Route::get('/account-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/account-orders/{id}', [OrderController::class, 'show'])->name('orders.details');
 });
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account', [UserController::class, 'index'])->name('account');
+    Route::post('/account/update', [UserController::class, 'update'])->name('account.update');
+    Route::post('/account/change-password', [UserController::class, 'changePassword'])->name('account.changePassword');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/reviews/create/{product_detail}', [ReviewController::class, 'create'])->name('review');
+    Route::match(['GET', 'POST'], '/reviews', [ReviewController::class, 'store'])->name('reviews.store');
+});
+
 
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');

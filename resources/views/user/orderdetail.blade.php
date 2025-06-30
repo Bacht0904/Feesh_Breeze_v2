@@ -180,12 +180,12 @@
                             </thead>
                             <tbody>
                                 @foreach ($order->details as $item)
-                              
+
 
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="{{ asset($item->image) }}" class="image"  style="width: 50px; height: 50px; object-fit: cover;">
+                                            <img src="{{ asset($item->image) }}" class="image" style="width: 50px; height: 50px; object-fit: cover;">
 
                                             <a href="#" target="_blank" class="text-decoration-none fw-semibold">{{ $item->product_name }}</a>
                                         </div>
@@ -196,7 +196,9 @@
                                     <td class="text-center">{{ $item->size ?? '--' }}{{ $item->color ? ', '.$item->color : '' }}</td>
                                     <td class="text-center">Không</td>
                                     <td class="text-center">
-                                        <a href="#" class="btn btn-sm btn-outline-primary"><i class="fa fa-eye"></i></a>
+                                        <a href="{{ route('reviews.create', $item->product_detail_id) }}" class="btn btn-sm btn-primary">
+                                            Đánh giá
+                                        </a>
                                     </td>
                                 </tr>
                                 @endforeach
