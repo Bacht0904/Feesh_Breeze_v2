@@ -78,7 +78,7 @@ Route::put('/admin/slide/{id}/toggle', [AdminController::class, 'toggle_slide_st
 
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
 Route::get('/admin/user/add', [AdminController::class, 'add_user'])->name('admin.user.add');
-Route::post('/admin/user/store', [AdminController::class, 'userstore'])->name('admin.user.store');
+Route::post('/admin/user/store', [AdminController::class, 'user_store'])->name('admin.user.store');
 Route::get('/admin/user/{id}/edit', [AdminController::class, 'edit_user'])->name('admin.user.edit');
 Route::put('/admin/user/update', [AdminController::class, 'update_user'])->name('admin.user.update');
 Route::delete('/admin/user/{id}/delete', [AdminController::class, 'delete_user'])->name('admin.user.delete');
