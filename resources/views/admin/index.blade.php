@@ -15,7 +15,7 @@
                                     </div>
                                     <div>
                                         <div class="body-text mb-2">Tổng hóa đơn</div>
-                                        <h4>{{$dashboardDatas[0]->total}} VND</h4>
+                                        <h4>{{$dashboardDatas[0]->total}}</h4>
                                     </div>
                                 </div>
                             </div>

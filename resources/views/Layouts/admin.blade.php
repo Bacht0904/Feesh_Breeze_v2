@@ -163,7 +163,7 @@
                                         @csrf
                                         <a href="{{route('logout')}}" class=""
                                             onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                                            <div class="icon"><i class="icon-settings"></i></div>
+                                            <div class="icon"><i class="icon-log-out"></i></div>
                                             <div class="text">Đăng xuất</div>
                                         </a>
                                     </form>
@@ -263,11 +263,11 @@
                                         <ul class="dropdown-menu dropdown-menu-end has-content"
                                             aria-labelledby="dropdownMenuButton3">
                                             <li>
-                                                <a href="#" class="user-item">
+                                                <a href="{{ route('admin.settings') }}" class="user-item">
                                                     <div class="icon">
                                                         <i class="icon-user"></i>
                                                     </div>
-                                                    <div class="body-title-2">Account</div>
+                                                    <div class="body-title-2">Tài khoản</div>
                                                 </a>
                                             </li>
                                             <li>
@@ -275,33 +275,24 @@
                                                     <div class="icon">
                                                         <i class="icon-mail"></i>
                                                     </div>
-                                                    <div class="body-title-2">Inbox</div>
+                                                    <div class="body-title-2">Liên hệ</div>
                                                     <div class="number">27</div>
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-file-text"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Taskboard</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-headphones"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Support</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="login.html" class="user-item">
+                                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                    style="display: none;">
+                                                    @csrf
+                                                </form>
+
+                                                <a href="{{ route('logout') }}" class="user-item"
+                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                     <div class="icon">
                                                         <i class="icon-log-out"></i>
                                                     </div>
-                                                    <div class="body-title-2">Log out</div>
+                                                    <div class="body-title-2">Đăng xuất</div>
                                                 </a>
+
                                             </li>
                                         </ul>
                                     </div>
@@ -327,10 +318,10 @@
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
- 
+
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-  
+
     @stack('scripts')
 </body>
 

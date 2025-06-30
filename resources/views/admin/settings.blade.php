@@ -23,26 +23,27 @@
                 <div class="col-lg-12">
                     <div class="page-content my-account__edit">
                         <div class="my-account__edit-form">
-                            <form name="account_edit_form" action="{{ route('admin.user.store') }}" method="POST"
+                            <form name="account_edit_form" action="{{ route('admin.user.update', $user->id) }}" method="POST"
                                 class="form-new-product form-style-1 needs-validation" novalidate="">
-
+                                @csrf
+                                @method('PUT')
                                 <fieldset class="name">
                                     <div class="body-title">Tên<span class="tf-color-1">*</span>
                                     </div>
                                     <input class="flex-grow" type="text" placeholder="Họ tên" name="name" tabindex="0"
-                                        value="" aria-required="true" required="">
+                                        value="{{ $user->name }}" aria-required="true" required="">
                                 </fieldset>
 
-                                <fieldset class="name">
+                                <fieldset class="phone">
                                     <div class="body-title">Số điện thoại<span class="tf-color-1">*</span></div>
-                                    <input class="flex-grow" type="text" placeholder="Số điện thoại" name="mobile"
-                                        tabindex="0" value="" aria-required="true" required="">
+                                    <input class="flex-grow" type="text" placeholder="Số điện thoại" name="phone"
+                                        tabindex="0" value="{{ $user->phone }}" aria-required="true" required="">
                                 </fieldset>
 
-                                <fieldset class="name">
+                                <fieldset class="email">
                                     <div class="body-title">Email<span class="tf-color-1">*</span></div>
                                     <input class="flex-grow" type="text" placeholder="Địa chie Email" name="email"
-                                        tabindex="0" value="" aria-required="true" required="">
+                                        tabindex="0" value="{{ $user->email }}" aria-required="true" required="">
                                 </fieldset>
 
                                 <div class="row">

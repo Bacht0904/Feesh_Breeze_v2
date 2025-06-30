@@ -82,6 +82,7 @@ Route::post('/admin/user/store', [AdminController::class, 'user_store'])->name('
 Route::get('/admin/user/{id}/edit', [AdminController::class, 'edit_user'])->name('admin.user.edit');
 Route::put('/admin/user/update', [AdminController::class, 'update_user'])->name('admin.user.update');
 Route::delete('/admin/user/{id}/delete', [AdminController::class, 'delete_user'])->name('admin.user.delete');
+Route::get('/admin/user/search', [AdminController::class, 'search_user'])->name('admin.users.search');
 
 Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
 Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');

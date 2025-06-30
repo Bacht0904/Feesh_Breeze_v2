@@ -643,6 +643,22 @@ class AdminController extends Controller
         return redirect()->route('admin.users')->with('status', 'Người dùng đã được thêm thành công!');
     }
 
+    public function search_user(Request $request)
+    {
+        $search = $request->input('name');
+
+        $users = User::where(function ($query) use ($search) {
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('email', 'like', "%$search%")
+                ->orWhere('phone', 'like', "%$search%")
+                ->orWhere('address', 'like', "%$search%")
+                ->orWhere('role', 'like', "%$search%")
+                ->orWhere('status', 'like', "%$search%");
+        })->paginate(10);
+
+        return view('admin.users', compact('users', 'search'));
+    }
+
 
     public function update_user(Request $request)
     {
@@ -795,7 +811,11 @@ class AdminController extends Controller
 
     public function settings()
     {
-        return view('admin.settings');
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Bạn cần đăng nhập trước khi tiếp tục.');
+        }
+        $user = auth()->user(); // hoặc lấy theo cách bạn đang quản lý session/user
+        return view('admin.settings', compact('user'));
     }
 
 
