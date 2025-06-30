@@ -2,212 +2,145 @@
 
 @section('content')
 <main class="pt-90">
-    <div class="mb-4 pb-4"></div>
-    <section class="shop-checkout container">
-      <h2 class="page-title">Shipping and Checkout</h2>
-      <div class="checkout-steps">
-        <a href="cart.html" class="checkout-steps__item active">
-          <span class="checkout-steps__item-number">01</span>
-          <span class="checkout-steps__item-title">
-            <span>Shopping Bag</span>
-            <em>Manage Your Items List</em>
-          </span>
-        </a>
-        <a href="checkout.html" class="checkout-steps__item active">
-          <span class="checkout-steps__item-number">02</span>
-          <span class="checkout-steps__item-title">
-            <span>Shipping and Checkout</span>
-            <em>Checkout Your Items List</em>
-          </span>
-        </a>
-        <a href="order-confirmation.html" class="checkout-steps__item">
-          <span class="checkout-steps__item-number">03</span>
-          <span class="checkout-steps__item-title">
-            <span>Confirmation</span>
-            <em>Review And Submit Your Order</em>
-          </span>
-        </a>
-      </div>
-      <form name="checkout-form" action="https://uomo-html.flexkitux.com/Demo3/shop_order_complete.html">
-        <div class="checkout-form">
-          <div class="billing-info__wrapper">
-            <div class="row">
-              <div class="col-6">
-                <h4>SHIPPING DETAILS</h4>
-              </div>
-              <div class="col-6">
-              </div>
-            </div>
+  <section class="shop-checkout container">
+    <h2 class="page-title mb-4">Vận chuyển và Thanh toán</h2>
 
-            <div class="row mt-5">
-              <div class="col-md-6">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="name" required="">
-                  <label for="name">Full Name *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="phone" required="">
-                  <label for="phone">Phone Number *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="zip" required="">
-                  <label for="zip">Pincode *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-floating mt-3 mb-3">
-                  <input type="text" class="form-control" name="state" required="">
-                  <label for="state">State *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="city" required="">
-                  <label for="city">Town / City *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="address" required="">
-                  <label for="address">House no, Building Name *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-6">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="locality" required="">
-                  <label for="locality">Road Name, Area, Colony *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-              <div class="col-md-12">
-                <div class="form-floating my-3">
-                  <input type="text" class="form-control" name="landmark" required="">
-                  <label for="landmark">Landmark *</label>
-                  <span class="text-danger"></span>
-                </div>
-              </div>
-            </div>
+    @if(session('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    {{-- Tiến trình thanh toán --}}
+    <div class="checkout-steps d-flex mb-5">
+      @foreach ([
+      ['text' => 'Giỏ Hàng', 'sub' => 'Sản phẩm'],
+      ['text' => 'Thanh toán', 'sub' => 'Thông tin'],
+      ['text' => 'Xác nhận', 'sub' => 'Gửi đơn']
+      ] as $index => $step)
+      <div class="checkout-steps__item {{ $index <= 1 ? 'active' : '' }}">
+        <span class="checkout-steps__item-number">0{{ $index + 1 }}</span>
+        <span class="checkout-steps__item-title">
+          <span>{{ $step['text'] }}</span><em>{{ $step['sub'] }}</em>
+        </span>
+      </div>
+      @endforeach
+    </div>
+
+    <div class="row">
+      {{-- Form khách hàng --}}
+      <div class="col-md-7">
+        <form action="{{ route('checkout.process') }}" method="POST">
+          @csrf
+
+          @foreach ([
+          ['name', 'Họ tên *', 'text', Auth::user()->name ?? ''],
+          ['phone', 'Số điện thoại *', 'text', Auth::user()->phone ?? ''],
+          ['address', 'Địa chỉ giao hàng *', 'text', Auth::user()->address ?? ''],
+          ['coupon_code', 'Mã giảm giá (nếu có)', 'text', '']
+          ] as [$name, $label, $type, $value])
+          <div class="form-floating mb-3">
+            <input class="form-control"
+              type="{{ $type }}"
+              name="{{ $name }}"
+              id="{{ $name }}"
+              value="{{ $value }}"
+              {{ $name !== 'coupon_code' ? 'required' : '' }}>
+
+            <label for="{{ $name }}">{{ $label }}</label>
           </div>
-          <div class="checkout__totals-wrapper">
-            <div class="sticky-content">
-              <div class="checkout__totals">
-                <h3>Your Order</h3>
-                <table class="checkout-cart-items">
-                  <thead>
-                    <tr>
-                      <th>PRODUCT</th>
-                      <th align="right">SUBTOTAL</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>
-                        Zessi Dresses x 2
-                      </td>
-                      <td align="right">
-                        $32.50
-                      </td>
-                    </tr>
-                    <tr>
-                      <td>
-                        Kirby T-Shirt
-                      </td>
-                      <td align="right">
-                        $29.90
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <table class="checkout-totals">
-                  <tbody>
-                    <tr>
-                      <th>SUBTOTAL</th>
-                      <td align="right">$62.40</td>
-                    </tr>
-                    <tr>
-                      <th>SHIPPING</th>
-                      <td align="right">Free shipping</td>
-                    </tr>
-                    <tr>
-                      <th>VAT</th>
-                      <td align="right">$19</td>
-                    </tr>
-                    <tr>
-                      <th>TOTAL</th>
-                      <td align="right">$81.40</td>
-                    </tr>
-                  </tbody>
-                </table>
+          @endforeach
+
+          <div class="form-floating mb-4">
+            <textarea class="form-control" name="note" id="note" style="height: 100px" placeholder="Ghi chú đơn hàng (tuỳ chọn)"></textarea>
+            <label for="note">Ghi chú đơn hàng</label>
+          </div>
+
+          {{-- Phương thức thanh toán --}}
+          <h4 class="mb-3">Phương thức thanh toán</h4>
+          @foreach([
+          ['cod', 'Thanh toán khi nhận hàng', 'cash_logo.jpg'],
+          ['momo', 'Ví MOMO', 'momo_logo.jpg'],
+          ['vnpay', 'VNPAY', 'vnpay_logo.jpg']
+          ] as [$id, $name, $logo])
+          <div class="form-check mb-2 d-flex align-items-center">
+            <input class="form-check-input me-2" type="radio" name="payment_method" id="{{ $id }}" value="{{ $id }}" {{ $loop->first ? 'checked' : '' }}>
+            <label class="form-check-label d-flex align-items-center gap-3" for="{{ $id }}">
+              <img src="{{ asset('images/payment_logo/' . $logo) }}" alt="{{ $name }}" width="48" height="32" style="object-fit: contain; border-radius: 6px;">
+              <span>{{ $name }}</span>
+            </label>
+          </div>
+          @endforeach
+
+          <button type="submit" class="btn btn-primary mt-4">ĐẶT HÀNG</button>
+        </form>
+      </div>
+
+      {{-- Giỏ hàng --}}
+      <div class="col-md-5">
+        <div class="card">
+          <div class="card-header bg-light"><strong>🛒 Giỏ hàng của bạn</strong></div>
+          <ul class="list-group list-group-flush">
+            @forelse ($cart ?? [] as $item)
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              <div>
+                <div>{{ $item['product_name'] }} ({{ $item['size'] ?? '-' }})</div>
+                <small class="text-muted">{{ $item['quantity'] }} × ₫{{ number_format($item['price']) }}</small>
               </div>
-              <div class="checkout__payment-methods">
-                <div class="form-check">
-                  <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
-                    id="checkout_payment_method_1" checked>
-                  <label class="form-check-label" for="checkout_payment_method_1">
-                    Direct bank transfer
-                    <p class="option-detail">
-                      Make your payment directly into our bank account. Please use your Order ID as the payment
-                      reference.Your order will not be shipped until the funds have cleared in our account.
-                    </p>
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
-                    id="checkout_payment_method_2">
-                  <label class="form-check-label" for="checkout_payment_method_2">
-                    Check payments
-                    <p class="option-detail">
-                      Phasellus sed volutpat orci. Fusce eget lore mauris vehicula elementum gravida nec dui. Aenean
-                      aliquam varius ipsum, non ultricies tellus sodales eu. Donec dignissim viverra nunc, ut aliquet
-                      magna posuere eget.
-                    </p>
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
-                    id="checkout_payment_method_3">
-                  <label class="form-check-label" for="checkout_payment_method_3">
-                    Cash on delivery
-                    <p class="option-detail">
-                      Phasellus sed volutpat orci. Fusce eget lore mauris vehicula elementum gravida nec dui. Aenean
-                      aliquam varius ipsum, non ultricies tellus sodales eu. Donec dignissim viverra nunc, ut aliquet
-                      magna posuere eget.
-                    </p>
-                  </label>
-                </div>
-                <div class="form-check">
-                  <input class="form-check-input form-check-input_fill" type="radio" name="checkout_payment_method"
-                    id="checkout_payment_method_4">
-                  <label class="form-check-label" for="checkout_payment_method_4">
-                    Paypal
-                    <p class="option-detail">
-                      Phasellus sed volutpat orci. Fusce eget lore mauris vehicula elementum gravida nec dui. Aenean
-                      aliquam varius ipsum, non ultricies tellus sodales eu. Donec dignissim viverra nunc, ut aliquet
-                      magna posuere eget.
-                    </p>
-                  </label>
-                </div>
-                <div class="policy-text">
-                  Your personal data will be used to process your order, support your experience throughout this
-                  website, and for other purposes described in our <a href="terms.html" target="_blank">privacy
-                    policy</a>.
-                </div>
-              </div>
-              <button class="btn btn-primary btn-checkout">PLACE ORDER</button>
-            </div>
+              <img src="{{ asset($item['image']) }}" width="50" class="rounded" alt="">
+            </li>
+            @empty
+            <li class="list-group-item">Không có sản phẩm trong giỏ.</li>
+            @endforelse
+          </ul>
+          <div class="card-footer text-end fw-bold">
+            Tổng cộng: ₫{{ number_format(collect($cart ?? [])->sum(fn($i) => $i['price'] * $i['quantity'])) }}
           </div>
         </div>
-      </form>
-    </section>
-  </main>
+      </div>
+    </div>
+  </section>
+</main>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('success'))
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: '🎉 Đặt hàng thành công!',
+    text: "{{ session('success') }}",
+    confirmButtonText: 'OK',
+    customClass: {
+      confirmButton: 'btn btn-primary px-4'
+    },
+    buttonsStyling: false
+  });
+</script>
+@endif
+@endpush
+
+@push('styles')
+<style>
+  .form-check-label {
+    cursor: pointer;
+  }
+
+  .checkout-steps__item.active {
+    font-weight: bold;
+    color: var(--bs-primary);
+  }
+
+  .checkout-steps__item-number {
+    background: #eee;
+    padding: 4px 10px;
+    border-radius: 20px;
+    display: inline-block;
+  }
+
+  .checkout-steps__item-title em {
+    display: block;
+    font-size: 0.8rem;
+    color: #999;
+  }
+</style>
+@endpush
