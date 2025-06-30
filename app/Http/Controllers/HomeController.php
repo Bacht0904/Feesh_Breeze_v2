@@ -23,7 +23,12 @@ class HomeController extends Controller
     public function welcome()
     {
         $featuredProducts = Product::with('product_details')->latest()->take(8)->get();
-        $products = Product::with('product_details')->get(); // hoặc ->paginate()
+        $products = Product::whereHas('product_details', function ($query) {
+            $query->where('quantity', '>', 0);
+        })->with(['product_details' => function ($query) {
+            $query->where('quantity', '>', 0);
+        }])->get();
+        // hoặc ->paginate()
         $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
         return view('welcome', compact('categories', 'products', 'featuredProducts'));
     }
@@ -43,11 +48,21 @@ class HomeController extends Controller
 
 
         if (Auth::check()) {
-            $products = Product::with('product_details')->get(); // hoặc ->paginate()
+            $products = Product::whereHas('product_details', function ($query) {
+                $query->where('quantity', '>', 0);
+            })->with(['product_details' => function ($query) {
+                $query->where('quantity', '>', 0);
+            }])->get();
+            // hoặc ->paginate()
             $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
             return view('welcome', compact('categories', 'products', 'featuredProducts'));
         } else {
-            $products = Product::with('product_details')->get(); // hoặc ->paginate()
+            $products = Product::whereHas('product_details', function ($query) {
+                $query->where('quantity', '>', 0);
+            })->with(['product_details' => function ($query) {
+                $query->where('quantity', '>', 0);
+            }])->get();
+            // hoặc ->paginate()
             $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
             return view('welcome', compact('categories', 'products', 'featuredProducts'));
         }
@@ -59,7 +74,13 @@ class HomeController extends Controller
 
     public function shop()
     {
-        $products = Product::with('product_details')->get();
+
+        $products = Product::whereHas('product_details', function ($query) {
+            $query->where('quantity', '>', 0);
+        })->with(['product_details' => function ($query) {
+            $query->where('quantity', '>', 0);
+        }])->get();
+
         $categories = Category::all();
         $brands = Brand::withCount('products')->get();
 
@@ -89,7 +110,7 @@ class HomeController extends Controller
         }
     }
 
-  
+
 
     public function register(Request $request)
     {
@@ -115,7 +136,6 @@ class HomeController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-       return redirect('/');
-
+        return redirect('/');
     }
 }

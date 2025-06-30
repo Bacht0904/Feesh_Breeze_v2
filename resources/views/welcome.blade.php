@@ -265,7 +265,7 @@
                     $productUrl = route('products.show', $product->slug);
 
                     @endphp
-                    @if($detail)
+                    @if($detail && $detail->quantity > 0)
                     <div class="swiper-slide">
                         <div class="card border-0 shadow-sm product-card h-100 text-center">
                             <a href="{{ $productUrl }}" class="d-block">
