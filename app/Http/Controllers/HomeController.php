@@ -89,16 +89,7 @@ class HomeController extends Controller
         }
     }
 
-    public function logout(Request $request)
-    {
-        Auth::logout(); // Đăng xuất người dùng
-
-        // Invalidate phiên hiện tại & regenerate token để bảo mật
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return redirect('welcome')->with('success', 'Đăng xuất thành công');
-    }
+  
 
     public function register(Request $request)
     {
@@ -117,5 +108,14 @@ class HomeController extends Controller
         Auth::login($user);
 
         return redirect()->route('welcome');
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+       return redirect('/');
+
     }
 }

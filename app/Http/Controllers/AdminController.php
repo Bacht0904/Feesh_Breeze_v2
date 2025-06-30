@@ -11,6 +11,7 @@ use App\Models\Order;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Rules\MatchOldPassword;
@@ -25,7 +26,62 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.index');
+        $orders = Order::orderBy('created_at', 'desc')->get()->take(10);
+        $dashboardDatas = DB::select("Select sum(total) as totalAmount,
+                                            sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
+                                            sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount,
+                                            sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount,
+                                            count(*) as total,
+                                            sum(if(status = 'Chờ Xác Nhận', 1, 0)) as totalOrdered,
+                                            sum(if(status = 'Đã Xác Nhận', 1, 0)) as totalConfirmed,
+                                            sum(if(status = 'Đã Giao', 1, 0)) as totalDelivered
+                                            from orders
+                                            ");
+        $monthlyDatas = DB::select("Select 
+                                            M.id as month_No, 
+                                            M.name as monthName, 
+                                            Ifnull(D.totalAmount, 0) as totalAmount, 
+                                            Ifnull(D.totalOrderedAmount, 0) as totalOrderedAmount, 
+                                            Ifnull(D.totalConfirmedAmount, 0) as totalConfirmedAmount, 
+                                            Ifnull(D.totalDeliveredAmount, 0) as totalDeliveredAmount 
+                                            from month_names M 
+                                            left join (
+                                            Select 
+                                                date_format(created_at, '%b') as monthName, 
+                                                month(created_at) as monthNo, 
+                                                sum(total) as totalAmount, 
+                                                sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount, 
+                                                sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount, 
+                                                sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount 
+                                            from orders 
+                                            where year(created_at) = year(now()) 
+                                            group by year(created_at), month(created_at), date_format(created_at, '%b') 
+                                            order by month(created_at)
+                                            ) D on D.monthNo = M.id");
+
+        $amountM = implode(',', collect($monthlyDatas)->pluck('totalAmount')->toArray());
+        $orderedAmountM = implode(',', collect($monthlyDatas)->pluck('totalOrderedAmount')->toArray());
+        $confirmedAmountM = implode(',', collect($monthlyDatas)->pluck('totalConfirmedAmount')->toArray());
+        $deliveredAmountM = implode(',', collect($monthlyDatas)->pluck('totalDeliveredAmount')->toArray());
+
+        $totalAmount = collect($monthlyDatas)->sum('totalAmount');
+        $totalOrderedAmount = collect($monthlyDatas)->sum('totalOrderedAmount');
+        $totalConfirmedAmount = collect($monthlyDatas)->sum('totalConfirmedAmount');
+        $totalDeliveredAmount = collect($monthlyDatas)->sum('totalDeliveredAmount');
+
+        return view('admin.index', compact(
+            'orders',
+            'dashboardDatas',
+            'amountM',
+            'orderedAmountM',
+            'confirmedAmountM',
+            'deliveredAmountM',
+            'totalAmount',
+            'totalOrderedAmount',
+            'totalConfirmedAmount',
+            'totalDeliveredAmount'
+        ));
+
     }
 
     public function changePassword()

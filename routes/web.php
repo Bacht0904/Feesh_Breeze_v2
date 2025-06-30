@@ -10,14 +10,11 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\OrderController;
 
 
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+
 
 Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
@@ -98,10 +95,13 @@ Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
 Route::post('/login', [HomeController::class, 'login'])->name('login');
 
-Route::get('/logout','HomeController@logout')->name('user.logout');
+Route::post('/logout', [HomeController::class, 'logout'])
+    ->name('logout');
+
 
 Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
 Route::get('/register', [HomeController::class, 'showRegistrationForm'])->name('register');
+Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
 Route::get('/shop', [HomeController::class, 'shop'])->name('shop');
@@ -134,6 +134,15 @@ Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name(
 Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
 Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
+Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
+Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/account-orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/account-orders/{id}', [OrderController::class, 'show'])->name('orders.details');
+});
 
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
@@ -142,3 +151,13 @@ Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout
 Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
 Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
 
+
+Route::match(['GET', 'POST'], '/momo-return', [CheckoutController::class, 'handleMomoCallback'])->name('momo.callback');
+
+
+// routes/web.php
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
+Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist.add');
+Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
+Route::get('/wishlist/clear', [WishlistController::class, 'clear'])->name('wishlist.clear');
+Route::post('/wishlist/move-to-cart', [WishlistController::class, 'moveToCart'])->name('wishlist.moveToCart');
