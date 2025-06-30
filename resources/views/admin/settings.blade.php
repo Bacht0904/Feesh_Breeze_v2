@@ -23,7 +23,7 @@
                 <div class="col-lg-12">
                     <div class="page-content my-account__edit">
                         <div class="my-account__edit-form">
-                            <form name="account_edit_form" action="#" method="POST"
+                            <form name="account_edit_form" action="{{ route('admin.user.store') }}" method="POST"
                                 class="form-new-product form-style-1 needs-validation" novalidate="">
 
                                 <fieldset class="name">

@@ -59,10 +59,11 @@ class AdminController extends Controller
                                             order by month(created_at)
                                             ) D on D.monthNo = M.id");
 
-        $amountM = implode(',', collect($monthlyDatas)->pluck('totalAmount')->toArray());
-        $orderedAmountM = implode(',', collect($monthlyDatas)->pluck('totalOrderedAmount')->toArray());
-        $confirmedAmountM = implode(',', collect($monthlyDatas)->pluck('totalConfirmedAmount')->toArray());
-        $deliveredAmountM = implode(',', collect($monthlyDatas)->pluck('totalDeliveredAmount')->toArray());
+        $amountM = collect($monthlyDatas)->pluck('totalAmount')->map(fn($v) => round($v, 2))->values();
+        $orderedAmountM = collect($monthlyDatas)->pluck('totalOrderedAmount')->map(fn($v) => round($v, 2))->values();
+        $confirmedAmountM = collect($monthlyDatas)->pluck('totalConfirmedAmount')->map(fn($v) => round($v, 2))->values();
+        $deliveredAmountM = collect($monthlyDatas)->pluck('totalDeliveredAmount')->map(fn($v) => round($v, 2))->values();
+
 
         $totalAmount = collect($monthlyDatas)->sum('totalAmount');
         $totalOrderedAmount = collect($monthlyDatas)->sum('totalOrderedAmount');

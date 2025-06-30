@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{config('app.name','Laravel')}}</title>
+    <title>{{config('app.name', 'Laravel')}}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="surfside media" />
@@ -22,6 +22,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
     @stack('styles')
 </head>
+
 <body class="body">
     <div id="wrapper">
         <div id="page" class="">
@@ -160,10 +161,11 @@
                                 <li class="menu-item">
                                     <form method="post" action="{{route('logout')}}" id="logout-form">
                                         @csrf
-                                    <a href="{{route('logout')}}" class="" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                                        <div class="icon"><i class="icon-settings"></i></div>
-                                        <div class="text">Đăng xuất</div>
-                                    </a>
+                                        <a href="{{route('logout')}}" class=""
+                                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                            <div class="icon"><i class="icon-settings"></i></div>
+                                            <div class="text">Đăng xuất</div>
+                                        </a>
                                     </form>
                                 </li>
                             </ul>
@@ -323,11 +325,13 @@
 
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>   
-    <script src="{{ asset('js/sweetalert.min.js') }}"></script>    
+    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('js/sweetalert.min.js') }}"></script>
+ 
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-
+  
     @stack('scripts')
 </body>
+
 </html>

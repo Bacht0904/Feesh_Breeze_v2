@@ -64,7 +64,7 @@
                                     </td>
                                     <td>
                                         @if($product->product_details->count())
-                                            {{ number_format($product->product_details->min('price')) }}₫
+                                            {{ number_format($product->product_details->min('price'), 0, ',', '.') }}&nbsp;VND
                                         @else
                                             <span class="">Chưa có giá</span>
                                         @endif
