@@ -309,6 +309,14 @@
         $firstDetail = $product->product_details->first();
         $productUrl = route('products.show', $product->slug); // dùng slug
         $uniqueSizes = $product->product_details->pluck('size')->unique()->filter()->values();
+
+        $reviewCount = $product->reviews->count();
+        $reviewAvg = $reviewCount > 0 ? round($product->reviews->avg('rating')) : 0;
+        $reviewStars = str_repeat('<svg class="review-star" viewBox="0 0 9 9">
+          <use href="#icon_star" />
+        </svg>', $reviewAvg);
+        $reviewText = $reviewCount > 0 ? "{$reviewCount} reviews" : 'Chưa có đánh giá';
+
         @endphp
         @if ( $firstDetail->quantity > 0)
         <div class="col-6 col-md-4">
@@ -359,15 +367,20 @@
                 <span class="badge bg-light text-dark border me-1 mb-1">{{ $size }}</span>
                 @endforeach
               </div>
-
               <div class="product-card__review d-flex align-items-center">
-                <div class="reviews-group d-flex">
-                  @for($i = 0; $i < 5; $i++)
-                    <svg class="review-star" viewBox="0 0 9 9">
-                    <use href="#icon_star" /></svg>
+                <div class="reviews-group d-flex align-items-center">
+                  @for ($i = 1; $i <= 5; $i++)
+                    <svg class="review-star {{ $i <= $reviewAvg ? 'text-warning' : 'text-muted' }}" viewBox="0 0 9 9">
+                    <use href="#icon_star" />
+                    </svg>
                     @endfor
+                    @if ($reviewCount > 0)
+                    <span class="ms-2 small text-dark fw-semibold">{{ number_format($product->reviews->avg('rating'), 1) }}/5</span>
+                    @endif
                 </div>
-                <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
+                <span class="reviews-note text-secondary ms-2">
+                  {{ $reviewCount > 0 ? $reviewCount . ' đánh giá' : 'Chưa có đánh giá' }}
+                </span>
               </div>
 
               <button type="button" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" data-id="{{ $firstDetail->id }}"
@@ -504,4 +517,19 @@
 
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
+<style>
+  .review-star {
+    width: 1rem;
+    height: 1rem;
+    fill: currentColor;
+  }
+
+  .text-warning {
+    color: #ffc107;
+  }
+
+  .text-muted {
+    color: #ccc;
+  }
+</style>
 @endpush

@@ -172,61 +172,122 @@
                                     <th>Sản phẩm</th>
                                     <th class="text-center">Giá</th>
                                     <th class="text-center">Số lượng</th>
-                                    <th class="text-center">Mã sản phẩm</th>
-                                    <th class="text-center">Tùy chọn</th>
+                                    <th class="text-center">Đánh giá</th>
+                                    <th class="text-center">Size, Màu</th>
                                     <th class="text-center">Trả hàng</th>
                                     <th class="text-center">Thao tác</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($order->details as $item)
-
-
+                                @php
+                                $productDetail = $item->productDetail;
+                                $product = $productDetail->product ?? null;
+                                @endphp
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
                                             <img src="{{ asset($item->image) }}" class="image" style="width: 50px; height: 50px; object-fit: cover;">
 
-                                            <a href="#" target="_blank" class="text-decoration-none fw-semibold">{{ $item->product_name }}</a>
+                                            <a href="{{ route('products.show', ['slug' => $product->slug]) }}">
+                                                {{ $product->name }}
+                                            </a>
                                         </div>
                                     </td>
                                     <td class="text-center">{{ number_format($item->price, 0, ',', '.') }}₫</td>
                                     <td class="text-center">{{ $item->quantity }}</td>
-                                    <td class="text-center">--</td>
-                                    <td class="text-center">{{ $item->size ?? '--' }}{{ $item->color ? ', '.$item->color : '' }}</td>
-                                    <td class="text-center">Không</td>
                                     <td class="text-center">
 
-                                        @if($canReview)
-                                        <form action="{{ route('review.store') }}" method="POST">
-                                            @csrf
-                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
-                                            <input type="hidden" name="product_detail_id" value="{{ $productDetail->id ?? '' }}">
-
-                                            <div class="mb-2">
-                                                <label>Đánh giá:</label>
-                                                <select name="rating" class="form-select" required>
-                                                    @for($i = 5; $i >= 1; $i--)
-                                                    <option value="{{ $i }}">{{ $i }} sao</option>
+                                        @if ($item->review)
+                                        <span class="badge bg-success">
+                                            <div class="d-flex align-items-center gap-2">
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <i class="fa fa-star {{ $i <= $item->review->rating ? 'text-warning' : 'text-secondary' }}"></i>
                                                     @endfor
-                                                </select>
                                             </div>
+                                        </span>
+                                        <div class="text-muted small mb-2" style="max-width: 220px;">
+                                            “{{ $item->review->comment }}”
+                                        </div>
 
-                                            <div class="mb-3">
-                                                <textarea name="comment" class="form-control" placeholder="Nhận xét của bạn (tuỳ chọn)"></textarea>
-                                            </div>
-
-                                            <button class="btn btn-primary">Gửi đánh giá</button>
-                                        </form>
+                                        @else
+                                        <span class="badge bg-warning">Chưa đánh giá</span>
                                         @endif
 
                                     </td>
+                                    <td class="text-center">{{ $item->size ?? '--' }}{{ $item->color ? ', '.$item->color : '' }}</td>
+                                    <td class="text-center">Không</td>
+                                    <td class="text-center">
+                                        @if ($canReview && !$item->review && $product)
+                                        <button class="btn btn-success radius"
+                                            onclick="showReviewForm({{ $product->id }}, '{{ $product->name }}', {{ $productDetail->id ?? 'null' }})">
+                                            Đánh giá
+                                        </button>
+                                        @elseif ($item->review)
+                                        <div class="d-flex flex-wrap gap-2">
+                                            <button class="btn btn-warning btn-sm px-3 shadow-sm d-flex align-items-center"
+                                                onclick="editReview({{ $product->id }}, '{{ $product->name }}', {{ $productDetail->id ?? 'null' }}, {{ $item->review->rating }}, `{{ $item->review->comment }}`)">
+                                                <i class="fa fa-pen-to-square me-1"></i> Sửa
+                                            </button>
+
+                                            <form action="{{ route('review.destroy', $item->review->id) }}" method="POST"
+                                                onsubmit="return confirm('Bạn có chắc muốn xoá đánh giá này?')">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button class="btn btn-danger btn-sm px-3 shadow-sm d-flex align-items-center">
+                                                    <i class="fa fa-xmark me-1"></i> Xóa
+                                                </button>
+                                            </form>
+                                        </div>
+                                        @endif
+
+                                    </td>
+
+
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
+                {{-- Đánh giá sản phẩm --}}
+
+                <div id="review-section" class="mt-4 d-none">
+                    <div class="card shadow-sm">
+                        <div class="card-header bg-light fw-bold">
+                            Đánh giá sản phẩm: <span id="review-product-name" class="text-primary"></span>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ route('review.store') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="product_id" id="review-product-id">
+                                <input type="hidden" name="product_detail_id" id="review-product-detail-id">
+
+                                <div class="mb-3">
+                                    <label class="form-label d-block">Đánh giá sao *</label>
+                                    <div class="star-rating">
+                                        @for ($i = 1; $i <= 5; $i++)
+                                            <input type="radio" id="star-{{ $i }}" name="rating" value="{{ $i }}">
+                                            <label for="star-{{ $i }}" title="{{ $i }} sao">
+                                                <i class="fa fa-star"></i>
+                                            </label>
+                                            @endfor
+                                    </div>
+
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Nhận xét</label>
+                                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-success">Gửi đánh giá</button>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
 
                 {{-- Địa chỉ giao hàng --}}
                 <div class="wg-box mt-5">
@@ -289,3 +350,83 @@
     </section>
 </main>
 @endsection
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    .star-rating {
+        display: flex;
+        flex-direction: row;
+        /* chiều trái sang phải */
+        justify-content: flex-start;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 10px;
+    }
+
+
+
+
+    .star-rating input[type="radio"] {
+        display: none;
+    }
+
+    .star-rating label {
+        font-size: 30px;
+        color: #ccc;
+        cursor: pointer;
+        transition: color 0.2s;
+        margin: 0;
+        /* tránh lệch do spacing */
+    }
+
+    .star-rating input[type="radio"]:checked~label,
+    .star-rating label:hover,
+    .star-rating label:hover~label {
+        color: #ffc107;
+    }
+</style>
+
+<script>
+    let activeReviewId = null;
+
+    function showReviewForm(productId, productName, productDetailId) {
+        const reviewSection = document.getElementById('review-section');
+
+        if (activeReviewId === productId) {
+            // Người dùng bấm lại nút đang mở → ẩn đi
+            reviewSection.classList.add('d-none');
+            activeReviewId = null;
+            return;
+        }
+
+        // Gán dữ liệu vào form
+        document.getElementById('review-product-id').value = productId;
+        document.getElementById('review-product-detail-id').value = productDetailId || '';
+        document.getElementById('review-product-name').textContent = productName;
+
+        // Hiển thị form và scroll tới
+        reviewSection.classList.remove('d-none');
+        reviewSection.scrollIntoView({
+            behavior: 'smooth'
+        });
+
+        activeReviewId = productId;
+    }
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tự động mở form đánh giá nếu có sản phẩm đang chờ đánh giá
+        const canReview = @json($canReview);
+        if (canReview) {
+            const firstProduct = document.querySelector('.table-striped tbody tr');
+            if (firstProduct) {
+                const productId = firstProduct.querySelector('td:nth-child(1) a').getAttribute('href').split('/').pop();
+                const productName = firstProduct.querySelector('td:nth-child(1) a').textContent.trim();
+                showReviewForm(productId, productName, null);
+            }
+        }
+    });
+</script>
+@endpush

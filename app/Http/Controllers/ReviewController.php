@@ -19,7 +19,7 @@ class ReviewController extends Controller
         ]);
 
         Review::create([
-            'user_id'          => auth()->id(),
+            'user_id'          => Auth::id(),
             'product_id'       => $request->product_id,
             'product_detail_id' => $request->product_detail_id,
             'rating'           => $request->rating,
@@ -61,7 +61,7 @@ class ReviewController extends Controller
         if ($review->user_id !== Auth::id()) {
             return redirect()->back()->with('error', 'Bạn không có quyền xóa đánh giá này.');
         }
-        $review->delete();
+        $review->unset('status'); // Ẩn đánh giá thay vì xóa
         return redirect()->route('product.show', $review->product_id)
             ->with('success', '✅ Đánh giá đã được xóa thành công!');
     }

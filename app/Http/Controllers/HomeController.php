@@ -5,81 +5,47 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
+
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Brand;
-// Nếu cần sử dụng Brand trong controller này
-// Nếu cần sử dụng Product_detail trong controller này
-use App\Models\Product_details; // Nếu cần sử dụng ProductDetail trong controller này
+use App\Models\Product_details;
+use App\Models\User;
 
 class HomeController extends Controller
 {
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function welcome()
     {
-        $featuredProducts = Product::with('product_details')->latest()->take(8)->get();
-        $products = Product::whereHas('product_details', function ($query) {
-            $query->where('quantity', '>', 0);
-        })->with(['product_details' => function ($query) {
-            $query->where('quantity', '>', 0);
-        }])->get();
-        // hoặc ->paginate()
-        $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
+        $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+            ->with([
+                'product_details' => fn($q) => $q->where('quantity', '>', 0),
+                'reviews' // 👈 thêm reviews để hiển thị số sao + số lượt đánh giá
+            ])
+            ->get();
+
+        $featuredProducts = Product::with(['product_details', 'reviews']) // cũng eager load reviews
+            ->latest()
+            ->take(8)
+            ->get();
+
+        $categories = Category::all(); // hoặc ->where('status', 'active')
+
         return view('welcome', compact('categories', 'products', 'featuredProducts'));
     }
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
 
-    public function showRegistrationForm()
-    {
-        return view('auth.register');
-    }
     public function index()
     {
-
-        $featuredProducts = Product::latest()->take(8)->get();
-
-
-        if (Auth::check()) {
-            $products = Product::whereHas('product_details', function ($query) {
-                $query->where('quantity', '>', 0);
-            })->with(['product_details' => function ($query) {
-                $query->where('quantity', '>', 0);
-            }])->get();
-            // hoặc ->paginate()
-            $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
-            return view('welcome', compact('categories', 'products', 'featuredProducts'));
-        } else {
-            $products = Product::whereHas('product_details', function ($query) {
-                $query->where('quantity', '>', 0);
-            })->with(['product_details' => function ($query) {
-                $query->where('quantity', '>', 0);
-            }])->get();
-            // hoặc ->paginate()
-            $categories = Category::all(); // hoặc ->where('status', 'active') nếu có
-            return view('welcome', compact('categories', 'products', 'featuredProducts'));
-        }
-    }
-    public function showProfile()
-    {
-        return view('auth.profile');
+        return $this->welcome(); // gọi lại hàm welcome để tránh lặp code
     }
 
     public function shop()
     {
-
-        $products = Product::whereHas('product_details', function ($query) {
-            $query->where('quantity', '>', 0);
-        })->with(['product_details' => function ($query) {
-            $query->where('quantity', '>', 0);
-        }])->get();
+        $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+            ->with([
+                'product_details' => fn($q) => $q->where('quantity', '>', 0),
+                'reviews'
+            ])
+            ->get();
 
         $categories = Category::all();
         $brands = Brand::withCount('products')->get();
@@ -93,34 +59,47 @@ class HomeController extends Controller
             ];
         });
 
-
         return view('user.shop', compact('products', 'categories', 'brands', 'colors', 'sizes'));
+    }
+
+    public function showLoginForm()
+    {
+        return view('auth.login');
+    }
+
+    public function showRegistrationForm()
+    {
+        return view('auth.register');
+    }
+
+    public function showProfile()
+    {
+        return view('auth.profile');
     }
 
     public function login(Request $request)
     {
-        $data = $request->all();
+        $data = $request->only(['email', 'password']);
+
         if (Auth::attempt(['email' => $data['email'], 'password' => $data['password'], 'status' => 'active'])) {
             Session::put('user', $data['email']);
-            request()->session()->flash('success', 'Đăng nhập thành công');
+            $request->session()->flash('success', 'Đăng nhập thành công');
             return redirect()->route('home');
-        } else {
-            request()->session()->flash('error', 'Email hoặc mật khẩu không đúng!');
-            return redirect()->back();
         }
+
+        $request->session()->flash('error', 'Email hoặc mật khẩu không đúng!');
+        return back();
     }
-
-
 
     public function register(Request $request)
     {
-        $this->validate($request, [
+        $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:6|confirmed',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|min:6|confirmed',
         ]);
 
-        $user = \App\Models\User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
@@ -130,6 +109,7 @@ class HomeController extends Controller
 
         return redirect()->route('welcome');
     }
+
     public function logout(Request $request)
     {
         Auth::logout();

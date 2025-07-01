@@ -36,7 +36,16 @@
         <p><strong>Trạng thái:</strong> {{ $product->status ? 'Còn hàng' : 'Hết hàng' }}</p>
         <p><strong>Ngày tạo:</strong> {{ $product->created_at->format('d/m/Y H:i') }}</p>
         <p><strong>Mô tả:</strong> {{ $product->description }}</p>
-
+        <p><strong>Đánh giá:</strong>
+          @if ($product->reviews->count() > 0)
+          <span class="text-warning">
+            {{ number_format($product->reviews->avg('rating'), 1) }} <i class="fa fa-star"></i>
+          </span>
+          ({{ $product->reviews->count() }} đánh giá)
+          @else
+          Chưa có đánh giá
+          @endif
+        </p>
         {{-- Thêm vào giỏ --}}
         <form method="POST" action="{{ route('cart.addDetail') }}">
           @csrf
