@@ -87,10 +87,10 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if($product->product_details->sum('quantity') > 0)
-                                            <span class="badge bg-success">Còn hàng</span>
-                                        @else
+                                        @if (!$product->brand || $product->product_details->sum('quantity') == 0)
                                             <span class="badge bg-secondary">Hết hàng</span>
+                                        @else
+                                            <span class="badge bg-success">Còn hàng</span>
                                         @endif
                                     </td>
                                     <td>

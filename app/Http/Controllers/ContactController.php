@@ -11,8 +11,10 @@ class ContactController extends Controller
     {
         
         $contacts = Contact::orderBy('created_at', 'desc')->paginate(10);
+        $contactCount = Contact::count(); // assuming you are using Eloquent model 'Contact'
+        $contacts = Contact::latest()->paginate(10); 
 
-        return view('admin.contacts', compact('contacts'));
+        return view('admin.contacts', compact('contacts', 'contactCount'));
     }
 
 

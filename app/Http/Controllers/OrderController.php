@@ -34,4 +34,6 @@ class OrderController extends Controller
 
         return view('user.orderdetail', compact('order'));
     }
+
+    
 }

@@ -1,3 +1,4 @@
+@php $user = $user ?? Auth::user(); @endphp
 @extends('layouts.admin')
 @section('content')
     <div class="main-content-inner">
@@ -23,8 +24,8 @@
                 <div class="col-lg-12">
                     <div class="page-content my-account__edit">
                         <div class="my-account__edit-form">
-                            <form name="account_edit_form" action="{{ route('admin.user.update', $user->id) }}" method="POST"
-                                class="form-new-product form-style-1 needs-validation" novalidate="">
+                            <form name="account_edit_form" action="{{ route('admin.setting', Auth::id()) }}" method="POST"
+                                class="form-new-product form-style-1 needs-validation" >
                                 @csrf
                                 @method('PUT')
                                 <fieldset class="name">
@@ -42,7 +43,7 @@
 
                                 <fieldset class="email">
                                     <div class="body-title">Email<span class="tf-color-1">*</span></div>
-                                    <input class="flex-grow" type="text" placeholder="Địa chie Email" name="email"
+                                    <input class="flex-grow" type="email" placeholder="Địa chie Email" name="email"
                                         tabindex="0" value="{{ $user->email }}" aria-required="true" required="">
                                 </fieldset>
 
@@ -55,6 +56,15 @@
                                         </div>
                                     </div>
                                     <div class="col-md-12">
+                                        @if ($errors->any())
+                                            <div class="alert alert-danger">
+                                                <ul>
+                                                    @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            </div>
+                                        @endif
                                         <div class="my-3">
                                             <button type="submit" class="btn btn-primary tf-button w208">Lưu thay
                                                 đổi</button>

@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\ProductDetail;
+use App\Models\Category;
+use App\Models\Brand;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -26,13 +29,12 @@ class Product extends Model
     }
     public function category()
     {
-        return $this->belongsTo(Category::class,'category_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function brand()
     {
-
-        return $this->belongsTo(Brand::class,'brand_id');
+        return $this->belongsTo(Brand::class, 'brand_id');
     }
 
 }
