@@ -27,11 +27,13 @@ class OrderController extends Controller
     // Chi tiết đơn hàng
     public function show($id)
     {
+
         $order = Order::where('id', $id)
             ->where('id_user', Auth::id())
             ->with(['details.productDetail']) // load cả chi tiết sản phẩm và thông tin sản phẩm gốc
             ->firstOrFail();
-
-        return view('user.orderdetail', compact('order'));
+        $canReview = $order->status === 'Đã Giao' || $order->status === 'Hoàn Thành';
+        return view('user.orderdetail', compact('order', 'canReview'));
     }
+   
 }

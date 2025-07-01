@@ -13,8 +13,8 @@
           <li><a href="{{ route('wishlist') }}" class="menu-link menu-link_us-s">Yêu Thích</a></li>
           <li><a href="{{ route('cart') }}" class="menu-link menu-link_us-s">Giỏ Hàng</a></li>
           <li><a href="{{ route('orders.index') }}" class="menu-link menu-link_us-s">Đơn Hàng</a></li>
-          <li><a href="{{ route('user.address') }}" class="menu-link menu-link_us-s">Địa Chỉ</a></li>
-          <li><a href="{{ route('user.review') }}" class="menu-link menu-link_us-s">Đánh Giá</a></li>
+         
+        
 
 
           <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">

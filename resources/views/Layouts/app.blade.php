@@ -280,15 +280,16 @@
             </div>
 
             <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart" data-aside="cartDrawer">
-                <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
+                <span class="header-item">
+                    <span class="text-tiny">{{ $cartItemCount ?? 0 }}</span>
                     <use href="#icon_cart" />
-                </svg>
+                </span>
 
                 <span class="cart-amount d-block position-absolute">
                     {{ $cartItemCount ?? 0 }}
                 </span>
             </a>
+       
         </div>
 
         <nav
@@ -477,22 +478,22 @@
                     </div>
 
                     @guest
-                        <div class="header-tools__item">
-                            <a href="{{ route('login') }}" class="header-tools__link">
+                    <div class="header-tools__item">
+                        <a href="{{ route('login') }}" class="header-tools__link">
 
-                                <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
-                            </a>
-                        </div>
+                            <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
+                        </a>
+                    </div>
                     @else
-                        <div class="header-tools__item">
-                            <a href="{{ route('profile') }}" class="header-tools__link">
-                                <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_user" />
-                                </svg>
-                                <span class="d-block text-uppercase fw-medium"></span>
-                            </a>
-                        </div>
+                    <div class="header-tools__item">
+                        <a href="{{ route('profile') }}" class="header-tools__link">
+                            <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <use href="#icon_user" />
+                            </svg>
+                            <span class="d-block text-uppercase fw-medium"></span>
+                        </a>
+                    </div>
                     @endguest
                     <a href="{{ route('wishlist') }} " class="header-tools__item">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -512,29 +513,29 @@
                         </span>
                     </a>
                     @if (Auth::check() && Auth::user()->role == 'admin')
-                        <div class="header-tools__item">
-                            <a href="{{ route('admin.index') }}" class="header-tools__link">
+                    <div class="header-tools__item">
+                        <a href="{{ route('admin.index') }}" class="header-tools__link">
 
-                                <span class="d-block text-uppercase fw-medium">Quản Lý</span>
-                            </a>
-                        </div>
-                        <form method="post" action="{{route('logout')}}" id="logout-form">
-                            @csrf
-                            <a href="{{route('logout')}}" class=""
-                                onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                                <div class="icon"><i class="icon-settings"></i></div>
-                                <div class="text">Đăng xuất</div>
-                            </a>
-                        </form>
+                            <span class="d-block text-uppercase fw-medium">Quản Lý</span>
+                        </a>
+                    </div>
+                    <form method="post" action="{{route('logout')}}" id="logout-form">
+                        @csrf
+                        <a href="{{route('logout')}}" class=""
+                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                            <div class="icon"><i class="icon-settings"></i></div>
+                            <div class="text">Đăng xuất</div>
+                        </a>
+                    </form>
                     @elseif(Auth::check())
-                        <form method="post" action="{{route('logout')}}" id="logout-form">
-                            @csrf
-                            <a href="{{route('logout')}}" class=""
-                                onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                                <div class="icon"><i class="icon-settings"></i></div>
-                                <div class="text">Đăng xuất</div>
-                            </a>
-                        </form>
+                    <form method="post" action="{{route('logout')}}" id="logout-form">
+                        @csrf
+                        <a href="{{route('logout')}}" class=""
+                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                            <div class="icon"><i class="icon-settings"></i></div>
+                            <div class="text">Đăng xuất</div>
+                        </a>
+                    </form>
                     @endif
 
                 </div>

@@ -38,7 +38,7 @@
             <div class="swiper-slide">
                 <div class="overflow-hidden position-relative h-100">
                     <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                        <img loading="lazy" src="{{asset('assets/images/home/demo3/slideshow-character1.png')}}" width="542" height="733"
+                        <img loading="lazy" src="assets/images/home/demo3/slideshow-character1.png" width="542" height="733"
                             alt="Woman Fashion 1"
                             class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto" />
                         <div class="character_markup type2">
@@ -85,7 +85,7 @@
             <div class="swiper-slide">
                 <div class="overflow-hidden position-relative h-100">
                     <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                        <img loading="lazy" src="{{asset('assets/images/slideshow-character2.png')}}" width="400" height="690"
+                        <img loading="lazy" src="assets/images/slideshow-character2.png" width="400" height="690"
                             alt="Woman Fashion 2"
                             class="slideshow-character__img animate animate_fade animate_rtl animate_delay-10 w-auto h-auto" />
                     </div>
@@ -100,13 +100,14 @@
                     </div>
                 </div>
             </div>
-        </div>
 
+        </div>
         <div class="container">
             <div
                 class="slideshow-pagination slideshow-number-pagination d-flex align-items-center position-absolute bottom-0 mb-5">
             </div>
         </div>
+
     </section>
     <div class="container mw-1620 bg-white border-radius-10">
         <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>

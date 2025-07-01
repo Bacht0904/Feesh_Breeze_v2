@@ -196,9 +196,30 @@
                                     <td class="text-center">{{ $item->size ?? '--' }}{{ $item->color ? ', '.$item->color : '' }}</td>
                                     <td class="text-center">Không</td>
                                     <td class="text-center">
-                                        <a href="{{ route('reviews.create', $item->product_detail_id) }}" class="btn btn-sm btn-primary">
-                                            Đánh giá
-                                        </a>
+
+                                        @if($canReview)
+                                        <form action="{{ route('review.store') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="product_id" value="{{ $product->id }}">
+                                            <input type="hidden" name="product_detail_id" value="{{ $productDetail->id ?? '' }}">
+
+                                            <div class="mb-2">
+                                                <label>Đánh giá:</label>
+                                                <select name="rating" class="form-select" required>
+                                                    @for($i = 5; $i >= 1; $i--)
+                                                    <option value="{{ $i }}">{{ $i }} sao</option>
+                                                    @endfor
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <textarea name="comment" class="form-control" placeholder="Nhận xét của bạn (tuỳ chọn)"></textarea>
+                                            </div>
+
+                                            <button class="btn btn-primary">Gửi đánh giá</button>
+                                        </form>
+                                        @endif
+
                                     </td>
                                 </tr>
                                 @endforeach
@@ -229,8 +250,8 @@
                                 <tr>
                                     <th>Tạm tính</th>
                                     <td>{{ number_format($order->suptotal, 0, ',', '.') }}₫</td>
-                                    <th>Thuế</th>
-                                    <td>--</td>
+                                    <th>Tiền vận chuyển</th>
+                                    <td>{{ $order->shipping_fee == 0 ? 'Miễn phí' : number_format($order->shipping_fee, 0, ',', '.') . '₫' }}</td>
                                     <th>Giảm giá</th>
                                     <td>-{{ number_format($order->coupon_discount ?? 0, 0, ',', '.') }}₫</td>
                                 </tr>

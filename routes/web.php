@@ -137,6 +137,8 @@ Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.c
 Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
 Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
 Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
 
 
@@ -149,15 +151,19 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/update', [UserController::class, 'update'])->name('account.update');
     Route::post('/account/change-password', [UserController::class, 'changePassword'])->name('account.changePassword');
 });
-Route::middleware(['auth'])->group(function () {
-    Route::get('/reviews/create/{product_detail}', [ReviewController::class, 'create'])->name('review');
-    Route::match(['GET', 'POST'], '/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-});
+
+// web.php
+Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
+Route::get('/review/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
+Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
+Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');    
 
 
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
 Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
 Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
