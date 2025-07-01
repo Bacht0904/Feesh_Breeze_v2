@@ -443,7 +443,58 @@
             });
     });
 </script>
+<style>
+  .text-rating-custom {
+    color: #ff9900;
+    /* Cam rực rỡ hoặc chọn tông màu bạn thích */
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
 
+
+
+  .review-count {
+    color: #6c757d;
+    /* xám nhẹ */
+    margin-left: 5px;
+  }
+
+  .product-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .swiper-product-detail img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #000;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: #007bff;
+  }
+
+  .form-select,
+  .form-control {
+    width: 100%;
+  }
+
+  .form-select {
+    max-width: 300px;
+  }
+
+
+
+  .form-check-label {
+    cursor: pointer;
+  }
+</style>
 <script>
     setTimeout(() => {
         const alert = document.getElementById('flash-alert');

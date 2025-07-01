@@ -281,11 +281,12 @@
           <div class="shop-header__sort me-3">
             <label for="sort-select" class="form-label visually-hidden">Sắp xếp theo</label>
             <select id="sort-select" class="form-select form-select-sm">
-              <option value="default" selected>Mặc định</option>
-              <option value="price_asc">Giá: Thấp đến Cao</option>
-              <option value="price_desc">Giá: Cao đến Thấp</option>
-              <option value="newest">Mới nhất</option>
+              <option value="default" {{ request('sort') === 'default' ? 'selected' : '' }}>Mặc định</option>
+              <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Giá: Thấp đến Cao</option>
+              <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Giá: Cao đến Thấp</option>
+              <option value="newest" {{ request('sort') === 'newest' ? 'selected' : '' }}>Mới nhất</option>
             </select>
+
           </div>
 
           <button class="btn btn-sm btn-outline-secondary js-toggle-view" data-view="grid"
@@ -306,121 +307,196 @@
       <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
         @foreach($products as $product)
         @php
-        $firstDetail = $product->product_details->first();
-        $productUrl = route('products.show', $product->slug); // dùng slug
-        $uniqueSizes = $product->product_details->pluck('size')->unique()->filter()->values();
-
-        $reviewCount = $product->reviews->count();
-        $reviewAvg = $reviewCount > 0 ? round($product->reviews->avg('rating')) : 0;
-        $reviewStars = str_repeat('<svg class="review-star" viewBox="0 0 9 9">
-          <use href="#icon_star" />
-        </svg>', $reviewAvg);
-        $reviewText = $reviewCount > 0 ? "{$reviewCount} reviews" : 'Chưa có đánh giá';
-
+        $firstDetail = $product->lowestPricedDetail;
+        $productUrl = route('products.show', $product->slug);
         @endphp
-        @if ( $firstDetail->quantity > 0)
+
+        @if($firstDetail && $firstDetail->quantity > 0)
         <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+
+            {{-- Hình ảnh sản phẩm --}}
             <div class="pc__img-wrapper">
               <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
                 <div class="swiper-wrapper">
                   <div class="swiper-slide">
                     <a href="{{ $productUrl }}">
-                      <img loading="lazy"
-                        src="{{ asset($firstDetail?->image ?? 'images/default.jpg') }}"
-                        width="330" height="400"
+                      <img
+                        src="{{ asset($firstDetail->image ?? 'images/default.jpg') }}"
                         alt="{{ $product->name }}"
-                        class="pc__img">
+                        class="pc__img"
+                        width="330" height="400"
+                        loading="lazy">
                     </a>
                   </div>
                 </div>
-
               </div>
 
-              @if ($firstDetail)
+              {{-- Nút Thêm vào giỏ --}}
               <form action="{{ route('cart.addDetail') }}" method="POST">
                 @csrf
                 <input type="hidden" name="product_detail_id" value="{{ $firstDetail->id }}">
                 <input type="hidden" name="quantity" value="1">
-
-                <button type="submit"
-                  class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium"
-                  data-aside="cartDrawer">
+                <button type="submit" class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium" data-aside="cartDrawer">
                   Thêm vào giỏ
                 </button>
               </form>
-              @endif
             </div>
 
+            {{-- Thông tin sản phẩm --}}
             <div class="pc__info position-relative">
               <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
-              <h6 class="pc__title"><a href="{{ $productUrl }}">{{ $product->name }}</a></h6>
+              <h6 class="pc__title">
+                <a href="{{ $productUrl }}">{{ Str::limit($product->name, 25) }}</a>
+              </h6>
 
-              @if($firstDetail)
-              <span class="money price">${{ number_format($firstDetail->price, 2) }}</span>
-              @else
-              <span class="text-muted">Chưa có giá</span>
+              <span class="money price">
+                ${{ number_format($firstDetail->price, 2) }}
+              </span>
+
+              @if($firstDetail->size)
+              <div class="mt-1">
+                <span class="badge bg-light text-dark border me-1">
+                  {{ $firstDetail->size }}
+                </span>
+              </div>
               @endif
 
-              <div class="mb-2">
-                @foreach($uniqueSizes as $size)
-                <span class="badge bg-light text-dark border me-1 mb-1">{{ $size }}</span>
-                @endforeach
-              </div>
-              <div class="product-card__review d-flex align-items-center">
+              {{-- Đánh giá --}}
+              <div class="product-card__review d-flex align-items-center mt-2">
+                @php
+                $reviewCount = $product->reviews->count();
+                $reviewAvg = $reviewCount > 0 ? round($product->reviews->avg('rating')) : 0;
+                @endphp
+
                 <div class="reviews-group d-flex align-items-center">
                   @for ($i = 1; $i <= 5; $i++)
-                    <svg class="review-star {{ $i <= $reviewAvg ? 'text-warning' : 'text-muted' }}" viewBox="0 0 9 9">
+                    <svg class="review-star {{ $i <= $reviewAvg ? 'text-rating-custom' : 'text-muted' }}">
                     <use href="#icon_star" />
                     </svg>
                     @endfor
-                    @if ($reviewCount > 0)
-                    <span class="ms-2 small text-dark fw-semibold">{{ number_format($product->reviews->avg('rating'), 1) }}/5</span>
+
+                    @if($reviewCount > 0)
+                    <span class="ms-2 small text-dark fw-semibold">
+                      {{ number_format($product->reviews->avg('rating'), 1) }}/5
+                    </span>
                     @endif
                 </div>
+
                 <span class="reviews-note text-secondary ms-2">
-                  {{ $reviewCount > 0 ? $reviewCount . ' đánh giá' : 'Chưa có đánh giá' }}
+                  {{ $reviewCount > 0 ? $reviewCount . ' đánh giá' : '0 đánh giá' }}
                 </span>
               </div>
 
-              <button type="button" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" data-id="{{ $firstDetail->id }}"
+              {{-- Wishlist --}}
+              <button type="button"
+                class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
+                data-id="{{ $firstDetail->id }}"
                 title="Add To Wishlist">
                 <svg width="16" height="16">
                   <use href="#icon_heart" />
                 </svg>
               </button>
-
             </div>
+
           </div>
         </div>
         @endif
-
         @endforeach
+
+
+
       </div>
 
-
-      <nav class="shop-pages d-flex justify-content-between mt-3" aria-label="Page navigation">
-        <a href="#" class="btn-link d-inline-flex align-items-center">
-          <svg class="me-1" width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-            <use href="#icon_prev_sm" />
-          </svg>
-          <span class="fw-medium">PREV</span>
-        </a>
-        <ul class="pagination mb-0">
-          <li class="page-item"><a class="btn-link px-1 mx-2 btn-link_active" href="#">1</a></li>
-        </ul>
-        <a href="#" class="btn-link d-inline-flex align-items-center">
-          <span class="fw-medium me-1">NEXT</span>
-          <svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-            <use href="#icon_next_sm" />
-          </svg>
-        </a>
+      {{-- Phân trang --}}
+      @if ($products->hasPages())
+      <nav class="shop-pages d-flex justify-content-center mt-4" aria-label="Phân trang sản phẩm">
+        {{ $products->links('vendor.pagination.tailwind') }}
       </nav>
+      @endif
     </div>
   </section>
 </main>
 @endsection
 @push('scripts')
+<style>
+  /* ✅ Wrapper giữ tỷ lệ khung hình (nếu cần) */
+  .pc__img-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 121.2%;
+    overflow: hidden;
+  }
+
+  .pc__img-wrapper img.pc__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+  }
+
+  .pc__img-wrapper .swiper-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+
+  .text-rating-custom {
+    color: #ff9900;
+    /* Cam rực rỡ hoặc chọn tông màu bạn thích */
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+
+
+  .review-count {
+    color: #6c757d;
+    /* xám nhẹ */
+    margin-left: 5px;
+  }
+
+  .product-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .swiper-product-detail img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #000;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: #007bff;
+  }
+
+  .form-select,
+  .form-control {
+    width: 100%;
+  }
+
+  .form-select {
+    max-width: 300px;
+  }
+
+
+
+  .form-check-label {
+    cursor: pointer;
+  }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if(session('added_to_cart'))
 <script>
@@ -503,6 +579,15 @@
       });
   });
 </script>
+<script>
+  document.getElementById('sort-select').addEventListener('change', function() {
+    const selectedSort = this.value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', selectedSort);
+    url.searchParams.set('page', 1); // reset về trang đầu
+    window.location.href = url.toString();
+  });
+</script>
 
 <script>
   setTimeout(() => {
@@ -513,23 +598,4 @@
     }
   }, 3000);
 </script>
-@endpush
-
-@push('styles')
-<link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
-<style>
-  .review-star {
-    width: 1rem;
-    height: 1rem;
-    fill: currentColor;
-  }
-
-  .text-warning {
-    color: #ffc107;
-  }
-
-  .text-muted {
-    color: #ccc;
-  }
-</style>
 @endpush

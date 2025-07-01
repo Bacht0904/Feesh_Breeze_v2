@@ -38,4 +38,12 @@ class Product extends Model
     {
         return $this->hasMany(Review::class)->where('status', 1);
     }
+    public function lowestPricedDetail()
+    {
+        return $this->hasOne(Product_details::class)
+            ->where('quantity', '>', 0)
+            ->orderBy('price')        // Giá thấp nhất trước
+            ->orderBy('size')         // Size nhỏ nhất tiếp theo (nếu có)
+            ->orderByRaw('RAND()');   // Chọn màu ngẫu nhiên nếu trùng
+    }
 }

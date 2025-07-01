@@ -115,7 +115,7 @@
                         @csrf
                     </form>
 
-                    <a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <a href="#" class="menu-link menu-link_us-s" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Đăng xuất
                     </a>
 
@@ -226,9 +226,11 @@
                                         @elseif ($item->review)
                                         <div class="d-flex flex-wrap gap-2">
                                             <button class="btn btn-warning btn-sm px-3 shadow-sm d-flex align-items-center"
-                                                onclick="editReview({{ $product->id }}, '{{ $product->name }}', {{ $productDetail->id ?? 'null' }}, {{ $item->review->rating }}, `{{ $item->review->comment }}`)">
+                                                onclick="editReview(
+                                                     {{ $product->id }},'{{ $product->name }}',{{ $productDetail->id ?? 'null' }}, {{ $item->review->rating }},`{{ $item->review->comment }}`,{{ $item->review->id }})">
                                                 <i class="fa fa-pen-to-square me-1"></i> Sửa
                                             </button>
+
 
                                             <form action="{{ route('review.destroy', $item->review->id) }}" method="POST"
                                                 onsubmit="return confirm('Bạn có chắc muốn xoá đánh giá này?')">
@@ -255,38 +257,48 @@
                 <div id="review-section" class="mt-4 d-none">
                     <div class="card shadow-sm">
                         <div class="card-header bg-light fw-bold">
-                            Đánh giá sản phẩm: <span id="review-product-name" class="text-primary"></span>
+                            <span id="review-mode-label">Đánh giá sản phẩm:</span>
+                            <span id="review-product-name" class="text-primary"></span>
                         </div>
+
                         <div class="card-body">
-                            <form action="{{ route('review.store') }}" method="POST">
+                            <form id="review-form" method="POST" action="{{ route('review.store') }}">
                                 @csrf
+                                {{-- JavaScript sẽ chèn @method("PUT") và thay đổi action nếu là edit --}}
                                 <input type="hidden" name="product_id" id="review-product-id">
                                 <input type="hidden" name="product_detail_id" id="review-product-detail-id">
 
+                                {{-- Đánh giá sao --}}
                                 <div class="mb-3">
                                     <label class="form-label d-block">Đánh giá sao *</label>
-                                    <div class="star-rating">
-                                        @for ($i = 1; $i <= 5; $i++)
-                                            <input type="radio" id="star-{{ $i }}" name="rating" value="{{ $i }}">
-                                            <label for="star-{{ $i }}" title="{{ $i }} sao">
-                                                <i class="fa fa-star"></i>
-                                            </label>
-                                            @endfor
+                                    <div class="star-rating d-flex gap-1">
+                                        @for ($i = 5; $i >= 1; $i--)
+                                        <input type="radio" id="star-{{ $i }}" name="rating" value="{{ $i }}">
+                                        <label for="star-{{ $i }}" title="{{ $i }} sao">
+                                            <i class="fa fa-star"></i>
+                                        </label>
+                                        @endfor
+
                                     </div>
-
                                 </div>
 
+                                {{-- Nội dung nhận xét --}}
                                 <div class="mb-3">
-                                    <label class="form-label">Nhận xét</label>
-                                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                                    <label for="review-comment" class="form-label">Nhận xét của bạn</label>
+                                    <textarea name="comment" id="review-comment" class="form-control" rows="3" placeholder="Hãy chia sẻ trải nghiệm của bạn..." required></textarea>
                                 </div>
 
-                                <button type="submit" class="btn btn-success">Gửi đánh giá</button>
+                                {{-- Nút hành động --}}
+                                <div class="d-flex justify-content-between">
+                                    <button type="submit" class="btn btn-success" id="review-submit-btn">Gửi đánh giá</button>
+                                    <button type="button" class="btn btn-outline-secondary" onclick="cancelReview()">Hủy</button>
+                                </div>
                             </form>
-
                         </div>
+
                     </div>
                 </div>
+
 
 
                 {{-- Địa chỉ giao hàng --}}
@@ -351,22 +363,30 @@
 </main>
 @endsection
 @push('scripts')
+<script>
+    let currentReviewingProductId = null;
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 <style>
     .star-rating {
         display: flex;
-        flex-direction: row;
-        /* chiều trái sang phải */
-        justify-content: flex-start;
+        flex-direction: row-reverse;
+        justify-content: center;
+        /* căn giữa theo trục ngang */
         align-items: center;
+        /* căn giữa theo trục dọc */
         gap: 6px;
         margin-bottom: 10px;
     }
 
 
 
+    .star-rating input[type="radio"]:not(:checked)~label {
+        color: #ccc;
+    }
 
     .star-rating input[type="radio"] {
         display: none;
@@ -381,52 +401,91 @@
         /* tránh lệch do spacing */
     }
 
-    .star-rating input[type="radio"]:checked~label,
     .star-rating label:hover,
     .star-rating label:hover~label {
         color: #ffc107;
     }
+
+    .star-rating input[type="radio"]:checked~label,
+    .star-rating input[type="radio"]:checked~label~label {
+        color: #ffc107;
+    }
 </style>
-
 <script>
-    let activeReviewId = null;
+    let currentFormContext = null;
 
-    function showReviewForm(productId, productName, productDetailId) {
-        const reviewSection = document.getElementById('review-section');
+    function toggleReviewForm({
+        mode,
+        productId,
+        productName,
+        productDetailId = null,
+        rating = null,
+        comment = '',
+        reviewId = null
+    }) {
+        const form = document.getElementById("review-form");
+        const section = document.getElementById("review-section");
+        const currentKey = `${mode}-${reviewId ?? productId}`;
 
-        if (activeReviewId === productId) {
-            // Người dùng bấm lại nút đang mở → ẩn đi
-            reviewSection.classList.add('d-none');
-            activeReviewId = null;
+        // Nếu click lần 2 vào cùng đối tượng → ẩn form
+        if (currentFormContext === currentKey) {
+            section.classList.add("d-none");
+            currentFormContext = null;
             return;
         }
 
-        // Gán dữ liệu vào form
-        document.getElementById('review-product-id').value = productId;
-        document.getElementById('review-product-detail-id').value = productDetailId || '';
-        document.getElementById('review-product-name').textContent = productName;
+        // Cập nhật nội dung
+        currentFormContext = currentKey;
+        section.classList.remove("d-none");
+        document.getElementById("review-mode-label").textContent = mode === 'edit' ? "Chỉnh sửa đánh giá:" : "Đánh giá sản phẩm:";
+        document.getElementById("review-product-name").innerText = productName;
+        document.getElementById("review-product-id").value = productId;
+        document.getElementById("review-product-detail-id").value = productDetailId ?? '';
+        document.getElementById("review-comment").value = comment ?? '';
 
-        // Hiển thị form và scroll tới
-        reviewSection.classList.remove('d-none');
-        reviewSection.scrollIntoView({
-            behavior: 'smooth'
+        // Đặt lại hoặc chọn rating
+        form.querySelectorAll("input[name='rating']").forEach(input => {
+            input.checked = parseInt(input.value) === parseInt(rating);
         });
 
-        activeReviewId = productId;
+        // Cập nhật action + method
+        form.action = mode === 'edit' ?
+            `/review/${reviewId}` :
+            `{{ route('review.store') }}`;
+
+        // Làm sạch method cũ
+        form.querySelector("input[name='_method']")?.remove();
+
+        if (mode === 'edit') {
+            const methodInput = document.createElement("input");
+            methodInput.type = "hidden";
+            methodInput.name = "_method";
+            methodInput.value = "PUT";
+            form.appendChild(methodInput);
+        }
+    }
+
+    // Shortcut hàm gọi
+    function showReviewForm(productId, productName, productDetailId) {
+        toggleReviewForm({
+            mode: 'create',
+            productId,
+            productName,
+            productDetailId
+        });
+    }
+
+    function editReview(productId, productName, detailId, rating, comment, reviewId) {
+        toggleReviewForm({
+            mode: 'edit',
+            productId,
+            productName,
+            productDetailId: detailId,
+            rating,
+            comment,
+            reviewId
+        });
     }
 </script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Tự động mở form đánh giá nếu có sản phẩm đang chờ đánh giá
-        const canReview = @json($canReview);
-        if (canReview) {
-            const firstProduct = document.querySelector('.table-striped tbody tr');
-            if (firstProduct) {
-                const productId = firstProduct.querySelector('td:nth-child(1) a').getAttribute('href').split('/').pop();
-                const productName = firstProduct.querySelector('td:nth-child(1) a').textContent.trim();
-                showReviewForm(productId, productName, null);
-            }
-        }
-    });
-</script>
+
 @endpush

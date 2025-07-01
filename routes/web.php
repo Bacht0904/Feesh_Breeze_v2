@@ -154,9 +154,12 @@ Route::middleware(['auth'])->group(function () {
 
 // web.php
 Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
-Route::get('/review/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
+Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
+
 Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
-Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');    
+Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
+Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('product.reviews');
+
 
 
 
