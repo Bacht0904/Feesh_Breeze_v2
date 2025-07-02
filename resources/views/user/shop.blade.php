@@ -10,8 +10,132 @@
       </div>
 
       <div class="pt-4 pt-lg-0"></div>
+      <form method="GET" action="{{ route('shop') }}">
+        {{-- DANH MỤC --}}
+        <div class="accordion mb-3" id="categories-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-category">Danh Mục</button>
+            </h5>
+            <div id="filter-category" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3">
+                <select name="category" class="form-select">
+                  <option value="">Tất cả</option>
+                  @foreach ($categories as $cat)
+                  <option value="{{ $cat->slug }}" {{ request('category') == $cat->slug ? 'selected' : '' }}>
+                    {{ $cat->name }}
+                  </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div class="accordion" id="categories-list">
+        {{-- MÀU --}}
+        <div class="accordion mb-3" id="color-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-color">Màu</button>
+            </h5>
+            <div id="filter-color" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3 d-flex flex-wrap gap-2">
+                @foreach ($colors as $color)
+                @if (!empty($color['code']))
+                <label class="position-relative" title="{{ ucfirst($color['name']) }}">
+                  <input type="radio" name="color" value="{{ strtolower($color['name']) }}"
+                    class="visually-hidden"
+                    {{ request('color') === strtolower($color['name']) ? 'checked' : '' }}>
+                  <span class="d-inline-block rounded-circle border shadow-sm"
+                    style="background-color: {{ $color['code'] }}; width: 32px; height: 32px;"></span>
+                </label>
+                @endif
+                @endforeach
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- SIZE --}}
+        <div class="accordion mb-3" id="size-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-size">Size</button>
+            </h5>
+            <div id="filter-size" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3 d-flex flex-wrap gap-2">
+                @foreach ($sizes as $size)
+                <label>
+                  <input type="radio" name="size" value="{{ strtoupper($size) }}"
+                    class="btn-check" autocomplete="off"
+                    {{ request('size') === strtoupper($size) ? 'checked' : '' }}>
+                  <span class="btn btn-outline-secondary btn-sm">{{ strtoupper($size) }}</span>
+                </label>
+                @endforeach
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- THƯƠNG HIỆU --}}
+        <div class="accordion mb-3" id="brand-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-brand">Thương hiệu</button>
+            </h5>
+            <div id="filter-brand" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3">
+                <select name="brand" class="form-select">
+                  <option value="">Tất cả thương hiệu</option>
+                  @foreach ($brands as $brand)
+                  <option value="{{ $brand->slug }}" {{ request('brand') == $brand->slug ? 'selected' : '' }}>
+                    {{ $brand->name }}
+                  </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- GIÁ --}}
+        <div class="accordion mb-3" id="price-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-price">Giá</button>
+            </h5>
+            <div id="filter-price" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3 d-flex flex-column gap-2">
+                <input type="number" name="min_price" class="form-control" placeholder="Giá từ"
+                  value="{{ request('min_price') }}">
+                <input type="number" name="max_price" class="form-control" placeholder="Đến"
+                  value="{{ request('max_price') }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- NÚT LỌC --}}
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-1">
+            <i class="bi bi-funnel-fill"></i>
+            Áp dụng
+          </button>
+          <a href="{{ route('shop') }}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1">
+            <i class="bi bi-x-lg"></i>
+            Xóa
+          </a>
+        </div>
+
+
+      </form>
+
+      <!-- <div class="accordion" id="categories-list">
         <div class="accordion-item mb-4 pb-3">
           <h5 class="accordion-header" id="accordion-heading-1">
             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
@@ -174,7 +298,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="shop-list flex-grow-1">
@@ -281,131 +405,139 @@
           <div class="shop-header__sort me-3">
             <label for="sort-select" class="form-label visually-hidden">Sắp xếp theo</label>
             <select id="sort-select" class="form-select form-select-sm">
-              <option value="default" selected>Mặc định</option>
-              <option value="price_asc">Giá: Thấp đến Cao</option>
-              <option value="price_desc">Giá: Cao đến Thấp</option>
-              <option value="newest">Mới nhất</option>
+              <option value="default" {{ request('sort') === 'default' ? 'selected' : '' }}>Mặc định</option>
+              <option value="price_asc" {{ request('sort') === 'price_asc' ? 'selected' : '' }}>Giá: Thấp đến Cao</option>
+              <option value="price_desc" {{ request('sort') === 'price_desc' ? 'selected' : '' }}>Giá: Cao đến Thấp</option>
+              <option value="newest" {{ request('sort') === 'newest' ? 'selected' : '' }}>Mới nhất</option>
             </select>
+
           </div>
-
-          <button class="btn btn-sm btn-outline-secondary js-toggle-view" data-view="grid"
-            title="Xem dạng lưới">
-            <svg width="16" height="16">
-              <use href="#icon_grid" />
-            </svg>
-          </button>
-
-          <button class="btn btn-sm btn-outline-secondary js-toggle-view ms-2" data-view="list"
-            title="Xem dạng danh sách">
-            <svg width="16" height="16">
-              <use href="#icon_list" />
-            </svg>
-          </button>
         </div>
       </div>
       <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
         @foreach($products as $product)
         @php
-        $firstDetail = $product->product_details->first();
-        $productUrl = route('products.show', $product->slug); // dùng slug
-        $uniqueSizes = $product->product_details->pluck('size')->unique()->filter()->values();
+        $firstDetail = $product->lowestPricedDetail;
+        $productUrl = route('products.show', $product->slug);
         @endphp
 
+        @if($firstDetail && $firstDetail->quantity > 0)
         <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
+
+            {{-- Hình ảnh sản phẩm --}}
             <div class="pc__img-wrapper">
               <div class="swiper-container background-img js-swiper-slider" data-settings='{"resizeObserver": true}'>
                 <div class="swiper-wrapper">
                   <div class="swiper-slide">
                     <a href="{{ $productUrl }}">
-                      <img loading="lazy"
-                        src="{{ asset($firstDetail?->image ?? 'images/default.jpg') }}"
-                        width="330" height="400"
+                      <img
+                        src="{{ asset($firstDetail->image ?? 'images/default.jpg') }}"
                         alt="{{ $product->name }}"
-                        class="pc__img">
+                        class="pc__img"
+                        width="330" height="400"
+                        loading="lazy">
                     </a>
                   </div>
                 </div>
-
               </div>
 
-              @if ($firstDetail)
+              {{-- Nút Thêm vào giỏ --}}
               <form action="{{ route('cart.addDetail') }}" method="POST">
                 @csrf
                 <input type="hidden" name="product_detail_id" value="{{ $firstDetail->id }}">
                 <input type="hidden" name="quantity" value="1">
-
-                <button type="submit"
-                  class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium"
-                  data-aside="cartDrawer">
+                <button type="submit" class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium" data-aside="cartDrawer">
                   Thêm vào giỏ
                 </button>
               </form>
-              @endif
             </div>
 
+            {{-- Thông tin sản phẩm --}}
             <div class="pc__info position-relative">
               <p class="pc__category">{{ $product->category->name ?? 'N/A' }}</p>
-              <h6 class="pc__title"><a href="{{ $productUrl }}">{{ $product->name }}</a></h6>
+              <h6 class="pc__title">
+                <a href="{{ $productUrl }}">{{ Str::limit($product->name, 25) }}</a>
+              </h6>
 
-              @if($firstDetail)
-              <span class="money price">${{ number_format($firstDetail->price, 2) }}</span>
-              @else
-              <span class="text-muted">Chưa có giá</span>
-              @endif
+              <span class="money price">
+                ${{ number_format($firstDetail->price, 2) }}
+              </span>
 
-              <div class="mb-2">
-                @foreach($uniqueSizes as $size)
-                <span class="badge bg-light text-dark border me-1 mb-1">{{ $size }}</span>
+              @if($product->product_details->count())
+              <div class="product-sizes text-muted small">
+                Size:
+                @foreach($product->product_details as $detail)
+                <span class="badge bg-light border text-dark me-1">{{ $detail->size }}</span>
                 @endforeach
               </div>
+              @endif
 
-              <div class="product-card__review d-flex align-items-center">
-                <div class="reviews-group d-flex">
-                  @for($i = 0; $i < 5; $i++)
-                    <svg class="review-star" viewBox="0 0 9 9">
-                    <use href="#icon_star" /></svg>
+
+              {{-- Đánh giá --}}
+              <div class="product-card__review d-flex align-items-center mt-2">
+                @php
+                $reviewCount = $product->reviews->count();
+                $reviewAvg = $reviewCount > 0 ? round($product->reviews->avg('rating')) : 0;
+                @endphp
+
+                <div class="reviews-group d-flex align-items-center">
+                  @for ($i = 1; $i <= 5; $i++)
+                    {{-- Hiển thị sao đánh giá --}}
+                    <svg class="review-star {{ $color=$i <=$reviewAvg ? 'text-warning-custom' : 'text-muted' ; }}" width="16" height="16">
+                    <use href="#icon_star" />
+                    </svg>
                     @endfor
+
+                    {{-- Hiển thị điểm trung bình nếu có đánh giá --}}
+
+
+
+                    @if($reviewCount > 0)
+                    <span class="ms-2 small text-dark fw-semibold">
+                      {{ number_format($product->reviews->avg('rating'), 1) }}/5
+                    </span>
+                    @endif
+
                 </div>
-                <span class="reviews-note text-lowercase text-secondary ms-1">8k+ reviews</span>
+
+                <span class="reviews-note text-secondary ms-2">
+                  {{ $reviewCount > 0 ? $reviewCount . ' đánh giá' : '0 đánh giá' }}
+                </span>
               </div>
 
-              <button type="button" class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist" data-id="{{ $firstDetail->id }}"
-                title="Add To Wishlist">
+              {{-- Wishlist --}}
+              @php
+              $isWished = in_array($firstDetail->id, $wishlistIds);
+              @endphp
+              <button type="button"
+                class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist {{ $isWished ? 'active' : '' }}"
+                data-id="{{ $firstDetail->id }}"
+                title="{{ $isWished ? 'Đã yêu thích' : 'Thêm vào yêu thích' }}">
                 <svg width="16" height="16">
                   <use href="#icon_heart" />
                 </svg>
               </button>
 
             </div>
+
           </div>
         </div>
+        @endif
         @endforeach
       </div>
-
-
-      <nav class="shop-pages d-flex justify-content-between mt-3" aria-label="Page navigation">
-        <a href="#" class="btn-link d-inline-flex align-items-center">
-          <svg class="me-1" width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-            <use href="#icon_prev_sm" />
-          </svg>
-          <span class="fw-medium">PREV</span>
-        </a>
-        <ul class="pagination mb-0">
-          <li class="page-item"><a class="btn-link px-1 mx-2 btn-link_active" href="#">1</a></li>
-        </ul>
-        <a href="#" class="btn-link d-inline-flex align-items-center">
-          <span class="fw-medium me-1">NEXT</span>
-          <svg width="7" height="11" viewBox="0 0 7 11" xmlns="http://www.w3.org/2000/svg">
-            <use href="#icon_next_sm" />
-          </svg>
-        </a>
+      {{-- Phân trang --}}
+      @if ($products->hasPages())
+      <nav class="shop-pages d-flex justify-content-center mt-4" aria-label="Phân trang sản phẩm">
+        {{ $products->links('vendor.pagination.tailwind') }}
       </nav>
+      @endif
     </div>
   </section>
 </main>
 @endsection
 @push('scripts')
+
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if(session('added_to_cart'))
 <script>
@@ -488,6 +620,15 @@
       });
   });
 </script>
+<script>
+  document.getElementById('sort-select').addEventListener('change', function() {
+    const selectedSort = this.value;
+    const url = new URL(window.location.href);
+    url.searchParams.set('sort', selectedSort);
+    url.searchParams.set('page', 1); // reset về trang đầu
+    window.location.href = url.toString();
+  });
+</script>
 
 <script>
   setTimeout(() => {
@@ -499,7 +640,119 @@
   }, 3000);
 </script>
 @endpush
-
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
+<style>
+  .pc__btn-wl.active svg use {
+    fill: #e74c3c;
+    /* Màu đỏ trái tim */
+  }
+
+  .review-star {
+    fill: currentColor;
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .text-warning {
+    color: rgb(236, 83, 22);
+    /* màu cam bạn chọn */
+  }
+
+  .text-warning-custom {
+    color: coral
+  }
+
+  .text-muted {
+    color: #adb5bd;
+    /* xám nhạt cho sao chưa đánh giá */
+  }
+
+
+
+
+  /* ✅ Wrapper giữ tỷ lệ khung hình (nếu cần) */
+  .pc__img-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 121.2%;
+    overflow: hidden;
+  }
+
+  .pc__img-wrapper img.pc__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+  }
+
+  .pc__img-wrapper .swiper-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+
+
+
+
+
+  .review-count {
+    color: #6c757d;
+    /* xám nhẹ */
+    margin-left: 5px;
+  }
+
+  .product-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .swiper-product-detail img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #000;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: #007bff;
+  }
+
+  .form-select,
+  .form-control {
+    width: 100%;
+  }
+
+  .form-select {
+    max-width: 300px;
+  }
+
+  .pc__btn-wl.active {
+    color: #e74c3c;
+    /* đỏ trái tim */
+  }
+
+
+  .form-check-label {
+    cursor: pointer;
+  }
+
+  .btn {
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: scale(1.02);
+  }
+</style>
 @endpush

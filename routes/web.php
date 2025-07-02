@@ -11,9 +11,8 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Hash;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
 
 
 
@@ -79,7 +78,7 @@ Route::put('/admin/slide/{id}/toggle', [AdminController::class, 'toggle_slide_st
 
 Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
 Route::get('/admin/user/add', [AdminController::class, 'add_user'])->name('admin.user.add');
-Route::post('/admin/user/store', [AdminController::class, 'userstore'])->name('admin.user.store');
+Route::post('/admin/user/store', [AdminController::class, 'user_store'])->name('admin.user.store');
 Route::get('/admin/user/{id}/edit', [AdminController::class, 'edit_user'])->name('admin.user.edit');
 Route::put('/admin/user/update', [AdminController::class, 'update_user'])->name('admin.user.update');
 Route::delete('/admin/user/{id}/delete', [AdminController::class, 'delete_user'])->name('admin.user.delete');
@@ -138,9 +137,36 @@ Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.c
 Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
 Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
 Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
+
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/account-orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('/account-orders/{id}', [OrderController::class, 'show'])->name('orders.details');
+});
+Route::middleware(['auth'])->group(function () {
+    Route::get('/account', [UserController::class, 'index'])->name('account');
+    Route::post('/account/update', [UserController::class, 'update'])->name('account.update');
+    Route::post('/account/change-password', [UserController::class, 'changePassword'])->name('account.changePassword');
+});
+
+// web.php
+Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
+Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
+
+Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
+Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
+Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('product.reviews');
+
+
+
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
 Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
 Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
@@ -155,4 +181,8 @@ Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist
 Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 Route::get('/wishlist/clear', [WishlistController::class, 'clear'])->name('wishlist.clear');
 Route::post('/wishlist/move-to-cart', [WishlistController::class, 'moveToCart'])->name('wishlist.moveToCart');
+
+// routes/web.php hoặc routes/api.php
+Route::get('/search-suggestions', [HomeController::class, 'suggest'])->name('search.suggest');
+Route::get('/quick-suggestions', [HomeController::class, 'quickSuggestions']);
 

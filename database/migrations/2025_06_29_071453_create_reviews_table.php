@@ -11,32 +11,26 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('order_details', function (Blueprint $table) {
+        Schema::create('reviews', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('order_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('product_id');
             $table->unsignedBigInteger('product_detail_id')->nullable();
-
-            $table->string('product_name');
-            $table->string('size')->nullable();
-            $table->string('color')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->string('image')->nullable();
-            $table->unsignedInteger('quantity');
-
+            $table->unsignedTinyInteger('rating');
+            $table->text('comment');
             $table->timestamps();
 
-            // Quan hệ ngoại
-            $table->foreign('order_id')->references('id')->on('orders')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('product_id')->references('id')->on('products')->onDelete('cascade');
             $table->foreign('product_detail_id')->references('id')->on('product_details')->nullOnDelete();
         });
     }
-
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('order_details');
+        Schema::dropIfExists('reviews');
     }
 };
