@@ -117,16 +117,7 @@ class CheckoutController extends Controller
     }
 
 
-    protected function handleVnPay(Request $request, array $cart, array $totals)
-    {
-        session()->put('order_data', [
-            'cart' => $cart,
-            ...$totals,
-            'customer' => $request->only('name', 'phone', 'address', 'email', 'note', 'coupon_code'),
-        ]);
-
-        return redirect()->route('vnpay.payment');
-    }
+    
 
     protected function handleCashOnDelivery(Request $request, array $cart, array $totals)
     {

@@ -10,8 +10,132 @@
       </div>
 
       <div class="pt-4 pt-lg-0"></div>
+      <form method="GET" action="{{ route('shop') }}">
+        {{-- DANH MỤC --}}
+        <div class="accordion mb-3" id="categories-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-category">Danh Mục</button>
+            </h5>
+            <div id="filter-category" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3">
+                <select name="category" class="form-select">
+                  <option value="">Tất cả</option>
+                  @foreach ($categories as $cat)
+                  <option value="{{ $cat->slug }}" {{ request('category') == $cat->slug ? 'selected' : '' }}>
+                    {{ $cat->name }}
+                  </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
 
-      <div class="accordion" id="categories-list">
+        {{-- MÀU --}}
+        <div class="accordion mb-3" id="color-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-color">Màu</button>
+            </h5>
+            <div id="filter-color" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3 d-flex flex-wrap gap-2">
+                @foreach ($colors as $color)
+                @if (!empty($color['code']))
+                <label class="position-relative" title="{{ ucfirst($color['name']) }}">
+                  <input type="radio" name="color" value="{{ strtolower($color['name']) }}"
+                    class="visually-hidden"
+                    {{ request('color') === strtolower($color['name']) ? 'checked' : '' }}>
+                  <span class="d-inline-block rounded-circle border shadow-sm"
+                    style="background-color: {{ $color['code'] }}; width: 32px; height: 32px;"></span>
+                </label>
+                @endif
+                @endforeach
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- SIZE --}}
+        <div class="accordion mb-3" id="size-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-size">Size</button>
+            </h5>
+            <div id="filter-size" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3 d-flex flex-wrap gap-2">
+                @foreach ($sizes as $size)
+                <label>
+                  <input type="radio" name="size" value="{{ strtoupper($size) }}"
+                    class="btn-check" autocomplete="off"
+                    {{ request('size') === strtoupper($size) ? 'checked' : '' }}>
+                  <span class="btn btn-outline-secondary btn-sm">{{ strtoupper($size) }}</span>
+                </label>
+                @endforeach
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- THƯƠNG HIỆU --}}
+        <div class="accordion mb-3" id="brand-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-brand">Thương hiệu</button>
+            </h5>
+            <div id="filter-brand" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3">
+                <select name="brand" class="form-select">
+                  <option value="">Tất cả thương hiệu</option>
+                  @foreach ($brands as $brand)
+                  <option value="{{ $brand->slug }}" {{ request('brand') == $brand->slug ? 'selected' : '' }}>
+                    {{ $brand->name }}
+                  </option>
+                  @endforeach
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- GIÁ --}}
+        <div class="accordion mb-3" id="price-accordion">
+          <div class="accordion-item">
+            <h5 class="accordion-header">
+              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
+                data-bs-target="#filter-price">Giá</button>
+            </h5>
+            <div id="filter-price" class="accordion-collapse collapse show">
+              <div class="accordion-body px-0 pt-3 d-flex flex-column gap-2">
+                <input type="number" name="min_price" class="form-control" placeholder="Giá từ"
+                  value="{{ request('min_price') }}">
+                <input type="number" name="max_price" class="form-control" placeholder="Đến"
+                  value="{{ request('max_price') }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {{-- NÚT LỌC --}}
+        <div class="d-flex gap-2 mt-3">
+          <button type="submit" class="btn btn-dark w-100 d-flex align-items-center justify-content-center gap-1">
+            <i class="bi bi-funnel-fill"></i>
+            Áp dụng
+          </button>
+          <a href="{{ route('shop') }}" class="btn btn-outline-secondary w-100 d-flex align-items-center justify-content-center gap-1">
+            <i class="bi bi-x-lg"></i>
+            Xóa
+          </a>
+        </div>
+
+
+      </form>
+
+      <!-- <div class="accordion" id="categories-list">
         <div class="accordion-item mb-4 pb-3">
           <h5 class="accordion-header" id="accordion-heading-1">
             <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
@@ -174,7 +298,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div class="shop-list flex-grow-1">
@@ -288,20 +412,6 @@
             </select>
 
           </div>
-
-          <button class="btn btn-sm btn-outline-secondary js-toggle-view" data-view="grid"
-            title="Xem dạng lưới">
-            <svg width="16" height="16">
-              <use href="#icon_grid" />
-            </svg>
-          </button>
-
-          <button class="btn btn-sm btn-outline-secondary js-toggle-view ms-2" data-view="list"
-            title="Xem dạng danh sách">
-            <svg width="16" height="16">
-              <use href="#icon_list" />
-            </svg>
-          </button>
         </div>
       </div>
       <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
@@ -354,13 +464,15 @@
                 ${{ number_format($firstDetail->price, 2) }}
               </span>
 
-              @if($firstDetail->size)
-              <div class="mt-1">
-                <span class="badge bg-light text-dark border me-1">
-                  {{ $firstDetail->size }}
-                </span>
+              @if($product->product_details->count())
+              <div class="product-sizes text-muted small">
+                Size:
+                @foreach($product->product_details as $detail)
+                <span class="badge bg-light border text-dark me-1">{{ $detail->size }}</span>
+                @endforeach
               </div>
               @endif
+
 
               {{-- Đánh giá --}}
               <div class="product-card__review d-flex align-items-center mt-2">
@@ -371,16 +483,22 @@
 
                 <div class="reviews-group d-flex align-items-center">
                   @for ($i = 1; $i <= 5; $i++)
-                    <svg class="review-star {{ $i <= $reviewAvg ? 'text-rating-custom' : 'text-muted' }}">
+                    {{-- Hiển thị sao đánh giá --}}
+                    <svg class="review-star {{ $color=$i <=$reviewAvg ? 'text-warning-custom' : 'text-muted' ; }}" width="16" height="16">
                     <use href="#icon_star" />
                     </svg>
                     @endfor
+
+                    {{-- Hiển thị điểm trung bình nếu có đánh giá --}}
+
+
 
                     @if($reviewCount > 0)
                     <span class="ms-2 small text-dark fw-semibold">
                       {{ number_format($product->reviews->avg('rating'), 1) }}/5
                     </span>
                     @endif
+
                 </div>
 
                 <span class="reviews-note text-secondary ms-2">
@@ -389,25 +507,25 @@
               </div>
 
               {{-- Wishlist --}}
+              @php
+              $isWished = in_array($firstDetail->id, $wishlistIds);
+              @endphp
               <button type="button"
-                class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist"
+                class="pc__btn-wl position-absolute top-0 end-0 bg-transparent border-0 js-add-wishlist {{ $isWished ? 'active' : '' }}"
                 data-id="{{ $firstDetail->id }}"
-                title="Add To Wishlist">
+                title="{{ $isWished ? 'Đã yêu thích' : 'Thêm vào yêu thích' }}">
                 <svg width="16" height="16">
                   <use href="#icon_heart" />
                 </svg>
               </button>
+
             </div>
 
           </div>
         </div>
         @endif
         @endforeach
-
-
-
       </div>
-
       {{-- Phân trang --}}
       @if ($products->hasPages())
       <nav class="shop-pages d-flex justify-content-center mt-4" aria-label="Phân trang sản phẩm">
@@ -419,84 +537,7 @@
 </main>
 @endsection
 @push('scripts')
-<style>
-  /* ✅ Wrapper giữ tỷ lệ khung hình (nếu cần) */
-  .pc__img-wrapper {
-    position: relative;
-    width: 100%;
-    padding-top: 121.2%;
-    overflow: hidden;
-  }
 
-  .pc__img-wrapper img.pc__img {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    z-index: 0;
-  }
-
-  .pc__img-wrapper .swiper-container {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-
-  .text-rating-custom {
-    color: #ff9900;
-    /* Cam rực rỡ hoặc chọn tông màu bạn thích */
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
-
-
-
-  .review-count {
-    color: #6c757d;
-    /* xám nhẹ */
-    margin-left: 5px;
-  }
-
-  .product-title {
-    font-size: 1.75rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-
-  .swiper-product-detail img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  .swiper-button-next,
-  .swiper-button-prev {
-    color: #000;
-  }
-
-  .swiper-button-next:hover,
-  .swiper-button-prev:hover {
-    color: #007bff;
-  }
-
-  .form-select,
-  .form-control {
-    width: 100%;
-  }
-
-  .form-select {
-    max-width: 300px;
-  }
-
-
-
-  .form-check-label {
-    cursor: pointer;
-  }
-</style>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 @if(session('added_to_cart'))
 <script>
@@ -598,4 +639,120 @@
     }
   }, 3000);
 </script>
+@endpush
+@push('styles')
+<link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
+<style>
+  .pc__btn-wl.active svg use {
+    fill: #e74c3c;
+    /* Màu đỏ trái tim */
+  }
+
+  .review-star {
+    fill: currentColor;
+    width: 1.2rem;
+    height: 1.2rem;
+  }
+
+  .text-warning {
+    color: rgb(236, 83, 22);
+    /* màu cam bạn chọn */
+  }
+
+  .text-warning-custom {
+    color: coral
+  }
+
+  .text-muted {
+    color: #adb5bd;
+    /* xám nhạt cho sao chưa đánh giá */
+  }
+
+
+
+
+  /* ✅ Wrapper giữ tỷ lệ khung hình (nếu cần) */
+  .pc__img-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 121.2%;
+    overflow: hidden;
+  }
+
+  .pc__img-wrapper img.pc__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    z-index: 0;
+  }
+
+  .pc__img-wrapper .swiper-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+
+
+
+
+
+  .review-count {
+    color: #6c757d;
+    /* xám nhẹ */
+    margin-left: 5px;
+  }
+
+  .product-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .swiper-product-detail img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #000;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: #007bff;
+  }
+
+  .form-select,
+  .form-control {
+    width: 100%;
+  }
+
+  .form-select {
+    max-width: 300px;
+  }
+
+  .pc__btn-wl.active {
+    color: #e74c3c;
+    /* đỏ trái tim */
+  }
+
+
+  .form-check-label {
+    cursor: pointer;
+  }
+
+  .btn {
+    transition: all 0.2s ease;
+  }
+
+  .btn:hover {
+    transform: scale(1.02);
+  }
+</style>
 @endpush

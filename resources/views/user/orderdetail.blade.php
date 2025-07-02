@@ -157,6 +157,46 @@
                                         </span>
                                     </td>
                                 </tr>
+                                <tr>
+                                    @switch($order->status)
+                                    @case('Chờ Xác Nhận')
+                                    <th>Yêu cầu hủy hàng</th>
+                                    <td colspan="5">
+                                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
+                                        </form>
+                                    </td>
+                                    @break
+                                    @case('Giao Thành Công')
+                                    @break
+                                    
+                                    <th>Trạng thái đơn hàng</th>
+
+                                    @case('Xác Nhận Hủy')
+                                    <th>Trạng thái đơn hàng</th>
+                                    <td colspan="5">
+                                        <span class="badge bg-danger">Xác nhận hủy</span><br>
+                                        <small>Đơn hàng đang chờ xác nhận hủy từ hệ thống.</small>
+                                    </td>
+                                    @break
+
+                                    @case('Đã Hủy')
+                                    <th>Trạng thái đơn hàng</th>
+                                    <td colspan="5">
+                                        <span class="badge bg-dark">Đã hủy</span><br>
+                                        <small>Yêu cầu hủy hoặc trả hàng đã được xử lý.</small>
+                                    </td>
+                                    @break
+
+                                    @default
+                                    <th>Trạng thái đơn hàng</th>
+                                    <td colspan="5">
+                                        <span class="badge bg-light text-dark">vui lòng chờ</span>
+                                    </td>
+                                    @endswitch
+                                </tr>
                             </tbody>
                         </table>
                     </div>

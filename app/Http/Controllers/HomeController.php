@@ -17,6 +17,7 @@ class HomeController extends Controller
 {
     public function welcome()
     {
+        $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
         $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
             ->with([
                 'product_details' => fn($q) => $q->where('quantity', '>', 0),
@@ -31,7 +32,7 @@ class HomeController extends Controller
 
         $categories = Category::all(); // hoặc ->where('status', 'active')
 
-        return view('welcome', compact('categories', 'products', 'featuredProducts'));
+        return view('welcome', compact('categories', 'products', 'featuredProducts', 'wishlistIds'));
     }
 
     public function index()
@@ -42,6 +43,7 @@ class HomeController extends Controller
     public function shop(Request $request)
     {
         $sort = $request->input('sort', 'default');
+        $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
 
         // Subquery: lấy mỗi product_id kèm min(price)
         $priceSub = DB::table('product_details')
@@ -60,6 +62,43 @@ class HomeController extends Controller
                 'category',
                 'brand',
             ]);
+        $search = $request->input('search');
+
+        if (!empty($search)) {
+            $productQuery->where('name', 'like', '%' . $search . '%');
+        }
+
+        // Bộ lọc nâng cao
+        if ($request->filled('category')) {
+            $productQuery->whereHas('category', fn($q) =>
+            $q->where('slug', $request->input('category')));
+        }
+
+        if ($request->filled('brand')) {
+            $productQuery->whereHas('brand', fn($q) =>
+            $q->where('slug', $request->input('brand')));
+        }
+
+        if ($request->filled('size')) {
+            $productQuery->whereHas('product_details', fn($q) =>
+            $q->where('size', $request->input('size')));
+        }
+
+        if ($request->filled('color')) {
+            $productQuery->whereHas('product_details', fn($q) =>
+            $q->whereRaw('LOWER(color) = ?', [strtolower($request->input('color'))]));
+        }
+
+        if ($request->filled('min_price')) {
+            $productQuery->whereHas('product_details', fn($q) =>
+            $q->where('price', '>=', $request->input('min_price')));
+        }
+
+        if ($request->filled('max_price')) {
+            $productQuery->whereHas('product_details', fn($q) =>
+            $q->where('price', '<=', $request->input('max_price')));
+        }
+
 
         // Sắp xếp
         match ($sort) {
@@ -96,8 +135,37 @@ class HomeController extends Controller
             'brands',
             'sizes',
             'colors',
-            'sort'
+            'sort',
+            'wishlistIds'
         ));
+    }
+
+    public function quickSuggestions()
+    {
+        $categories = Category::select('name', 'slug')->limit(5)->get();
+        $brands     = Brand::select('name', 'slug')->limit(5)->get();
+        $products   = Product::with('lowestPricedDetail')
+            ->latest()
+            ->take(5)
+            ->get();
+        dd($products);
+        return response()->json([
+            'categories' => $categories,
+            'brands'     => $brands,
+            'products'   => $products,
+        ]);
+    }
+
+    public function suggest(Request $request)
+    {
+        $keyword = $request->input('keyword');
+
+        $products = Product::where('name', 'like', '%' . $keyword . '%')
+            ->with('lowestPricedDetail')
+            ->take(5)
+            ->get();
+
+        return response()->json($products);
     }
 
 

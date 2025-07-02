@@ -181,3 +181,8 @@ Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist
 Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 Route::get('/wishlist/clear', [WishlistController::class, 'clear'])->name('wishlist.clear');
 Route::post('/wishlist/move-to-cart', [WishlistController::class, 'moveToCart'])->name('wishlist.moveToCart');
+
+// routes/web.php hoặc routes/api.php
+Route::get('/search-suggestions', [HomeController::class, 'suggest'])->name('search.suggest');
+Route::get('/quick-suggestions', [HomeController::class, 'quickSuggestions']);
+

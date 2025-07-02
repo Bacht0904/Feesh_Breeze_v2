@@ -275,19 +275,6 @@
                                     alt="{{ $product->name }}"
                                     class="card-img-top img-cover">
                             </a>
-                            <!-- <button
-                                type="button"
-                                class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 js-add-wishlist"
-                                title="Thêm vào wishlist"
-                                data-product-id="{{ $detail->id }}">
-                                <i class="fa fa-heart"></i>
-                            </button> -->
-                            <!-- <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0  js-add-wishlist"
-                                title="Add To Wishlist">
-                                <svg width="16" height="16">
-                                    <use href="#icon_heart" />
-                                </svg>
-                            </button> -->
                             <button type="button"
                                 class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 js-add-wishlist"
                                 data-id="{{ $detail->id }}"
@@ -317,7 +304,7 @@
                                     <a href="{{ $productUrl }}"
                                         class="text-dark text-decoration-none d-block"
                                         title="{{ $product->name }}">
-                                        {{ Str::limit($product->name, 30) }}
+                                        {{ Str::limit($product->name, 20) }}
                                     </a>
                                 </h6>
                                 @if($detail)
@@ -333,11 +320,6 @@
                     @endif
                     @endforeach
                 </div>
-
-                {{-- Navigation --}}
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-
             </div>
         </section>
     </div>
