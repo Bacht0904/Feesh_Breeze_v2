@@ -27,11 +27,15 @@ class VNPayController extends Controller
         $order = session('order_data');
         if (!$order) return redirect()->route('checkout')->with('error', 'Không tìm thấy thông tin đơn hàng.');
 
-        $vnp_Url = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-        $vnp_Returnurl = route('vnpay.return');
-        $vnp_TmnCode = "S6RMUB02";
-        $vnp_HashSecret = "3R1YUK6L2EVEHT36KDR7S5K25OTXI7M9";
-
+        $vnp_TmnCode = env('VNP_TMN_CODE', 'MSC0OYNH'); // Mã định danh của Merchant
+        $vnp_HashSecret = env('VNP_HASH_SECRET', 'PERCDPYVK8FOH4OJCB1015X4IMD12O52'); // Mã bí mật của Merchant
+        if (!$vnp_TmnCode || !$vnp_HashSecret) {
+            return redirect()->route('checkout')->with('error', 'Vui lòng cấu hình thông tin VNPay trong file .env');
+        }
+        // Mã định danh của Merchant
+        
+        $vnp_Returnurl = env('VNP_RETURN_URL', route('vnpay.return')); // URL trả về sau khi thanh toán
+        $vnp_Url = env('VNP_API_URL', 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html'); // URL của VNPay
         $vnp_TxnRef = uniqid();
         $vnp_OrderInfo = "Thanh toán đơn hàng tại Laravel";
         $vnp_Amount = $order['total'] * 100;
