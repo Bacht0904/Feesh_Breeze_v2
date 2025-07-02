@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Rules\MatchOldPassword;
 use App\Models\User;
+use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Hash;
 //use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\ImageManager;
@@ -447,9 +448,11 @@ class AdminController extends Controller
         return view('admin.orders', compact('orders'));
     }
 
-    public function order_detail()
+    public function order_detail($id)
     {
-        return view('admin.order-detail');
+        $order = Order::find($id);
+        $orderItems = OrderDetail ::where(  'order_id', $order->id)->orderBy('created_at','desc')->paginate(12);
+        return view('admin.order-detail', compact('order','orderItems'));
     }
 
     public function order_tracking()

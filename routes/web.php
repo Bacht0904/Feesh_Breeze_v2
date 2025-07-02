@@ -54,7 +54,7 @@ Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_ca
 Route::get('/admin/categories/search', [AdminController::class, 'category_search'])->name('admin.categories.search');
 
 Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
-Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
+Route::get('/admin/order/{id}detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
 
 Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
