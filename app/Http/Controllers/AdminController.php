@@ -460,6 +460,26 @@ class AdminController extends Controller
         return view('admin.order-tracking');
     }
 
+    public function update_order_status(Request $request)
+    {
+        $order = Order::find($request->id);
+        if (!$order) {
+        return back()->withErrors(['error' => 'Không tìm thấy đơn hàng.']);
+    }
+        $order->status = $request->status;
+        // if($request->status == 'Đã Giao')
+        // {
+        //     $order->delivered_date = Carbon::now();
+        // }
+        // else if($request->status == 'Đã Hủy')
+        // {
+        //     $order->canceled_date = Carbon::now();
+        // }
+        $order->save();
+        return back()->with('status','Đã cập nhật trạng thái đơn hàng thành công');
+    }
+
+
     public function sliders()
     {
         $slides = Slide::orderBy('id', 'asc')->paginate(10);

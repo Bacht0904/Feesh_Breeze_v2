@@ -484,7 +484,7 @@
                 <div class="reviews-group d-flex align-items-center">
                   @for ($i = 1; $i <= 5; $i++)
                     {{-- Hiển thị sao đánh giá --}}
-                    <svg class="review-star {{ $color=$i <=$reviewAvg ? 'text-warning-custom' : 'text-muted' ; }}" width="16" height="16">
+                    <svg class="review-star {{ $color=$i <=$reviewAvg ? 'text-warning-custom' : 'text-muted'  }}" width="16" height="16">
                     <use href="#icon_star" />
                     </svg>
                     @endfor

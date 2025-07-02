@@ -58,6 +58,7 @@ Route::get('/admin/categories/search', [AdminController::class, 'category_search
 Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
 Route::get('/admin/order/{id}detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
+Route::put('/admin/order/update-status', [AdminController::class,'update_order_status'])->name('admin.order.status.update');
 
 Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
 Route::post('/admin/product/store', [AdminController::class, 'product_store'])->name('admin.product.store');
