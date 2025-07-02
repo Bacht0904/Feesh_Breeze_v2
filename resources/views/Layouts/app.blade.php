@@ -274,7 +274,7 @@
 
             <div class="logo">
                 <a href="{{route('home')}}">
-                    <img src="{{asset('(assets/images/1750827198_685b80be46421.jpg')}}" class="logo__image d-block" />
+                    <img src="{{asset('(images/logo/logo.png')}}" class="logo__image d-block" />
                 </a>
             </div>
 
@@ -397,7 +397,7 @@
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('images/1750827198_685b80be46421.jpg') }}" class="logo__image">
+                        <img src="{{ asset('images/logo/logo.png') }}" class="logo__image", style="max-height: 60px ; with:auto ">
 
                     </a>
                 </div>
@@ -658,7 +658,9 @@
 
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
-
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="{{asset('assets/js/custom.js')}}"></script>
     <script src="{{asset('assets/js/plugins/jquery.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/bootstrap.bundle.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/bootstrap-slider.min.js')}}"></script>
