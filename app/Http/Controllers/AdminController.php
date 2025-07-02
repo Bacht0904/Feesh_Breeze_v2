@@ -81,7 +81,6 @@ class AdminController extends Controller
             'totalConfirmedAmount',
             'totalDeliveredAmount'
         ));
-
     }
 
     public function changePassword()
@@ -90,8 +89,6 @@ class AdminController extends Controller
             return redirect()->route('login')->with('error', 'Bạn cần đăng nhập trước khi tiếp tục.');
         }
         return view('auth.password.change');
-
-
     }
     // public function changPasswordStore(Request $request)
     // {
@@ -111,7 +108,12 @@ class AdminController extends Controller
         $product = Product::with(['category', 'brand', 'product_details'])
             ->where('slug', $Slug)
             ->firstOrFail();
-
+        $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+            ->with([
+                'product_details' => fn($q) => $q->where('quantity', '>', 0),
+                'reviews'
+            ])
+            ->get();
         if (!$product) {
             abort(404, view('errors.product-not-found'));
         }
@@ -766,7 +768,7 @@ class AdminController extends Controller
         // $coupon->status = $request->status;
         // $coupon->save();
 
-        return redirect()->route('admin.coupons');//->with('status', 'Coupon đã được cập nhật thành công!');
+        return redirect()->route('admin.coupons'); //->with('status', 'Coupon đã được cập nhật thành công!');
     }
 
     public function delete_coupon($id)
@@ -787,16 +789,10 @@ class AdminController extends Controller
             request()->session()->flash('error', 'Không tìm thấy mã giảm giá');
             return redirect()->back();
         }
-
-
-
     }
 
     public function settings()
     {
         return view('admin.settings');
     }
-
-
-
 }

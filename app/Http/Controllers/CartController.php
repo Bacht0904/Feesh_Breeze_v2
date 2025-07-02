@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
-use App\Models\Product_details; // Đổi tên model cho chuẩn (không _)
+use App\Models\Product_details;
+use App\Models\Coupon; // Đổi tên model cho chuẩn (không _)
 
 class CartController extends Controller
 {
@@ -15,8 +16,8 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
         return view('user.cart', compact('cart'));
     }
-    
 
+ 
     // 👉 Thêm sản phẩm chi tiết vào giỏ hàng
     public function addDetail(Request $request)
     {

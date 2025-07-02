@@ -36,7 +36,21 @@
         <p><strong>Trạng thái:</strong> {{ $product->status ? 'Còn hàng' : 'Hết hàng' }}</p>
         <p><strong>Ngày tạo:</strong> {{ $product->created_at->format('d/m/Y H:i') }}</p>
         <p><strong>Mô tả:</strong> {{ $product->description }}</p>
+        <p><strong>Đánh giá:</strong>
+          @if ($product->reviews->count() > 0)
+          <span class="text-rating-custom fw-bold">
+            {{ number_format($product->reviews->avg('rating'), 1) }}
+            <i class="fa fa-star"></i>
+          </span>
 
+         <a href="{{ route('product.reviews', $product->id) }}" class="review-count">
+            ({{ $product->reviews->count() }} đánh giá)
+          </a>
+          @else
+          <span class="text-muted fst-italic">Chưa có đánh giá</span>
+          @endif
+
+        </p>
         {{-- Thêm vào giỏ --}}
         <form method="POST" action="{{ route('cart.addDetail') }}">
           @csrf
@@ -61,7 +75,7 @@
 
           <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
         </form>
-        
+
       </div>
     </div>
 
@@ -87,46 +101,67 @@
 </script>
 @endpush
 @push('scripts')
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  @if(session('added_to_cart'))
-    <script>
-      Swal.fire({
-        icon: 'success',
-        title: '🎉 Đã thêm vào giỏ!',
-        text: "{{ session('added_to_cart') }}",
-        timer: 2000,
-        showConfirmButton: false,
-        toast: true,
-        position: 'top-end',
-        customClass: {
-          popup: 'shadow rounded',
-        }
-      });
-    </script>
-  @endif
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+@if(session('added_to_cart'))
+<script>
+  Swal.fire({
+    icon: 'success',
+    title: '🎉 Đã thêm vào giỏ!',
+    text: "{{ session('added_to_cart') }}",
+    timer: 2000,
+    showConfirmButton: false,
+    toast: true,
+    position: 'top-end',
+    customClass: {
+      popup: 'shadow rounded',
+    }
+  });
+</script>
+@endif
 @endpush
 @push('styles')
-<style> 
+<style>
+  .text-rating-custom {
+    color: #ff9900;
+    /* Cam rực rỡ hoặc chọn tông màu bạn thích */
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+
+
+
+  .review-count {
+    color: #6c757d;
+    /* xám nhẹ */
+    margin-left: 5px;
+  }
+
   .product-title {
     font-size: 1.75rem;
     font-weight: bold;
     margin-bottom: 1rem;
   }
-  
+
   .swiper-product-detail img {
     max-width: 100%;
     height: auto;
   }
-  
-  .swiper-button-next, .swiper-button-prev {
+
+  .swiper-button-next,
+  .swiper-button-prev {
     color: #000;
-  } 
-  .swiper-button-next:hover, .swiper-button-prev:hover {
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
     color: #007bff;
   }
-  .form-select, .form-control {
+
+  .form-select,
+  .form-control {
     width: 100%;
   }
+
   .form-select {
     max-width: 300px;
   }

@@ -38,7 +38,7 @@
             <div class="swiper-slide">
                 <div class="overflow-hidden position-relative h-100">
                     <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                        <img loading="lazy" src="{{asset('assets/images/home/demo3/slideshow-character1.png')}}" width="542" height="733"
+                        <img loading="lazy" src="assets/images/home/demo3/slideshow-character1.png" width="542" height="733"
                             alt="Woman Fashion 1"
                             class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto" />
                         <div class="character_markup type2">
@@ -85,7 +85,7 @@
             <div class="swiper-slide">
                 <div class="overflow-hidden position-relative h-100">
                     <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                        <img loading="lazy" src="{{asset('assets/images/slideshow-character2.png')}}" width="400" height="690"
+                        <img loading="lazy" src="assets/images/slideshow-character2.png" width="400" height="690"
                             alt="Woman Fashion 2"
                             class="slideshow-character__img animate animate_fade animate_rtl animate_delay-10 w-auto h-auto" />
                     </div>
@@ -100,13 +100,14 @@
                     </div>
                 </div>
             </div>
-        </div>
 
+        </div>
         <div class="container">
             <div
                 class="slideshow-pagination slideshow-number-pagination d-flex align-items-center position-absolute bottom-0 mb-5">
             </div>
         </div>
+
     </section>
     <div class="container mw-1620 bg-white border-radius-10">
         <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
@@ -274,19 +275,6 @@
                                     alt="{{ $product->name }}"
                                     class="card-img-top img-cover">
                             </a>
-                            <!-- <button
-                                type="button"
-                                class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 m-2 js-add-wishlist"
-                                title="Thêm vào wishlist"
-                                data-product-id="{{ $detail->id }}">
-                                <i class="fa fa-heart"></i>
-                            </button> -->
-                            <!-- <button class="btn btn-sm btn-outline-danger position-absolute top-0 end-0  js-add-wishlist"
-                                title="Add To Wishlist">
-                                <svg width="16" height="16">
-                                    <use href="#icon_heart" />
-                                </svg>
-                            </button> -->
                             <button type="button"
                                 class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 js-add-wishlist"
                                 data-id="{{ $detail->id }}"
@@ -316,7 +304,7 @@
                                     <a href="{{ $productUrl }}"
                                         class="text-dark text-decoration-none d-block"
                                         title="{{ $product->name }}">
-                                        {{ Str::limit($product->name, 30) }}
+                                        {{ Str::limit($product->name, 20) }}
                                     </a>
                                 </h6>
                                 @if($detail)
@@ -332,11 +320,6 @@
                     @endif
                     @endforeach
                 </div>
-
-                {{-- Navigation --}}
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-
             </div>
         </section>
     </div>
@@ -442,7 +425,58 @@
             });
     });
 </script>
+<style>
+  .text-rating-custom {
+    color: #ff9900;
+    /* Cam rực rỡ hoặc chọn tông màu bạn thích */
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
 
+
+
+  .review-count {
+    color: #6c757d;
+    /* xám nhẹ */
+    margin-left: 5px;
+  }
+
+  .product-title {
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+
+  .swiper-product-detail img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #000;
+  }
+
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    color: #007bff;
+  }
+
+  .form-select,
+  .form-control {
+    width: 100%;
+  }
+
+  .form-select {
+    max-width: 300px;
+  }
+
+
+
+  .form-check-label {
+    cursor: pointer;
+  }
+</style>
 <script>
     setTimeout(() => {
         const alert = document.getElementById('flash-alert');

@@ -29,9 +29,13 @@ class OrderController extends Controller
     {
         $order = Order::where('id', $id)
             ->where('id_user', Auth::id())
-            ->with(['details.productDetail']) // load cả chi tiết sản phẩm và thông tin sản phẩm gốc
+            ->with(['details.productDetail.product', 'details.review']) // 👈 THÊM chỗ này
             ->firstOrFail();
 
-        return view('user.orderdetail', compact('order'));
+
+
+        $canReview = $order->status === 'Chờ Xác Nhận';
+        return view('user.orderdetail', compact('order', 'canReview'));
     }
 }
+//  $table->enum('status', ['Chờ Xác Nhận','Đã Xác Nhận','Chờ Lấy Hàng','Đã Lấy Hàng','Đang Giao','Đã Giao','Giao Thành Công','Xác Nhận Hủy','Đã Hủy'])->default('Chờ Xác Nhận');       
