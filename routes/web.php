@@ -44,6 +44,7 @@ Route::middleware(['auth:admin'])->group(function () {
 
 Auth::routes();
 
+
 Route::middleware(['admin.staff'])->group(function () {
     Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
@@ -110,6 +111,64 @@ Route::middleware(['admin.staff'])->group(function () {
 //Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
 
+=======
+Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+Route::get('/admin/brand/add', [AdminController::class, 'add_brand'])->name('admin.brand.add');
+Route::post('/admin/brand/store', [AdminController::class, 'brand_store'])->name('admin.brand.store');
+Route::get('/admin/brand/{id}/edit', [AdminController::class, 'edit_brand'])->name('admin.brand.edit');
+Route::put('/admin/brand/update', [AdminController::class, 'update_brand'])->name('admin.brand.update');
+Route::delete('/admin/brand/{id}/delete', [AdminController::class, 'delete_brand'])->name('admin.brand.delete');
+Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
+Route::get('/admin/brands/search', [AdminController::class, 'brand_search'])->name('admin.brands.search');
+
+Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
+Route::get('/admin/category/add', [AdminController::class, 'add_category'])->name('admin.category.add');
+Route::post('/admin/category/store', [AdminController::class, 'category_store'])->name('admin.category.store');
+Route::get('/admin/category/{id}/edit', [AdminController::class, 'edit_category'])->name('admin.category.edit');
+Route::put('/admin/category/update', [AdminController::class, 'update_category'])->name('admin.category.update');
+Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_category'])->name('admin.category.delete');
+Route::get('/admin/categories/search', [AdminController::class, 'category_search'])->name('admin.categories.search');
+
+Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+Route::get('/admin/order/{id}detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
+Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
+
+Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
+Route::post('/admin/product/store', [AdminController::class, 'product_store'])->name('admin.product.store');
+Route::get('/admin/product/add', [AdminController::class, 'add_product'])->name('admin.product.add');
+Route::get('/admin/product/{id}/edit', [AdminController::class, 'edit_product'])->name('admin.product.edit');
+Route::put('/admin/product/{id}', [AdminController::class, 'update_product'])->name('admin.product.update');
+Route::delete('/admin/product/{id}/delete', [AdminController::class, 'delete_product'])->name('admin.product.delete');
+Route::get('/admin/product/{id}/detail', [AdminController::class, 'product_detail'])->name('admin.product.detail');
+Route::get('/admin/products/search', [AdminController::class, 'product_search'])->name('admin.products.search');
+
+
+Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
+Route::get('/admin/slide/add', [AdminController::class, 'add_slide'])->name('admin.slide.add');
+Route::post('/admin/slide/store', [AdminController::class, 'slide_store'])->name('admin.slide.store');
+Route::get('/admin/slide/{id}/edit', [AdminController::class, 'edit_slide'])->name('admin.slide.edit');
+Route::put('/admin/slide/{id}', [AdminController::class, 'update_slide'])->name('admin.slide.update');
+Route::delete('/admin/slide/{id}/delete', [AdminController::class, 'delete_slide'])->name('admin.slide.delete');
+Route::put('/admin/slide/{id}/toggle', [AdminController::class, 'toggle_slide_status'])->name('admin.slide.toggle');
+
+
+Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
+Route::get('/admin/user/add', [AdminController::class, 'add_user'])->name('admin.user.add');
+Route::post('/admin/user/store', [AdminController::class, 'user_store'])->name('admin.user.store');
+Route::get('/admin/user/{id}/edit', [AdminController::class, 'edit_user'])->name('admin.user.edit');
+Route::put('/admin/user/update', [AdminController::class, 'update_user'])->name('admin.user.update');
+Route::delete('/admin/user/{id}/delete', [AdminController::class, 'delete_user'])->name('admin.user.delete');
+
+Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
+Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
+Route::post('/admin/coupon/store', [AdminController::class, 'coupon_store'])->name('admin.coupon.store');
+Route::get('/admin/coupon/{id}/edit', [AdminController::class, 'edit_coupon'])->name('admin.coupon.edit');
+Route::put('/admin/coupon/update/{id}', [AdminController::class, 'update_coupon',])->name('admin.coupon.update');
+Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coupon'])->name('admin.coupon.delete');
+
+Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
@@ -162,6 +221,8 @@ Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.c
 Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
 Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
 Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
 
 
@@ -174,15 +235,22 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/account/update', [UserController::class, 'update'])->name('account.update');
     Route::post('/account/change-password', [UserController::class, 'changePassword'])->name('account.changePassword');
 });
-Route::middleware(['auth'])->group(function () {
-    Route::get('/reviews/create/{product_detail}', [ReviewController::class, 'create'])->name('review');
-    Route::match(['GET', 'POST'], '/reviews', [ReviewController::class, 'store'])->name('reviews.store');
-});
+
+// web.php
+Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
+Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
+
+Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
+Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
+Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('product.reviews');
+
 
 
 
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('cart.applyCoupon');
+Route::post('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
 Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
 Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
@@ -197,3 +265,8 @@ Route::post('/wishlist/add', [WishlistController::class, 'add'])->name('wishlist
 Route::delete('/wishlist/remove/{id}', [WishlistController::class, 'remove'])->name('wishlist.remove');
 Route::get('/wishlist/clear', [WishlistController::class, 'clear'])->name('wishlist.clear');
 Route::post('/wishlist/move-to-cart', [WishlistController::class, 'moveToCart'])->name('wishlist.moveToCart');
+
+// routes/web.php hoặc routes/api.php
+Route::get('/search-suggestions', [HomeController::class, 'suggest'])->name('search.suggest');
+Route::get('/quick-suggestions', [HomeController::class, 'quickSuggestions']);
+

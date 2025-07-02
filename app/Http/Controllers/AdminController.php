@@ -7,6 +7,13 @@ use App\Models\Contact;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
+use App\Rules\MatchOldPassword;
+use App\Models\User;
+use App\Models\OrderDetail;
+
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -74,7 +81,6 @@ class AdminController extends Controller
             'contactCount',
             'user'
         ));
-
     }
 
     public function changePassword()
@@ -82,7 +88,49 @@ class AdminController extends Controller
         return view('auth.password.change');
     }
 
+
     public function updatePassword(Request $request)
+
+    public function show($Slug)
+    {
+        $product = Product::with(['category', 'brand', 'product_details'])
+            ->where('slug', $Slug)
+            ->firstOrFail();
+        $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+            ->with([
+                'product_details' => fn($q) => $q->where('quantity', '>', 0),
+                'reviews'
+            ])
+            ->get();
+        if (!$product) {
+            abort(404, view('errors.product-not-found'));
+        }
+        return view('user.product', compact('product'));
+    }
+
+
+    public function products()
+    {
+        $products = Product::with(['category', 'brand'])->get();
+
+        $products = Product::with(['product_details'])->orderBy('id', 'asc')->paginate(10);
+        return view('admin.products', compact('products'));
+    }
+
+    public function add_product()
+    {
+        $categories = Category::select('id', 'name')->orderBy('name')->get();
+        $brands = Brand::select('id', 'name')->orderBy('name')->get();
+        return view('admin.product-add', compact('categories', 'brands'));
+    }
+    public function showAddProductForm()
+    {
+        return view('admin.add_product'); // hoặc tên view của bạn
+    }
+
+
+    public function product_store(Request $request)
+
     {
         $request->validate([
             'current_password' => 'required',
@@ -112,9 +160,11 @@ class AdminController extends Controller
         return view('admin.orders', compact('orders'));
     }
 
-    public function order_detail()
+    public function order_detail($id)
     {
-        return view('admin.order-detail');
+        $order = Order::find($id);
+        $orderItems = OrderDetail ::where(  'order_id', $order->id)->orderBy('created_at','desc')->paginate(12);
+        return view('admin.order-detail', compact('order','orderItems'));
     }
 
     public function order_tracking()
@@ -136,9 +186,14 @@ class AdminController extends Controller
 
 
 
+        return redirect()->route('admin.coupons'); //->with('status', 'Coupon đã được cập nhật thành công!');
+    }
+
+
     public function setting(Request $request)
     {
         $user = Auth::user();
+
 
         $rules = [
             'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
@@ -156,6 +211,22 @@ class AdminController extends Controller
 
         // Xử lý lưu thông tin
         $user->update($request->only('name', 'email', 'phone'));
+
+        $coupon = Coupon::findOrFail($id);
+        if ($coupon) {
+            $status = $coupon->delete();
+            if ($status) {
+                request()->session()->flash('success', 'Xóa mã thành công');
+            } else {
+                request()->session()->flash('error', 'Lỗi, vui lòng thử lại!!');
+            }
+            return redirect()->route('admin.coupons');
+        } else {
+            request()->session()->flash('error', 'Không tìm thấy mã giảm giá');
+            return redirect()->back();
+        }
+    }
+
 
         return redirect()->route('admin.users')->with('status', 'Thông tin người dùng đã được cập nhật!');
     }

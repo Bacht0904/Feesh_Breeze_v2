@@ -70,7 +70,7 @@
                                     
                                     
                                     <td class="text-center">
-                                        <a href="{{ route('admin.order.detail') }}">
+                                        <a href="{{ route('admin.order.detail',['id'=>$order->id]) }}">
                                             <div class="list-icon-function view-icon">
                                                 <div class="item eye">
                                                     <i class="icon-eye"></i>
