@@ -21,9 +21,14 @@ class Review extends Model
         return $this->belongsTo(Product::class);
     }
 
-// Product detail relationship is optional
+    // Product detail relationship is optional
     public function productDetail()
     {
         return $this->belongsTo(ProductDetail::class, 'product_detail_id');
+    }
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'product_detail_id', 'product_detail_id')
+            ->where('user_id', auth()->id());
     }
 }
