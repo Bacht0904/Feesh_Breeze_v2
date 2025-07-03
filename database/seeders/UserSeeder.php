@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
                 'phone' => '0912123456',
                 'address' => 'Đà Nẵng',
                 'role' => 'user',
-                'status' => 'inactive',
+                'status' => 'active',
                 'avatar' => 'avatars/user2.jpg',
                 'password' => Hash::make('12345678'),
             ]

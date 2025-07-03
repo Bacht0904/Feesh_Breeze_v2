@@ -76,7 +76,6 @@ class ReviewController extends Controller
         $review->status = 0; // Đánh dấu đánh giá là đã xóa (ẩn)
         $review->save();
         // Ẩn đánh giá thay vì xóa
-        return redirect()->route('product.show', $review->product_id)
-            ->with('success', '✅ Đánh giá đã được xóa thành công!');
+        return redirect()->back()->with('success', '✅ Đánh giá đã được xóa thành công!');
     }
 }
