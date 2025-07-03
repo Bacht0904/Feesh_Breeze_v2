@@ -42,8 +42,8 @@
                         <input class="flex-grow" type="text" placeholder="category Slug" name="slug" tabindex="0" value="{{ $category->slug }}" aria-required="true" required="">
                     </fieldset>
                     @error('slug') <span class="alert alert-danger text-center">{{ $message }}</span> @enderror
-                    <fieldset class="user-status">
-                        <div class="body-title mb-10">Trạng thái tài khoản <span class="tf-color-1">*</span></div>
+                    <fieldset class="category-status">
+                        <div class="body-title mb-10">Trạng thái loại sản phẩm<span class="tf-color-1">*</span></div>
                         <div class="select">
                             <select name="status" required>
                                 <option disabled selected>Chọn trạng thái</option>

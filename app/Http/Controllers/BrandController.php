@@ -64,6 +64,7 @@ class BrandController extends Controller
         $brand = Brand::find($request->id);
         $brand->name = $request->name;
         $brand->slug = Str::slug($request->name);
+        $brand->status = $request->status;
         $brand->save();
 
         $brand->save();
@@ -76,9 +77,13 @@ class BrandController extends Controller
     public function delete_brand($id)
     {
         $brand = Brand::find($id);
-        $brand->delete();
 
-        return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được xóa thành công!');
+            $brand->status = 'inactive';
+            $brand->save();
+            // Product::where('category_id', $category->id)->update(['status' => 'inactive']);
+
+            return redirect()->route('admin.brands')->with('status', 'Loại sản phẩm đã được chuyển sang trạng thái không hoạt động!');
+
     }
 
     public function brand_search(Request $request)

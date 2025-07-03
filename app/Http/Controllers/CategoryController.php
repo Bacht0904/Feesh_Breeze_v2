@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Product;
+
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -69,16 +69,11 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
 
-        if ($category) {
             $category->status = 'inactive';
             $category->save();
-
-            Product::where('category_id', $category->id)->update(['status' => 'inactive']);
+            // Product::where('category_id', $category->id)->update(['status' => 'inactive']);
 
             return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được chuyển sang trạng thái không hoạt động!');
-        }
-
-        return redirect()->route('admin.categories')->with('error', 'Không tìm thấy loại sản phẩm!');
     }
 
 

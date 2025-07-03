@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Models\ProductDetail;
+use App\Models\Product_details;
 use App\Models\Category;
 use App\Models\Brand;
 use Illuminate\Database\Eloquent\Model;
@@ -25,7 +25,7 @@ class Product extends Model
 
     public function product_details()
     {
-        return $this->hasMany(ProductDetail::class, 'product_id');
+        return $this->hasMany(Product_details::class, 'product_id');
     }
     public function category()
     {

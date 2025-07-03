@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product_details;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
@@ -12,7 +13,7 @@ class ReviewController extends Controller
 {
     public function create($product_detail_id)
     {
-        $productDetail = ProductDetail::with('product')->findOrFail($product_detail_id);
+        $productDetail = Product_details::with('product')->findOrFail($product_detail_id);
         return view('review', compact('productDetail'));
     }
     public function store(Request $request)

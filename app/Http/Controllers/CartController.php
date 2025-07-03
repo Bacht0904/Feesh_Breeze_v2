@@ -26,7 +26,7 @@ class CartController extends Controller
             'quantity'          => 'required|integer|min:1',
         ]);
 
-        $detail = ProductDetail::findOrFail($request->product_detail_id);
+        $detail = Product_details::findOrFail($request->product_detail_id);
         $cart   = session()->get('cart', []);
         $key    = "{$detail->id}-{$detail->size}-{$detail->color}";
 
@@ -80,7 +80,7 @@ class CartController extends Controller
 
             // Lấy product_detail_id mới mà user chọn
             $newDetailId = $request->input("product_detail_ids.$oldKey");
-            $detail = ProductDetail::with('product')->find($newDetailId);
+            $detail = Product_details::with('product')->find($newDetailId);
 
             if (!$detail) continue;
 

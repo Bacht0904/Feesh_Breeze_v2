@@ -15,7 +15,7 @@ class WishlistController extends Controller
 
         $items = collect($session)
             ->map(function ($row) {
-                $detail = ProductDetail::with('product')->find($row['product_detail_id']);
+                $detail = Product_details::with('product')->find($row['product_detail_id']);
                 if (!$detail) return null;
                 // Gắn thêm property quantity để view dễ dùng
                 $detail->wishlist_quantity = $row['quantity'];
@@ -63,7 +63,7 @@ class WishlistController extends Controller
             'product_detail_id' => 'required|exists:product_details,id',
         ]);
 
-        $detail = ProductDetail::with('product')->find($request->product_detail_id);
+        $detail = Product_details::with('product')->find($request->product_detail_id);
 
         if (!$detail) {
             return back()->with('error', 'Không tìm thấy sản phẩm chi tiết.');

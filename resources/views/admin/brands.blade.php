@@ -46,6 +46,7 @@
                                     <th>#</th>
                                     <th>Tên thương hiệu</th>
                                     <th>slug</th>
+                                    <th>Trạng thái</th>
                                     <th>Thao tác</th>
                                 </tr>
                             </thead>
@@ -57,6 +58,9 @@
                                             <a href="#" class="body-title-2">{{ $brand->name }}</a>
                                         </td>
                                         <td>{{ $brand->slug }}</td>
+                                        <td>
+                                            {{ $brand->status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động' }}
+                                        </td>
                                         <td>
                                         <div class="list-icon-function">
                                             <form action="{{ route('admin.brand.edit', $brand->id) }}" method="GET"

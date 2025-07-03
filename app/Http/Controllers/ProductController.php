@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use App\Models\Category;
 use App\Models\Brand;
-use App\Models\ProductDetail;
+use App\Models\Product_details;
 use Illuminate\Support\Str;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
@@ -17,11 +17,32 @@ class ProductController extends Controller
 {
     public function products()
     {
-        $products = Product::with(['category', 'brand'])->get();
+        $products = Product::with(['category', 'brand', 'product_details'])->orderBy('id', 'asc')->paginate(10);
 
-        $products = Product::with(['product_details'])->orderBy('id', 'asc')->paginate(10);
+        foreach ($products as $product) {
+            $category = $product->category;
+            $brand = $product->brand;
+
+            // Tính tổng số lượng từ các biến thể
+            $total_quantity = $product->product_details->sum('quantity');
+
+            // Xác định trạng thái
+            $newStatus = (
+                $category->status === 'inactive' ||
+                $brand->status === 'inactive' ||
+                $total_quantity === 0
+            ) ? 'inactive' : 'active';
+
+            // Chỉ update nếu có thay đổi
+            if ($product->status !== $newStatus) {
+                $product->status = $newStatus;
+                $product->save();
+            }
+        }
+
         return view('admin.products', compact('products'));
     }
+
 
     public function add_product()
     {
@@ -69,15 +90,23 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->brand_id = $request->brand_id;
         $product->description = $request->description;
-        $product->status = $category->status;
         $product->save();
+
+        $category = Category::findOrFail($request->category_id);
+        $brand = Brand::findOrFail($request->brand_id);
 
         $total_quantity = 0;
         foreach ($request->variants as $variant) {
             $total_quantity += $variant['quantity'];
         }
-        $product->status = ($total_quantity > 0) ? 'active' : 'inactive';
-        $product->save(); // Chỉ save một lần, sau khi xác định đúng trạng thái
+
+        if ($category->status === 'inactive' || $brand->status === 'inactive' || $total_quantity === 0)
+            $product->status = 'inactive';
+        else
+            $product->status = 'active';
+
+        $product->save();
+
 
 
         $manager = new ImageManager(new Driver());
@@ -153,8 +182,19 @@ class ProductController extends Controller
             'status' => $category->status,
         ]);
 
-        $total_quantity = collect($request->variants)->sum('quantity');
-        $product->status = ($total_quantity > 0) ? 'active' : 'inactive';
+        $category = Category::findOrFail($request->category_id);
+        $brand = Brand::findOrFail($request->brand_id);
+
+        $total_quantity = 0;
+        foreach ($request->variants as $variant) {
+            $total_quantity += $variant['quantity'];
+        }
+
+        if ($category->status === 'inactive' || $brand->status === 'inactive' || $total_quantity === 0)
+            $product->status = 'inactive';
+        else
+            $product->status = 'active';
+
         $product->save();
 
         $existingDetails = $product->product_details->keyBy(function ($detail) {
@@ -200,7 +240,7 @@ class ProductController extends Controller
                 if ($isSamePrice && $isSameQuantity && $isSameImage) {
                     continue;
                 }
-                ProductDetail::create([
+                Product_details::create([
                     'product_id' => $product->id,
                     'size' => $variant['size'],
                     'color' => $variant['color'],
@@ -210,7 +250,7 @@ class ProductController extends Controller
                 ]);
             } else {
                 // Biến thể chưa tồn tại → thêm mới
-                ProductDetail::create([
+                Product_details::create([
                     'product_id' => $product->id,
                     'size' => $variant['size'],
                     'color' => $variant['color'],
@@ -249,7 +289,7 @@ class ProductController extends Controller
 
     public function product_search(Request $request)
     {
-        $search = $request->input('name'); 
+        $search = $request->input('name');
 
         $products = Product::where('name', 'like', '%' . $search . '%')
             ->orWhere('slug', 'like', '%' . $search . '%')

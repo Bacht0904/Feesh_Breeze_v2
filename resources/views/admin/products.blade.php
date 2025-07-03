@@ -87,12 +87,8 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if (!$product->brand || !$product->category || $product->product_details->sum('quantity') == 0)
-                                            <span class="badge bg-secondary">Hết hàng</span>
-                                        @else
-                                            <span class="badge bg-success">Còn hàng</span>
-                                        @endif
-                                    </td>
+                                            {{ $product->status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động' }}
+                                        </td>
                                     <td>
                                         <div class="list-icon-function">
                                             <form action="{{ route('admin.product.detail', $product->id) }}" method="GET" style="display: inline;">

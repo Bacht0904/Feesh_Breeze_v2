@@ -64,8 +64,8 @@ class HomeController extends Controller
         $categories = Category::all();
         $brands = Brand::withCount('products')->get();
 
-        $sizes = ProductDetail::select('size')->distinct()->pluck('size');
-        $colors = ProductDetail::select('color')->distinct()->pluck('color')->map(function ($color) {
+        $sizes = Product_details::select('size')->distinct()->pluck('size');
+        $colors = Product_details::select('color')->distinct()->pluck('color')->map(function ($color) {
             $hexMap = config('colormap');
             return [
                 'name' => $color,

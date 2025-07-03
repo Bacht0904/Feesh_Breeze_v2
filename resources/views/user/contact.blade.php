@@ -58,21 +58,3 @@
     </section>
   </main>
  @endsection
-
- @push('scripts')
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-@if(session('success'))
-<script>
-  Swal.fire({
-    icon: 'success',
-    title: '🎉 Đặt hàng thành công!',
-    text: "{{ session('success') }}",
-    confirmButtonText: 'OK',
-    customClass: {
-      confirmButton: 'btn btn-primary px-4'
-    },
-    buttonsStyling: false
-  });
-</script>
-@endif
-@endpush

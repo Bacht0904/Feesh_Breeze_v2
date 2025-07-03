@@ -148,7 +148,7 @@ Route::post('/password/confirm', [HomeController::class, 'confirm'])->name('pass
 Route::get('/contact', [UserController::class, 'contact'])->name('contact');
 Route::get('/admin/contacts', [ContactController::class, 'contacts'])->name('admin.contacts');
 Route::post('/contact/store', [ContactController::class, 'contactStore'])->name('contact.store');
-Route::delete('/contact/delete/{id}', [ContactController::class, 'deleteContact'])->name('contact.delete');
+Route::delete('/contact/delete/{id}', [ContactController::class, 'delete_contact'])->name('contact.delete');
 
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
