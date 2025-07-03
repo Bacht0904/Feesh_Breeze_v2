@@ -40,7 +40,7 @@
                     <div class="box-logo">
                         <a href="{{route('admin.index')}}" id="site-logo-inner">
                             <img class="" id="logo_header" alt="" src="images/logo/logo.png"
-                                data-light="images/logo/logo.png" data-dark="images/logo/logo.png">
+                                data-light="images/logo/logo.png" data-dark="images/logo/logo.png" style="max-height: 60px ; with:auto ">
                         </a>
                         <div class="button-show-hide">
                             <i class="icon-menu-left"></i>
