@@ -60,7 +60,7 @@
                             <button class="btn btn-primary w-100 text-uppercase" type="submit">Đăng Nhập</button>
                             @if (Route::has('password.request'))
                             <a class="btn btn-link" href="{{ route('password.request') }}">
-                                {{ __('Forgot Your Password?') }}
+                                {{ __('Quên Mật Khẩu?') }}
                             </a>
                             @endif
                             <div class="customer-option mt-4 text-center">

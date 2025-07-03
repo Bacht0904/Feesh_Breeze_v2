@@ -8,6 +8,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
@@ -20,8 +22,8 @@ use App\Http\Controllers\ReviewController;
 Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
-Route::get('/admin/password/reset', [AdminController::class, 'showResetForm'])->name('admin.password.reset');
-Route::post('/admin/password/email', [AdminController::class, 'sendResetLinkEmail'])->name('admin.password.email');
+//Route::get('/admin/password/reset', [AdminController::class, 'showResetForm'])->name('admin.password.reset');
+//Route::post('/admin/password/email', [AdminController::class, 'sendResetLinkEmail'])->name('admin.password.email');
 Route::post('/admin/password/reset', [AdminController::class, 'reset'])->name('admin.password.update');
 Route::get('/admin/password/reset/{token}', [AdminController::class, 'showResetFormWithToken'])->name('admin.password.reset.token');
 Route::get('/admin/password/confirm', [AdminController::class, 'showConfirmForm'])->name('admin.password.confirm');
@@ -54,8 +56,9 @@ Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_ca
 Route::get('/admin/categories/search', [AdminController::class, 'category_search'])->name('admin.categories.search');
 
 Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
-Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
+Route::get('/admin/order/{id}detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
+Route::put('/admin/order/update-status', [AdminController::class,'update_order_status'])->name('admin.order.status.update');
 
 Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
 Route::post('/admin/product/store', [AdminController::class, 'product_store'])->name('admin.product.store');
@@ -118,12 +121,13 @@ Route::get('/products/{slug}', [AdminController::class, 'show'])->name('products
 Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
-Route::get('/password/reset', [HomeController::class, 'showResetForm'])->name('password.request');
-Route::post('/password/email', [HomeController::class, 'sendResetLinkEmail'])->name('password.email');
-Route::post('/password/reset', [HomeController::class, 'reset'])->name('password.update');
-Route::get('/password/reset/{token}', [HomeController::class, 'showResetFormWithToken'])->name('password.reset.token');
+//Route::get('/password/reset', [HomeController::class, 'showResetForm'])->name('password.request');
+//Route::post('/password/email', [HomeController::class, 'sendResetLinkEmail'])->name('password.email');
+// Route::post('/password/reset', [HomeController::class, 'reset'])->name('password.update');
+// Route::get('/password/reset/{token}', [HomeController::class, 'showResetFormWithToken'])->name('password.reset.token');
 Route::get('/password/confirm', [HomeController::class, 'showConfirmForm'])->name('password.confirm');
 Route::post('/password/confirm', [HomeController::class, 'confirm'])->name('password.confirm.submit');
+
 Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
@@ -140,6 +144,10 @@ Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.ch
 Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
 Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
+Route::get('/forgot-password', [ForgotPasswordController::class,'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class,'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [ResetPasswordController::class,'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ResetPasswordController::class,'resetPassword'])->name('password.update');
 
 
 Route::middleware('auth')->group(function () {

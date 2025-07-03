@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use App\Rules\MatchOldPassword;
 use App\Models\User;
+use App\Models\OrderDetail;
 use Illuminate\Support\Facades\Hash;
 //use Intervention\Image\Laravel\Facades\Image;
 use Intervention\Image\ImageManager;
@@ -447,15 +448,37 @@ class AdminController extends Controller
         return view('admin.orders', compact('orders'));
     }
 
-    public function order_detail()
+    public function order_detail($id)
     {
-        return view('admin.order-detail');
+        $order = Order::find($id);
+        $orderItems = OrderDetail ::where(  'order_id', $order->id)->orderBy('created_at','desc')->paginate(12);
+        return view('admin.order-detail', compact('order','orderItems'));
     }
 
     public function order_tracking()
     {
         return view('admin.order-tracking');
     }
+
+    public function update_order_status(Request $request)
+    {
+        $order = Order::find($request->id);
+        if (!$order) {
+        return back()->withErrors(['error' => 'Không tìm thấy đơn hàng.']);
+    }
+        $order->status = $request->status;
+        // if($request->status == 'Đã Giao')
+        // {
+        //     $order->delivered_date = Carbon::now();
+        // }
+        // else if($request->status == 'Đã Hủy')
+        // {
+        //     $order->canceled_date = Carbon::now();
+        // }
+        $order->save();
+        return back()->with('status','Đã cập nhật trạng thái đơn hàng thành công');
+    }
+
 
     public function sliders()
     {
