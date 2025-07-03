@@ -105,16 +105,12 @@
         <div class="row">
             <div class="col-lg-2">
                 <ul class="account-nav">
-                    <!-- <li><a href="my-account.html" class="menu-link menu-link_us-s">Dashboard</a></li> -->
-
                     <li><a href="{{ route('wishlist') }}" class="menu-link menu-link_us-s">Yêu Thích</a></li>
                     <li><a href="{{ route('cart') }}" class="menu-link menu-link_us-s">Giỏ Hàng</a></li>
                     <li><a href="{{ route('orders.index') }}" class="menu-link menu-link_us-s">Đơn Hàng</a></li>
-
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
                         @csrf
                     </form>
-
                     <a href="#" class="menu-link menu-link_us-s" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                         Đăng xuất
                     </a>
@@ -475,12 +471,6 @@
     let currentReviewingProductId = null;
 </script>
 <!-- Summernote CSS -->
-<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
-
-<!-- jQuery + Summernote JS -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -495,7 +485,7 @@
     $(document).ready(function() {
         // Khởi tạo Summernote
         $('#review-comment').summernote({
-            placeholder: 'Hãy chia sẻ trải nghiệm của bạn...',
+            placeholder: 'Hãy chia sẻ nhận xét về sản phẩm...',
             height: 180,
             toolbar: [
                 ['style', ['bold', 'italic', 'underline']],
@@ -513,7 +503,7 @@
             // Kiểm tra nếu nội dung rỗng (chỉ là <p><br></p>)
             const textOnly = $('<div>').html(content).text().trim();
             if (textOnly.length === 0) {
-                alert('⚠️ Nội dung nhận xét không được để trống!');
+                alert('Nội dung không được để trống!');
                 return false;
             }
         });

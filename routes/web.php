@@ -199,3 +199,7 @@ Route::post('/wishlist/move-to-cart', [WishlistController::class, 'moveToCart'])
 // routes/web.php hoặc routes/api.php
 Route::get('/search-suggestions', [HomeController::class, 'suggest'])->name('search.suggest');
 Route::get('/quick-suggestions', [HomeController::class, 'quickSuggestions']);
+
+
+Route::get('/hot-deals', [HomeController::class, 'showHotDeals'])->name('hot.deals');
+
