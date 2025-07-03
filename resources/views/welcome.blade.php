@@ -6,7 +6,7 @@
     </section>
 
     @if(session('success') || session('error'))
-    <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 px-4 py-3 
+    <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 px-4 py-3
               {{ session('success') ? 'alert-success' : 'alert-danger' }}"
         role="alert" id="flash-alert">
 
@@ -112,29 +112,17 @@
     <div class="container mw-1620 bg-white border-radius-10">
         <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
         <section class="hot-deals container">
-            <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">Hot Deals</h2>
+            <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">BÁN CHẠY</h2>
             <div class="row">
                 <div
                     class="col-md-6 col-lg-4 col-xl-20per d-flex align-items-center flex-column justify-content-center py-4 align-items-md-start">
-                    <h2>Summer Sale</h2>
-                    <h2 class="fw-bold">Up to 60% Off</h2>
+                    <!-- <h2>July Sale</h2>
+                    <h2 class="fw-bold">Up to 60% Off</h2> -->
 
-                    <div class="position-relative d-flex align-items-center text-center pt-xxl-4 js-countdown mb-3"
-                        data-date="18-3-2024" data-time="06:50">
-                        <div class="day countdown-unit">
-                            <span class="countdown-num d-block"></span>
-                            <span class="countdown-word text-uppercase text-secondary">Days</span>
-                        </div>
 
-                        <div class="hour countdown-unit">
-                            <span class="countdown-num d-block"></span>
-                            <span class="countdown-word text-uppercase text-secondary">Hours</span>
-                        </div>
 
-                    </div>
-
-                    <a href="#" class="btn-link default-underline text-uppercase fw-medium mt-3">View All</a>
                 </div>
+
                 <div class="col-md-6 col-lg-8 col-xl-80per">
                     <div class="position-relative">
                         <div class="swiper-container js-swiper-slider" data-settings='{
@@ -171,83 +159,66 @@
                   }
                 }'>
                             <div class="swiper-wrapper">
-                                <div class="swiper-slide product-card product-card_style3">
-                                    <div class="pc__img-wrapper">
-                                        <a href="details.html">
-                                            <img loading="lazy" src="{{asset('assets/images/home/demo3/product-0-1.jpg')}}" width="258" height="313"
-                                                alt="Cropped Faux leather Jacket" class="pc__img">
-                                            <img loading="lazy" src="{{asset('assets/images/home/demo3/product-0-2.jpg')}}" width="258" height="313"
-                                                alt="Cropped Faux leather Jacket" class="pc__img pc__img-second">
+                                @foreach($hotDeals as $detail)
+                                @php
+                                $product = $detail->product ?? null;
+                                @endphp
+
+                                @if($detail && $detail->quantity > 0)
+                                <div class="swiper-slide">
+                                    <div class="card border-0 shadow-sm product-card h-100 text-center">
+                                        <a href="{{ route('products.show', $product->slug) }}" class="d-block">
+                                            <img
+                                                src="{{ asset($detail->image ?: 'images/placeholder.jpg') }}"
+                                                alt="{{ $product->name }}"
+                                                class="card-img-top img-cover">
                                         </a>
-                                    </div>
+                                        <button type="button"
+                                            class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 js-add-wishlist"
+                                            data-id="{{ $detail->id }}"
+                                            title="Thêm vào yêu thích">
+                                            <svg width="16" height="16">
+                                                <use href="#icon_heart" />
+                                            </svg>
+                                        </button>
 
-                                    <div class="pc__info position-relative">
-                                        <h6 class="pc__title"><a href="details.html">Cropped Faux Leather Jacket</a></h6>
-                                        <div class="product-card__price d-flex">
-                                            <span class="money price text-secondary">$29</span>
-                                        </div>
 
-                                        <div
-                                            class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
-                                            <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside"
-                                                data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
-                                            <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
-                                                data-bs-toggle="modal" data-bs-target="#quickView" title="Quick view">
-                                                <span class="d-none d-xxl-block">Quick View</span>
-                                                <span class="d-block d-xxl-none"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <use href="#icon_view" />
-                                                    </svg></span>
+                                        @if ($detail)
+                                        <form action="{{ route('cart.addDetail') }}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="product_detail_id" value="{{ $detail->id }}">
+                                            <input type="hidden" name="quantity" value="1">
+
+                                            <button type="submit"
+                                                class="pc__atc btn anim_appear-bottom position-absolute border-0 text-uppercase fw-medium"
+                                                data-aside="cartDrawer">
+                                                Thêm vào giỏ
                                             </button>
-                                            <button class="pc__btn-wl bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                                                <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_heart" />
-                                                </svg>
-                                            </button>
+                                        </form>
+                                        @endif
+                                        <div class="pc__info position-relative">
+
+                                            <h6 class="card-title mb-1">
+                                                <a href="{{ route('products.show', $product->slug) }}"
+                                                    class="text-dark text-decoration-none d-block"
+                                                    title="{{ $product->name }}">
+                                                    {{ Str::limit($product->name, 20) }}
+                                                </a>
+                                            </h6>
+                                            @if($detail)
+                                            <span class="money price">${{ number_format($detail->price, 2) }}</span>
+                                            @else
+                                            <span class="text-muted">Chưa có giá</span>
+                                            @endif
+
+
                                         </div>
                                     </div>
                                 </div>
-
-                                <div class="swiper-slide product-card product-card_style3">
-                                    <div class="pc__img-wrapper">
-                                        <a href="details.html">
-                                            <img loading="lazy" src="{{asset('assets/images/home/demo3/product-3-1.jpg')}}" width="258" height="313"
-                                                alt="Cropped Faux leather Jacket" class="pc__img">
-                                            <img loading="lazy" src="{{asset('assets/images/home/demo3/product-3-2.jpg')}}" width="258" height="313"
-                                                alt="Cropped Faux leather Jacket" class="pc__img pc__img-second">
-                                        </a>
-                                    </div>
-
-                                    <div class="pc__info position-relative">
-                                        <h6 class="pc__title"><a href="details.html">Cableknit Shawl</a></h6>
-                                        <div class="product-card__price d-flex align-items-center">
-                                            <span class="money price-old">$129</span>
-                                            <span class="money price text-secondary">$99</span>
-                                        </div>
-
-                                        <div
-                                            class="anim_appear-bottom position-absolute bottom-0 start-0 d-none d-sm-flex align-items-center bg-body">
-                                            <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-add-cart js-open-aside"
-                                                data-aside="cartDrawer" title="Add To Cart">Add To Cart</button>
-                                            <button class="btn-link btn-link_lg me-4 text-uppercase fw-medium js-quick-view"
-                                                data-bs-toggle="modal" data-bs-target="#quickView" title="Quick view">
-                                                <span class="d-none d-xxl-block">Quick View</span>
-                                                <span class="d-block d-xxl-none"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <use href="#icon_view" />
-                                                    </svg></span>
-                                            </button>
-                                            <button class="pc__btn-wl bg-transparent border-0 js-add-wishlist" title="Add To Wishlist">
-                                                <svg width="16" height="16" viewBox="0 0 20 20" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <use href="#icon_heart" />
-                                                </svg>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div><!-- /.swiper-wrapper -->
+                                @endif
+                                @endforeach
+                            </div>
+                            <!-- /.swiper-wrapper -->
                         </div><!-- /.swiper-container js-swiper-slider -->
                     </div><!-- /.position-relative -->
                 </div>
@@ -255,7 +226,7 @@
         </section>
         <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
         <section class="container py-5">
-            <h2 class="text-center fw-bold mb-4">🌟 Sản phẩm nổi bật</h2>
+            <h2 class="text-center fw-bold mb-4">Sản phẩm nổi bật</h2>
 
             {{-- Swiper wrapper --}}
             <div class="swiper js-featured-swiper">
@@ -426,56 +397,56 @@
     });
 </script>
 <style>
-  .text-rating-custom {
-    color: #ff9900;
-    /* Cam rực rỡ hoặc chọn tông màu bạn thích */
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
+    .text-rating-custom {
+        color: #ff9900;
+        /* Cam rực rỡ hoặc chọn tông màu bạn thích */
+        font-weight: bold;
+        font-size: 1.1rem;
+    }
 
 
 
-  .review-count {
-    color: #6c757d;
-    /* xám nhẹ */
-    margin-left: 5px;
-  }
+    .review-count {
+        color: #6c757d;
+        /* xám nhẹ */
+        margin-left: 5px;
+    }
 
-  .product-title {
-    font-size: 1.75rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
+    .product-title {
+        font-size: 1.75rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
 
-  .swiper-product-detail img {
-    max-width: 100%;
-    height: auto;
-  }
+    .swiper-product-detail img {
+        max-width: 100%;
+        height: auto;
+    }
 
-  .swiper-button-next,
-  .swiper-button-prev {
-    color: #000;
-  }
+    .swiper-button-next,
+    .swiper-button-prev {
+        color: #000;
+    }
 
-  .swiper-button-next:hover,
-  .swiper-button-prev:hover {
-    color: #007bff;
-  }
+    .swiper-button-next:hover,
+    .swiper-button-prev:hover {
+        color: #007bff;
+    }
 
-  .form-select,
-  .form-control {
-    width: 100%;
-  }
+    .form-select,
+    .form-control {
+        width: 100%;
+    }
 
-  .form-select {
-    max-width: 300px;
-  }
+    .form-select {
+        max-width: 300px;
+    }
 
 
 
-  .form-check-label {
-    cursor: pointer;
-  }
+    .form-check-label {
+        cursor: pointer;
+    }
 </style>
 <script>
     setTimeout(() => {
