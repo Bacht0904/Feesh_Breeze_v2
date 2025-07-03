@@ -93,16 +93,19 @@
                                             @if (Auth::user()->role === 'admin')
                                                 <td>
                                                     <div class="list-icon-function">
-                                                        <a href="{{ route('admin.user.edit', ['id' => $user->id]) }}">
-                                                            <div class="item edit">
+                                                        <form action="{{ route('admin.user.edit', $user->id) }}" method="GET"
+                                                            style="display: inline;">
+                                                            <button style="border: 1px solid transparent;" type="submit"
+                                                                class="item edit">
                                                                 <i class="icon-edit-3"></i>
-                                                            </div>
-                                                        </a>
-                                                        <form action="{{ route('admin.user.delete', ['id' => $user->id]) }}"
-                                                            method="POST">
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('admin.user.delete', $user->id) }}" method="POST">
+
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="item text-danger delete"
+                                                            <button style="border: 1px solid transparent;" type="submit"
+                                                                class="item text-danger delete"
                                                                 onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
                                                                 <i class="icon-trash-2"></i>
                                                             </button>

@@ -43,7 +43,7 @@
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>STT</th>
+                                    <th>#</th>
                                     <th>Tên thương hiệu</th>
                                     <th>slug</th>
                                     <th>Thao tác</th>
@@ -54,30 +54,28 @@
                                     <tr>
                                         <td>{{ $brand->id }}</td>
                                         <td class="name">
-
-
                                             <a href="#" class="body-title-2">{{ $brand->name }}</a>
-
                                         </td>
                                         <td>{{ $brand->slug }}</td>
                                         <td>
-                                            <div class="list-icon-function">
-                                                <a href="{{ route('admin.brand.edit', ['id' => $brand->id]) }}">
-                                                    <div class="item edit">
-                                                        <i class="icon-edit-3"></i>
-                                                    </div>
-                                                </a>
-                                                <form action="{{ route('admin.brand.delete', ['id' => $brand->id]) }}"
-                                                    method="POST">
+                                        <div class="list-icon-function">
+                                            <form action="{{ route('admin.brand.edit', $brand->id) }}" method="GET"
+                                                style="display: inline;">
+                                                <button style="border: 1px solid transparent;" type="submit" class="item edit">
+                                                    <i class="icon-edit-3"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('admin.brand.delete', $brand->id) }}" method="POST">
 
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="item text-danger delete"
-                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
-                                                        <i class="icon-trash-2"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
+                                                @csrf
+                                                @method('DELETE')
+                                                <button style="border: 1px solid transparent;" type="submit"
+                                                    class="item text-danger delete"
+                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                    <i class="icon-trash-2"></i>
+                                                </button>
+                                            </form>
+                                        </div>
                                         </td>
                                     </tr>
                                 @endforeach
@@ -93,40 +91,3 @@
     </div>
 @endsection
 
-@push('scripts')
-    <script>
-        $function(document).ready(function () {
-            // Xử lý sự kiện click cho các nút xóa
-            $('.delete').on('click', function (event) {
-                event.preventDefault();
-                swal({
-                    title: "Xác nhận xóa",
-                    text: "Bạn có chắc chắn muốn xóa thương hiệu này?",
-                    icon: "warning",
-                    buttons: ["Hủy", "Xóa"],
-                    confirmButtonColor: "#DD6B55",
-                }).then((willDelete) => {
-                    if (willDelete) {
-                        // Nếu người dùng xác nhận xóa, gửi form
-                        $(this).closest('form').submit();
-                    } else {
-                        // Nếu người dùng hủy, không làm gì cả
-                        swal("Thương hiệu không bị xóa!");
-                    }
-                });
-
-            });
-        });
-        // document.addEventListener('DOMContentLoaded', function() {
-        //     const deleteForms = document.querySelectorAll('.delete');
-        //     deleteForms.forEach(form => {
-        //         form.addEventListener('click', function(event) {
-        //             event.preventDefault();
-        //             if (confirm('Bạn có chắc chắn muốn xóa thương hiệu này?')) {
-        //                 this.closest('form').submit();
-        //             }
-        //         });
-        //     });
-        // });
-    </script>
-@endpush

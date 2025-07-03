@@ -20,6 +20,8 @@
     <link rel="apple-touch-icon-precomposed" href="{{ asset('images/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.css" rel="stylesheet">
     @stack('styles')
 </head>
 
@@ -251,8 +253,10 @@
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="{{ asset(Auth::user()->avatar) }}" alt="Avatar người dùng">
+                                                <span class="">
+                                                    <img src="{{ asset(Auth::user()->avatar) }}" width="50px"
+                                                        height="50px" style="border-radius: 50%; object-fit: cover;"
+                                                        alt="Avatar người dùng">
                                                 </span>
                                                 <span class="flex flex-column">
                                                     <span class="body-title mb-2">{{ Auth::user()->name }}</span>
@@ -321,6 +325,11 @@
 
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
+    <!-- jQuery (bắt buộc trước Summernote) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Summernote JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.js"></script>
 
     @stack('scripts')
 </body>

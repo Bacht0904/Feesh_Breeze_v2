@@ -17,6 +17,6 @@ class CheckRole
             return $next($request);
         }
 
-        abort(403, 'Bạn không có quyền truy cập.');
+        return redirect()->route('login')->withErrors(['access' => 'Bạn không có quyền truy cập.']);
     }
 }

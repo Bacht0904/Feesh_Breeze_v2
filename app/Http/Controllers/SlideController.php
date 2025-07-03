@@ -25,16 +25,14 @@ class SlideController extends Controller
     public function slide_store(Request $request)
     {
         $request->validate([
-            'title' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
+            'title' => ['required', 'string', 'max:255', 'regex:/^[\p{L}0-9\s\/\-\!,]+$/u'],
             'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'description' => 'required|string|max:1024',
-            'link' => 'required|url',
         ]);
 
         $slide = new Slide();
         $slide->title = $request->title;
         $slide->description = $request->description;
-        $slide->link = $request->link;
 
         if ($request->hasFile('image')) {
             $image = $request->file('image');
@@ -71,16 +69,14 @@ class SlideController extends Controller
     public function update_slide(Request $request)
     {
         $request->validate([
-            'title' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
+            'title' => ['required', 'string', 'max:255', 'regex:/^[\p{L}0-9\s\/\-\!,]+$/u'],
             'image' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
             'description' => 'required|string|max:1024',
-            'link' => 'required|url',
         ]);
 
         $slide = Slide::find($request->id);
         $slide->title = $request->title;
         $slide->description = $request->description;
-        $slide->link = $request->link;
 
         if ($request->hasFile('image')) {
             // Xóa ảnh cũ nếu có

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product;
 use App\Models\Category;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -54,6 +55,8 @@ class CategoryController extends Controller
         $category = Category::find($request->id);
         $category->name = $request->name;
         $category->slug = Str::slug($request->name);
+        $category->status = $request->status;
+
 
         if (Category::where('slug', $category->slug)->where('id', '!=', $category->id)->exists()) {
             return back()->withErrors(['slug' => 'Slug đã tồn tại, vui lòng nhập lại!'])->withInput();
@@ -65,10 +68,19 @@ class CategoryController extends Controller
     public function delete_category($id)
     {
         $category = Category::find($id);
-        $category->delete();
 
-        return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được xóa thành công!');
+        if ($category) {
+            $category->status = 'inactive';
+            $category->save();
+
+            Product::where('category_id', $category->id)->update(['status' => 'inactive']);
+
+            return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được chuyển sang trạng thái không hoạt động!');
+        }
+
+        return redirect()->route('admin.categories')->with('error', 'Không tìm thấy loại sản phẩm!');
     }
+
 
     public function category_search(Request $request)
     {

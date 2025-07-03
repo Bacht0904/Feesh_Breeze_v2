@@ -12,6 +12,20 @@ class Category extends Model
         'status',
         'parent_id',
     ];
+    
+    protected static function booted()
+    {
+        static::updated(function ($category) {
+            if ($category->status === 'inactive') {
+                $category->products()->update(['status' => 'inactive']);
+            }
+        });
+    }
+
+    public function products()
+    {
+        return $this->hasMany(Product::class, 'category_id');
+    }
 
     public function parent()
     {
@@ -23,10 +37,10 @@ class Category extends Model
         return $this->hasMany('App\Models\Category', 'parent_id');
     }
 
-    public function products()
-    {
-        return $this->hasMany('App\Models\Product', 'cat_id');
-    }
+    // public function products()
+    // {
+    //     return $this->hasMany('App\Models\Product', 'cat_id');
+    // }
     public static function getCategoryBySlug($slug)
     {
         return Category::with(['children', 'products'])->where('slug', $slug)->first();

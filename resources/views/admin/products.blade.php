@@ -39,7 +39,7 @@
                     <table class="table table-striped table-bordered">
                         <thead>
                             <tr>
-                                <th>STT</th>
+                                <th>#</th>
                                 <th class="items-center">Tên sản phẩm</th>
                                 <th>Slug</th>
                                 <th>Giá</th>
@@ -87,7 +87,7 @@
                                         @endif
                                     </td>
                                     <td>
-                                        @if (!$product->brand || $product->product_details->sum('quantity') == 0)
+                                        @if (!$product->brand || !$product->category || $product->product_details->sum('quantity') == 0)
                                             <span class="badge bg-secondary">Hết hàng</span>
                                         @else
                                             <span class="badge bg-success">Còn hàng</span>
@@ -95,24 +95,29 @@
                                     </td>
                                     <td>
                                         <div class="list-icon-function">
-                                            <a href="{{ route('admin.product.detail', $product->id) }}" target="_blank">
-                                                <div class="item eye">
+                                            <form action="{{ route('admin.product.detail', $product->id) }}" method="GET" style="display: inline;">
+                                                <button type="submit"
+                                                style="border: none; background: none; padding: 10px; width: 35px; height: 35px; outline: none; cursor: pointer;" class="item eye">
                                                     <i class="icon-eye"></i>
-                                                </div>
-                                            </a>
-                                            <a href="{{ route('admin.product.edit', $product->id) }}">
-                                                <div class="item edit">
-                                                    <i class="icon-edit-3"></i>
-                                                </div>
-                                            </a>
-                                            <form action="{{ route('admin.product.delete',$product->id) }}" method="POST" style="display:inline;">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="item text-danger delete"
-                                                    style="background:none; border:none;">
-                                                    <i class="icon-trash-2"></i>
                                                 </button>
                                             </form>
+
+                                            <form action="{{ route('admin.product.edit', $product->id) }}" method="GET" style="display: inline;">
+                                                <button type="submit"
+                                                style="border: none; background: none; padding: 10px; width: 35px; height: 35px; outline: none; cursor: pointer;" class="item edit">
+                                                    <i class="icon-edit-3"></i>
+                                                </button>
+                                            </form>
+                                            <form action="{{ route('admin.product.delete', $product->id) }}"
+                                                    method="POST">
+
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button style="border: none; background: none; padding: 8px; width: 30px; height: 30px; outline: none; cursor: pointer;" type="submit" class="item text-danger delete"
+                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                        <i class="icon-trash-2"></i>
+                                                    </button>
+                                                </form>
                                         </div>
                                     </td>
                                 </tr>
