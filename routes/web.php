@@ -160,6 +160,7 @@ Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.up
 Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
 Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('product.reviews');
 
+Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
 
 

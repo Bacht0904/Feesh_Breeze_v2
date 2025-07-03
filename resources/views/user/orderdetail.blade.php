@@ -151,15 +151,14 @@
                                 </tr>
                                 <tr>
                                     <th>Trạng thái đơn hàng</th>
-                                    <td colspan="5">
+                                    <td>
                                         <span class="badge bg-{{ $order->status == 'Đã Hủy' ? 'danger' : ($order->status == 'Chờ Xác Nhận' ? 'warning' : 'success') }}">
                                             {{ $order->status }}
                                         </span>
                                     </td>
-                                </tr>
-                                <tr>
                                     @switch($order->status)
                                     @case('Chờ Xác Nhận')
+
                                     <th>Yêu cầu hủy hàng</th>
                                     <td colspan="5">
                                         <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
@@ -168,32 +167,32 @@
                                             <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
                                         </form>
                                     </td>
+
                                     @break
-                                    @case('Giao Thành Công')
-                                    @break
-                                    
-                                    <th>Trạng thái đơn hàng</th>
 
                                     @case('Xác Nhận Hủy')
+
                                     <th>Trạng thái đơn hàng</th>
                                     <td colspan="5">
                                         <span class="badge bg-danger">Xác nhận hủy</span><br>
                                         <small>Đơn hàng đang chờ xác nhận hủy từ hệ thống.</small>
                                     </td>
+
                                     @break
 
                                     @case('Đã Hủy')
+
                                     <th>Trạng thái đơn hàng</th>
                                     <td colspan="5">
                                         <span class="badge bg-dark">Đã hủy</span><br>
                                         <small>Yêu cầu hủy hoặc trả hàng đã được xử lý.</small>
                                     </td>
-                                    @break
 
+                                    @break
                                     @default
                                     <th>Trạng thái đơn hàng</th>
                                     <td colspan="5">
-                                        <span class="badge bg-light text-dark">vui lòng chờ</span>
+                                        <span class="badge bg-light text-dark">Vui lòng chờ</span>
                                     </td>
                                     @endswitch
                                 </tr>
@@ -223,56 +222,73 @@
                                 @php
                                 $productDetail = $item->productDetail;
                                 $product = $productDetail->product ?? null;
+                                $review = $item->review;
+                                $canReview = !$review || ($review && $review->status == 0);
                                 @endphp
                                 <tr>
+                                    <!-- Sản phẩm -->
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <img src="{{ asset($item->image) }}" class="image" style="width: 50px; height: 50px; object-fit: cover;">
-
+                                            <img src="{{ asset($item->image) }}" style="width: 50px; height: 50px; object-fit: cover;">
                                             <a href="{{ route('products.show', ['slug' => $product->slug]) }}">
                                                 {{ $product->name }}
                                             </a>
                                         </div>
                                     </td>
+
+                                    <!-- Giá -->
                                     <td class="text-center">{{ number_format($item->price, 0, ',', '.') }}₫</td>
+
+                                    <!-- Số lượng -->
                                     <td class="text-center">{{ $item->quantity }}</td>
+
+                                    <!-- Đánh giá -->
                                     <td class="text-center">
+                                        @php
+                                        $review = $item->review ?? null;
+                                        $canReview = !$review || $review->status == 0;
+                                        @endphp
 
-                                        @if ($item->review)
-                                        <span class="badge bg-success">
-                                            <div class="d-flex align-items-center gap-2">
-                                                @for ($i = 1; $i <= 5; $i++)
-                                                    <i class="fa fa-star {{ $i <= $item->review->rating ? 'text-warning' : 'text-secondary' }}"></i>
-                                                    @endfor
-                                            </div>
-                                        </span>
-                                        <div class="text-muted small mb-2" style="max-width: 220px;">
-                                            “{{ $item->review->comment }}”
+                                        @if ($review && $review->status == 1)
+                                        <div class="d-flex justify-content-center gap-1 mb-1">
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <i class="fa fa-star {{ $i <= $review->rating ? 'text-warning-custom' : 'text-secondary' }}"></i>
+                                                @endfor
                                         </div>
-
+                                        <div class="text-muted small" style="max-width: 240px;">{!! $review->comment !!}</div>
                                         @else
                                         <span class="badge bg-warning">Chưa đánh giá</span>
                                         @endif
 
+
                                     </td>
+
+                                    <!-- Size, Màu -->
                                     <td class="text-center">{{ $item->size ?? '--' }}{{ $item->color ? ', '.$item->color : '' }}</td>
+
+                                    <!-- Trả hàng -->
                                     <td class="text-center">Không</td>
+
+                                    <!-- Thao tác -->
                                     <td class="text-center">
-                                        @if ($canReview && !$item->review && $product)
-                                        <button class="btn btn-success radius"
-                                            onclick="showReviewForm({{ $product->id }}, '{{ $product->name }}', {{ $productDetail->id ?? 'null' }})">
-                                            Đánh giá
-                                        </button>
-                                        @elseif ($item->review)
+                                        @php
+                                        $review = $item->review ?? null;
+                                        $canReview = !$review || $review->status == 0;
+                                        @endphp
+                                        @if ($review && $review->status == 1)
                                         <div class="d-flex flex-wrap gap-2">
                                             <button class="btn btn-warning btn-sm px-3 shadow-sm d-flex align-items-center"
                                                 onclick="editReview(
-                                                     {{ $product->id }},'{{ $product->name }}',{{ $productDetail->id ?? 'null' }}, {{ $item->review->rating }},`{{ $item->review->comment }}`,{{ $item->review->id }})">
+                                            {{ $product->id }},
+                                            '{{ $product->name }}',
+                                            {{ $productDetail->id ?? 'null' }},
+                                            {{ $review->rating }},
+                                            `{!! $review->comment !!}`,
+                                            {{ $review->id }})">
                                                 <i class="fa fa-pen-to-square me-1"></i> Sửa
                                             </button>
 
-
-                                            <form action="{{ route('review.destroy', $item->review->id) }}" method="POST"
+                                            <form action="{{ route('review.destroy', $review->id) }}" method="POST"
                                                 onsubmit="return confirm('Bạn có chắc muốn xoá đánh giá này?')">
                                                 @csrf
                                                 @method('DELETE')
@@ -281,34 +297,37 @@
                                                 </button>
                                             </form>
                                         </div>
+                                        @else
+                                        <button class="btn btn-success radius"
+                                            onclick="showReviewForm({{ $product->id }}, '{{ $product->name }}', {{ $productDetail->id ?? 'null' }})">
+                                            Đánh giá
+                                        </button>
                                         @endif
-
                                     </td>
-
-
                                 </tr>
                                 @endforeach
                             </tbody>
                         </table>
                     </div>
                 </div>
+
                 {{-- Đánh giá sản phẩm --}}
 
+                <!-- Review Section -->
                 <div id="review-section" class="mt-4 d-none">
                     <div class="card shadow-sm">
                         <div class="card-header bg-light fw-bold">
                             <span id="review-mode-label">Đánh giá sản phẩm:</span>
                             <span id="review-product-name" class="text-primary"></span>
                         </div>
-
                         <div class="card-body">
                             <form id="review-form" method="POST" action="{{ route('review.store') }}">
                                 @csrf
-                                {{-- JavaScript sẽ chèn @method("PUT") và thay đổi action nếu là edit --}}
+                                <!-- Hidden fields -->
                                 <input type="hidden" name="product_id" id="review-product-id">
                                 <input type="hidden" name="product_detail_id" id="review-product-detail-id">
 
-                                {{-- Đánh giá sao --}}
+                                <!-- Star Rating -->
                                 <div class="mb-3">
                                     <label class="form-label d-block">Đánh giá sao *</label>
                                     <div class="star-rating d-flex gap-1">
@@ -318,26 +337,28 @@
                                             <i class="fa fa-star"></i>
                                         </label>
                                         @endfor
-
                                     </div>
                                 </div>
 
-                                {{-- Nội dung nhận xét --}}
+                                <!-- Review Content with Summernote -->
                                 <div class="mb-3">
                                     <label for="review-comment" class="form-label">Nhận xét của bạn</label>
-                                    <textarea name="comment" id="review-comment" class="form-control" rows="3" placeholder="Hãy chia sẻ trải nghiệm của bạn..." required></textarea>
+                                    <textarea name="comment" id="review-comment" class="form-control" required></textarea>
                                 </div>
 
-                                {{-- Nút hành động --}}
+                                <!-- Action Buttons -->
                                 <div class="d-flex justify-content-between">
                                     <button type="submit" class="btn btn-success" id="review-submit-btn">Gửi đánh giá</button>
                                     <button type="button" class="btn btn-outline-secondary" onclick="cancelReview()">Hủy</button>
                                 </div>
                             </form>
                         </div>
-
                     </div>
                 </div>
+
+                <!-- Scripts: Summernote + Form Handler -->
+
+
 
 
 
@@ -402,14 +423,7 @@
     </section>
 </main>
 @endsection
-@push('scripts')
-<script>
-    let currentReviewingProductId = null;
-</script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+@push('styles')
 <style>
     .star-rating {
         display: flex;
@@ -422,6 +436,10 @@
         margin-bottom: 10px;
     }
 
+    .text-warning-custom {
+        color:rgb(255, 147, 24) !important;
+        /* Màu vàng rực rỡ */
+    }
 
 
     .star-rating input[type="radio"]:not(:checked)~label {
@@ -451,14 +469,61 @@
         color: #ffc107;
     }
 </style>
+@endpush
+@push('scripts')
+<script>
+    let currentReviewingProductId = null;
+</script>
+<!-- Summernote CSS -->
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+
+<!-- jQuery + Summernote JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<link href="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.css" rel="stylesheet">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/summernote@0.8.20/dist/summernote-lite.min.js"></script>
+
 <script>
     let currentFormContext = null;
+
+    $(document).ready(function() {
+        // Khởi tạo Summernote
+        $('#review-comment').summernote({
+            placeholder: 'Hãy chia sẻ trải nghiệm của bạn...',
+            height: 180,
+            toolbar: [
+                ['style', ['bold', 'italic', 'underline']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link']],
+                ['view', ['codeview']]
+            ]
+        });
+
+        // Đồng bộ nội dung Summernote vào textarea khi submit
+        $('#review-form').on('submit', function() {
+            const content = $('#review-comment').summernote('code');
+            $('#review-comment').val(content);
+
+            // Kiểm tra nếu nội dung rỗng (chỉ là <p><br></p>)
+            const textOnly = $('<div>').html(content).text().trim();
+            if (textOnly.length === 0) {
+                alert('⚠️ Nội dung nhận xét không được để trống!');
+                return false;
+            }
+        });
+    });
 
     function toggleReviewForm({
         mode,
         productId,
         productName,
-        productDetailId = null,
+        productDetailId = '',
         rating = null,
         comment = '',
         reviewId = null
@@ -467,35 +532,36 @@
         const section = document.getElementById("review-section");
         const currentKey = `${mode}-${reviewId ?? productId}`;
 
-        // Nếu click lần 2 vào cùng đối tượng → ẩn form
+        // Ẩn form nếu đang mở đúng form đó
         if (currentFormContext === currentKey) {
             section.classList.add("d-none");
             currentFormContext = null;
             return;
         }
 
-        // Cập nhật nội dung
         currentFormContext = currentKey;
         section.classList.remove("d-none");
+
+        // Cập nhật nội dung form
         document.getElementById("review-mode-label").textContent = mode === 'edit' ? "Chỉnh sửa đánh giá:" : "Đánh giá sản phẩm:";
         document.getElementById("review-product-name").innerText = productName;
         document.getElementById("review-product-id").value = productId;
-        document.getElementById("review-product-detail-id").value = productDetailId ?? '';
-        document.getElementById("review-comment").value = comment ?? '';
+        document.getElementById("review-product-detail-id").value = productDetailId;
 
-        // Đặt lại hoặc chọn rating
+        // Đặt lại đánh giá sao
         form.querySelectorAll("input[name='rating']").forEach(input => {
             input.checked = parseInt(input.value) === parseInt(rating);
         });
 
-        // Cập nhật action + method
+        // Thiết lập nội dung Summernote
+        $('#review-comment').summernote('code', comment || '');
+
+        // Cập nhật action và method
         form.action = mode === 'edit' ?
             `/review/${reviewId}` :
             `{{ route('review.store') }}`;
 
-        // Làm sạch method cũ
         form.querySelector("input[name='_method']")?.remove();
-
         if (mode === 'edit') {
             const methodInput = document.createElement("input");
             methodInput.type = "hidden";
@@ -505,7 +571,6 @@
         }
     }
 
-    // Shortcut hàm gọi
     function showReviewForm(productId, productName, productDetailId) {
         toggleReviewForm({
             mode: 'create',
@@ -525,6 +590,11 @@
             comment,
             reviewId
         });
+    }
+
+    function cancelReview() {
+        document.getElementById("review-section").classList.add("d-none");
+        currentFormContext = null;
     }
 </script>
 
