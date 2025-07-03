@@ -12,6 +12,15 @@ use App\Models\Coupon;
 
 class CheckoutController extends Controller
 {
+    public function success($id)
+    {
+        $order = Order::with('orderDetails')->findOrFail($id);
+
+        // (Tuỳ chọn bảo vệ user)
+
+
+        return view('user.checkoutsuccess', compact('order'));
+    }
 
     public function show()
     {
@@ -117,13 +126,13 @@ class CheckoutController extends Controller
     }
 
 
-    
+
 
     protected function handleCashOnDelivery(Request $request, array $cart, array $totals)
     {
-
         try {
-            DB::transaction(function () use ($request, $cart, $totals) {
+            $order = DB::transaction(function () use ($request, $cart, $totals) {
+                // 1. Tạo đơn hàng
                 $order = Order::create([
                     'id_user'         => Auth::id() ?? 'guest',
                     'id_payment'      => 'PMT' . now()->timestamp,
@@ -144,9 +153,9 @@ class CheckoutController extends Controller
                     'status'          => 'Chờ Xác Nhận',
                 ]);
 
+                // 2. Lưu chi tiết đơn hàng
                 foreach ($cart as $item) {
-                    OrderDetail::create([
-                        'order_id'          => $order->id,
+                    $order->orderDetails()->create([
                         'product_detail_id' => $item['product_detail_id'],
                         'product_name'      => $item['product_name'],
                         'size'              => $item['size'],
@@ -157,11 +166,16 @@ class CheckoutController extends Controller
                     ]);
                 }
 
+                // 3. Xoá giỏ hàng
                 session()->forget('cart');
+
+                return $order; // ✅ Trả đối tượng Order ra ngoài
             });
 
-            return redirect()->route('checkout')->with('success', '🎉 Đặt hàng thành công!');
+            // 4. Redirect đến trang cảm ơn
+            return redirect()->route('user.checkoutsuccess', ['id' => $order->id]);
         } catch (\Throwable $e) {
+            dd($e);
             return back()->with('error', 'Đặt hàng thất bại: ' . $e->getMessage());
         }
     }
@@ -298,7 +312,7 @@ class CheckoutController extends Controller
     }
     public function handleMomoCancel()
     {
-        // Xóa dữ liệu đơn hàng khỏi session        
+        // Xóa dữ liệu đơn hàng khỏi session
 
         session()->forget('order_data');
         return redirect('/')->with('error', 'Thanh toán đã bị hủy.');

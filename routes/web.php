@@ -15,6 +15,7 @@ use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\NotificationController;
 
 
 
@@ -58,7 +59,7 @@ Route::get('/admin/categories/search', [AdminController::class, 'category_search
 Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
 Route::get('/admin/order/{id}detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
-Route::put('/admin/order/update-status', [AdminController::class,'update_order_status'])->name('admin.order.status.update');
+Route::put('/admin/order/update-status', [AdminController::class, 'update_order_status'])->name('admin.order.status.update');
 
 Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
 Route::post('/admin/product/store', [AdminController::class, 'product_store'])->name('admin.product.store');
@@ -94,6 +95,7 @@ Route::put('/admin/coupon/update/{id}', [AdminController::class, 'update_coupon'
 Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coupon'])->name('admin.coupon.delete');
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+Route::get('/admin/notifications', [NotificationController::class, 'index'])->name('notifications');
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
@@ -144,10 +146,12 @@ Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.ch
 Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
 Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 
-Route::get('/forgot-password', [ForgotPasswordController::class,'showLinkRequestForm'])->name('password.request');
-Route::post('/forgot-password', [ForgotPasswordController::class,'sendResetLink'])->name('password.email');
-Route::get('/reset-password/{token}', [ResetPasswordController::class,'showResetForm'])->name('password.reset');
-Route::post('/reset-password', [ResetPasswordController::class,'resetPassword'])->name('password.update');
+Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
+
+Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
+Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword'])->name('password.update');
 
 
 Route::middleware('auth')->group(function () {
@@ -171,11 +175,12 @@ Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->n
 Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
 
-
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
 Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
 Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('cart.applyCoupon');
 Route::post('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('cart.removeCoupon');
+Route::get('/checkout/success/{id}', [CheckoutController::class, 'success'])->name('user.checkoutsuccess');
+
 
 Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
 Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
@@ -194,4 +199,3 @@ Route::post('/wishlist/move-to-cart', [WishlistController::class, 'moveToCart'])
 // routes/web.php hoặc routes/api.php
 Route::get('/search-suggestions', [HomeController::class, 'suggest'])->name('search.suggest');
 Route::get('/quick-suggestions', [HomeController::class, 'quickSuggestions']);
-

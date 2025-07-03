@@ -143,7 +143,7 @@
             <div class="d-flex justify-content-between">
               <span>Phí vận chuyển:</span>
               <strong>{{ ($shipping ?? 0) === 0 ? 'Miễn phí' : '₫' . number_format($shipping ?? 0) }}</strong>
-            </div>\
+            </div>
 
             <hr>
             <div class="d-flex justify-content-between fw-bold fs-5">
