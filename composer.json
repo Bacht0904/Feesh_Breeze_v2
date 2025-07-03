@@ -10,11 +10,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "brian2694/laravel-toastr": "^5.59",
         "intervention/image": "^3.11",
         "intervention/image-laravel": "^1.5",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "laravel/ui": "^4.6"
+        "laravel/ui": "^4.6",
+        "php-flasher/flasher-toastr-laravel": "^2.1",
+        "yoeunes/toastr": "*"
     },
     "require-dev": {
         "barryvdh/laravel-ide-helper": "^3.5",
