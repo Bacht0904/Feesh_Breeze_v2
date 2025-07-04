@@ -35,19 +35,52 @@
           ['name', 'Họ tên *', 'text', Auth::user()->name ?? ''],
           ['phone', 'Số điện thoại *', 'text', Auth::user()->phone ?? ''],
           ['address', 'Địa chỉ giao hàng *', 'text', Auth::user()->address ?? ''],
-          ['coupon_code', 'Mã giảm giá (nếu có)', 'text', '']
+
           ] as [$name, $label, $type, $value])
           <div class="form-floating mb-3">
             <input class="form-control"
               type="{{ $type }}"
               name="{{ $name }}"
               id="{{ $name }}"
-              value="{{ $value }}"
-              {{ $name !== 'coupon_code' ? 'required' : '' }}>
+              value="{{ $value }}">
 
             <label for="{{ $name }}">{{ $label }}</label>
           </div>
           @endforeach
+          <div class="voucher-section mt-4">
+            <label for="coupon_code">Mã giảm giá</label>
+            <div class="d-flex flex-column flex-md-row gap-2">
+
+
+              <select id="coupon_select" class="form-select" onchange="onSelectCoupon(this.value)">
+                <option value="">-- Chọn mã giảm giá --</option>
+                @foreach ($availableCoupons as $coupon)
+                <option value="{{ $coupon->code }}"
+                  {{ session('coupon.code') === $coupon->code ? 'selected' : '' }}>
+                  {{ $coupon->code }} ({{ $coupon->type === 'percent' ? $coupon->value.'%' : number_format($coupon->value).'đ' }})
+                </option>
+                @endforeach
+              </select>
+
+
+              {{-- Input nhập mã thủ công --}}
+              <input type="text" name="coupon_code" id="coupon_code" class="form-control" placeholder="Hoặc nhập mã tại đây">
+
+              {{-- Nút áp dụng --}}
+              <button type="submit" formaction="{{ route('cart.applyCoupon') }}" class="btn btn-success">Áp dụng</button>
+            </div>
+
+            @if (session('voucher_message'))
+            <p class="text-info mt-2">{{ session('voucher_message') }}</p>
+            @endif
+          </div>
+
+          {{-- Script đồng bộ chọn và nhập --}}
+          <script>
+            function onSelectCoupon(code) {
+              document.getElementById('coupon_code').value = code;
+            }
+          </script>
 
           <div class="form-floating mb-4">
             <textarea class="form-control" name="note" id="note" style="height: 100px" placeholder="Ghi chú đơn hàng (tuỳ chọn)"></textarea>
@@ -91,15 +124,50 @@
             <li class="list-group-item">Không có sản phẩm trong giỏ.</li>
             @endforelse
           </ul>
-          <div class="card-footer text-end fw-bold">
-            Tổng cộng: ₫{{ number_format(collect($cart ?? [])->sum(fn($i) => $i['price'] * $i['quantity'])) }}
+
+          {{-- Tổng tiền --}}
+          <div class="card-footer">
+            <div class="d-flex justify-content-between">
+              <span>Tạm tính:</span>
+              <strong>₫{{ number_format($subtotal ?? 0) }}</strong>
+            </div>
+
+
+
+            @if (!empty($discount) && $discount > 0)
+            <div class="d-flex justify-content-between">
+              <span>Giảm giá:</span>
+              <strong>-₫{{ number_format($discount) }}</strong>
+            </div>
+            @endif
+            <div class="d-flex justify-content-between">
+              <span>Phí vận chuyển:</span>
+              <strong>{{ ($shipping ?? 0) === 0 ? 'Miễn phí' : '₫' . number_format($shipping ?? 0) }}</strong>
+            </div>
+
+            <hr>
+            <div class="d-flex justify-content-between fw-bold fs-5">
+              <span>Tổng cộng:</span>
+              <span class="text-primary">₫{{ number_format($total ?? ($subtotal + $shipping - $discount)) }}</span>
+            </div>
           </div>
+
         </div>
       </div>
     </div>
   </section>
 </main>
 @endsection
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const selectedCoupon = "{{ session('coupon.code') }}";
+    if (selectedCoupon) {
+      document.getElementById('coupon_code').value = selectedCoupon;
+    }
+  });
+</script>
+@endpush
 
 @push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

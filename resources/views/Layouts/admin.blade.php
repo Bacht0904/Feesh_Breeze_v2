@@ -40,7 +40,7 @@
                     <div class="box-logo">
                         <a href="{{route('admin.index')}}" id="site-logo-inner">
                             <img class="" id="logo_header" alt="" src="images/logo/logo.png"
-                                data-light="images/logo/logo.png" data-dark="images/logo/logo.png">
+                                data-light="images/logo/logo.png" data-dark="images/logo/logo.png" style="max-height: 60px ; with:auto ">
                         </a>
                         <div class="button-show-hide">
                             <i class="icon-menu-left"></i>
@@ -118,7 +118,7 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-file-plus"></i></div>
-                                        <div class="text">Hóa đơn</div>
+                                        <div class="text">Đơn hàng</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
@@ -172,6 +172,7 @@
                                         <a href="{{route('logout')}}" class=""
                                             onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                                             <div class="icon"><i class="icon-log-out"></i></div>
+
                                             <div class="text">Đăng xuất</div>
                                         </a>
                                     </form>
@@ -196,7 +197,7 @@
                             </div>
                             <div class="header-grid">
 
-                                <div class="popup-wrap message type-header">
+                                <!-- <div class="popup-wrap message type-header">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
@@ -249,7 +250,51 @@
                                             <li><a href="#" class="tf-button w-full">View all</a></li>
                                         </ul>
                                     </div>
+                                </div> -->
+
+                                <div class="popup-wrap message type-header">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="header-item">
+                                                <span class="text-tiny">{{ auth()->user()->unreadNotifications->count() }}</span>
+                                                <i class="icon-bell"></i>
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end has-content"
+                                            aria-labelledby="dropdownMenuButton2">
+                                            <li>
+                                                <h6>Thông báo</h6>
+                                            </li>
+
+                                            @forelse(auth()->user()->unreadNotifications as $notification)
+                                            <li>
+                                                <div class="message-item">
+                                                    <div class="image">
+                                                        <i class="icon-noti-{{ $loop->iteration }}"></i> {{-- bạn có thể tùy chọn icon khác nhau --}}
+                                                    </div>
+                                                    <div>
+                                                        <div class="body-title-2">{{ $notification->data['message'] ?? 'Thông báo mới' }}</div>
+                                                        <div class="text-tiny">
+                                                            Đơn hàng #{{ $notification->data['order_id'] ?? '---' }}<br>
+                                                            <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            @empty
+                                            <li>
+                                                <span class="dropdown-item">Không có thông báo mới</span>
+                                            </li>
+                                            @endforelse
+
+                                            <li>
+                                                <a href="{{ route('notifications') }}" class="tf-button w-full">Xem tất cả</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
+
 
 
 
@@ -328,7 +373,6 @@
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
-
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
     <!-- jQuery (bắt buộc trước Summernote) -->

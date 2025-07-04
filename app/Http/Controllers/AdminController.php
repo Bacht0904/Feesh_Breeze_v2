@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 
+
 class AdminController extends Controller
 {
     public function index()
@@ -27,25 +28,25 @@ class AdminController extends Controller
                                             sum(if(status = 'Đã Giao', 1, 0)) as totalDelivered
                                             from orders
                                             ");
-        $monthlyDatas = DB::select("Select 
-                                            M.id as month_No, 
-                                            M.name as monthName, 
-                                            Ifnull(D.totalAmount, 0) as totalAmount, 
-                                            Ifnull(D.totalOrderedAmount, 0) as totalOrderedAmount, 
-                                            Ifnull(D.totalConfirmedAmount, 0) as totalConfirmedAmount, 
-                                            Ifnull(D.totalDeliveredAmount, 0) as totalDeliveredAmount 
-                                            from month_names M 
+        $monthlyDatas = DB::select("Select
+                                            M.id as month_No,
+                                            M.name as monthName,
+                                            Ifnull(D.totalAmount, 0) as totalAmount,
+                                            Ifnull(D.totalOrderedAmount, 0) as totalOrderedAmount,
+                                            Ifnull(D.totalConfirmedAmount, 0) as totalConfirmedAmount,
+                                            Ifnull(D.totalDeliveredAmount, 0) as totalDeliveredAmount
+                                            from month_names M
                                             left join (
-                                            Select 
-                                                date_format(created_at, '%b') as monthName, 
-                                                month(created_at) as monthNo, 
-                                                sum(total) as totalAmount, 
-                                                sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount, 
-                                                sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount, 
-                                                sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount 
-                                            from orders 
-                                            where year(created_at) = year(now()) 
-                                            group by year(created_at), month(created_at), date_format(created_at, '%b') 
+                                            Select
+                                                date_format(created_at, '%b') as monthName,
+                                                month(created_at) as monthNo,
+                                                sum(total) as totalAmount,
+                                                sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
+                                                sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount,
+                                                sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount
+                                            from orders
+                                            where year(created_at) = year(now())
+                                            group by year(created_at), month(created_at), date_format(created_at, '%b')
                                             order by month(created_at)
                                             ) D on D.monthNo = M.id");
 
@@ -76,7 +77,6 @@ class AdminController extends Controller
             'contactCount',
             'user'
         ));
-
     }
 
     public function changePassword()
@@ -114,16 +114,17 @@ class AdminController extends Controller
         return view('admin.orders', compact('orders'));
     }
 
-    public function order_detail()
+    public function order_detail($id)
     {
-        return view('admin.order-detail');
+        $order = Order::find($id);
+        $orderItems = OrderDetail::where('order_id', $order->id)->orderBy('created_at', 'desc')->paginate(12);
+        return view('admin.order-detail', compact('order', 'orderItems'));
     }
 
     public function order_tracking()
     {
         return view('admin.order-tracking');
     }
-
     public function settings()
     {
         // Kiểm tra nếu chưa đăng nhập
@@ -173,5 +174,4 @@ class AdminController extends Controller
 
         return redirect()->route('admin.users')->with('status', 'Thông tin người dùng đã được cập nhật!');
     }
-
 }

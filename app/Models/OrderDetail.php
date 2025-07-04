@@ -8,9 +8,14 @@ use App\Models\Order;
 class OrderDetail extends Model
 {
     protected $fillable = [
-        'order_id', 'product_detail_id',
-        'product_name', 'size', 'color', 'image',
-        'price', 'quantity',
+        'order_id',
+        'product_detail_id',
+        'product_name',
+        'size',
+        'color',
+        'image',
+        'price',
+        'quantity',
     ];
 
     public function order()
@@ -20,5 +25,14 @@ class OrderDetail extends Model
     public function productDetail()
     {
         return $this->belongsTo(Product_details::class, 'product_detail_id');
+    }
+    public function reviews()
+    {
+        return $this->hasMany(Review::class)->where('status', 1);
+    }
+    public function review()
+    {
+        return $this->hasOne(Review::class, 'product_detail_id', 'product_detail_id')
+            ->where('user_id', auth()->id());
     }
 }
