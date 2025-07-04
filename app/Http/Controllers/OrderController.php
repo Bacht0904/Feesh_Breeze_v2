@@ -6,6 +6,8 @@ use App\Models\Order;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\OrderCancelRequested;
+use App\Models\User;
+use Illuminate\Support\Facades\Notification;
 
 class OrderController extends Controller
 {
@@ -45,8 +47,15 @@ class OrderController extends Controller
         $order->status = 'Xác Nhận Hủy';
         $order->save();
 
-        // Gửi thông báo cho user
-        $request->user()->notify(new OrderCancelRequested($order));
+        // Gửi thông báo cho tất cả admin
+        $admins = User::where('role', 'admin')->get();
+
+        Notification::send($admins, new OrderCancelRequested($order));
+
+        // ✅ (tuỳ chọn) log lại admin đã nhận
+        foreach ($admins as $admin) {
+            \Log::info("Đã gửi thông báo hủy đơn #{$order->id} tới admin ID: {$admin->id}");
+        }
 
         return redirect()->back()->with('success', 'Đã gửi yêu cầu hủy đơn hàng');
     }

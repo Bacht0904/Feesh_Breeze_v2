@@ -510,8 +510,9 @@
                     </div>
                     @endguest
                     @php
-                    $unread = auth()->user()->unreadNotifications;
+                    $unread = auth()->check() ? auth()->user()->unreadNotifications : collect();
                     @endphp
+
 
                     <div class="header-tools__item hover-container">
                         <div class="js-hover__open position-relative">
@@ -579,24 +580,18 @@
                         </span>
                     </a>
 
+
+
                     @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
                         <div class="header-tools__item">
                             <a href="{{ route('admin.index') }}" class="header-tools__link">
                                 <span class="d-block text-uppercase fw-medium">Quản Lý</span>
                             </a>
                         </div>
-                    @endif
+                   
 
                  
-                    <!-- <form method="post" action="{{route('logout')}}" id="logout-form">
-                        @csrf
-                        <a href="{{route('logout')}}" class=""
-                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                            <div class="icon"><i class="icon-settings"></i></div>
-                            <div class="text">Đăng xuất</div>
-                        </a>
-                    </form> -->
-                    <!-- @elseif(Auth::check())
+                    @elseif(Auth::check())
                     <form method="post" action="{{route('logout')}}" id="logout-form">
                         @csrf
                         <a href="{{route('logout')}}" class=""
@@ -605,7 +600,7 @@
                             <div class="text">ĐĂNG XUẤT</div>
                         </a>
                     </form>
-                    @endif -->
+                    @endif
 
 
 
