@@ -1,10 +1,12 @@
 <?php
 
+use App\Http\Controllers\BannerController;
 use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\CouponController;
 use App\Http\Controllers\SlideController;
+use App\Models\Banner;
 use App\Models\Contact;
 use App\Models\Slide;
 use Illuminate\Routing\RouteGroup;
@@ -85,6 +87,14 @@ Route::middleware(['admin.staff'])->group(function () {
     Route::put('/admin/slide/{id}', [SlideController::class, 'update_slide'])->name('admin.slide.update');
     Route::delete('/admin/slide/{id}/delete', [SlideController::class, 'delete_slide'])->name('admin.slide.delete');
     Route::put('/admin/slide/{id}/toggle', [SlideController::class, 'toggle_slide_status'])->name('admin.slide.toggle');
+
+    Route::get('/admin/banners', [BannerController::class, 'banners'])->name('admin.banners');
+    Route::get('/admin/banner/add', [BannerController::class, 'add_banner'])->name('admin.banner.add');
+    Route::post('/admin/banner/store', [BannerController::class, 'banner_store'])->name('admin.banner.store');
+    Route::get('/admin/banner/{id}/edit', [BannerController::class, 'edit_banner'])->name('admin.banner.edit');
+    Route::put('/admin/banner/{id}', [BannerController::class, 'update_banner'])->name('admin.banner.update');
+    Route::delete('/admin/banner/{id}/delete', [BannerController::class, 'banner_slide'])->name('admin.banner.delete');
+    Route::put('/admin/banner/{id}/toggle', [BannerController::class, 'toggle_banner_status'])->name('admin.banner.toggle');
 
 
     Route::get('/admin/users', [UserController::class, 'users'])->name('admin.users');

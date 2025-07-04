@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class AdminController extends Controller
 {
@@ -105,7 +107,7 @@ class AdminController extends Controller
 
 
 
-    
+
     public function orders()
     {
         $orders = Order::orderBy('created_at', 'desc')->paginate(12);
@@ -140,23 +142,36 @@ class AdminController extends Controller
     {
         $user = Auth::user();
 
-        $rules = [
+        $request->validate([
             'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
             'email' => 'required|email|min:8|unique:users,email,' . $user->id,
             'phone' => ['required', 'regex:/^0[0-9]{9}$/'],
-        ];
+            'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
+        ]);
 
-        $messages = [
-            'name.regex' => 'Tên chỉ được chứa chữ cái và khoảng trắng, không có ký tự đặc biệt.',
-            'email.unique' => 'Email này đã được sử dụng.',
-            'phone.regex' => 'Số điện thoại không đúng định dạng (bắt đầu bằng 0 và đủ 10 chữ số).',
-        ];
+        if ($request->hasFile('avatar')) {
+            $avatar = $request->file('avatar');
+            $uploadFolder = 'uploads/users/';
+            $savePath = public_path($uploadFolder);
 
-        $request->validate($rules, $messages);
+            if (!file_exists($savePath)) {
+                mkdir($savePath, 0777, true);
+            }
 
-        // Xử lý lưu thông tin
-        $user->update($request->only('name', 'email', 'phone'));
+            $filename = time() . '_' . uniqid() . '.' . $avatar->getClientOriginalExtension();
+            $fullPath = $savePath . '/' . $filename;
+
+            $manager = new ImageManager(new Driver());
+            $manager->read($avatar->getRealPath())
+                ->resize(800, 400)
+                ->save($fullPath);
+
+            $user->avatar = $uploadFolder . $filename;
+        }
+
+        $user->update($request->only('name', 'email', 'phone', 'avatar'));
 
         return redirect()->route('admin.users')->with('status', 'Thông tin người dùng đã được cập nhật!');
     }
+
 }

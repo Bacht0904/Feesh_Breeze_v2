@@ -140,6 +140,12 @@
                                     </a>
                                 </li>
                                 <li class="menu-item">
+                                    <a href="{{ route('admin.banners') }}" class="">
+                                        <div class="icon"><i class="icon-image"></i></div>
+                                        <div class="text">Banner</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
                                     <a href="{{ route('admin.coupons') }}" class="">
                                         <div class="icon"><i class="icon-grid"></i></div>
                                         <div class="text">Phiếu giảm giá</div>
