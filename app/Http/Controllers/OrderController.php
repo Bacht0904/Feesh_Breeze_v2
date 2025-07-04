@@ -50,5 +50,7 @@ class OrderController extends Controller
 
         return redirect()->back()->with('success', 'Đã gửi yêu cầu hủy đơn hàng');
     }
+
+    
 }
 //  $table->enum('status', ['Chờ Xác Nhận','Đã Xác Nhận','Chờ Lấy Hàng','Đã Lấy Hàng','Đang Giao','Đã Giao','Giao Thành Công','Xác Nhận Hủy','Đã Hủy'])->default('Chờ Xác Nhận');

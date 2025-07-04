@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
 <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
 
 <head>
@@ -580,13 +578,16 @@
                             {{ $cartItemCount ?? 0 }}
                         </span>
                     </a>
-                    @if (Auth::check() && Auth::user()->role == 'admin')
-                    <div class="header-tools__item">
-                        <a href="{{ route('admin.index') }}" class="header-tools__link">
 
-                            <span class="d-block text-uppercase fw-medium">Quản Lý</span>
-                        </a>
-                    </div>
+                    @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
+                        <div class="header-tools__item">
+                            <a href="{{ route('admin.index') }}" class="header-tools__link">
+                                <span class="d-block text-uppercase fw-medium">Quản Lý</span>
+                            </a>
+                        </div>
+                    @endif
+
+                 
                     <!-- <form method="post" action="{{route('logout')}}" id="logout-form">
                         @csrf
                         <a href="{{route('logout')}}" class=""
@@ -605,6 +606,7 @@
                         </a>
                     </form>
                     @endif -->
+
 
 
                 </div>

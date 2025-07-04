@@ -22,18 +22,23 @@
             <div class="wg-box">
                 <div class="flex items-center justify-between gap10 flex-wrap">
                     <div class="wg-filter flex-grow">
-                        <form class="form-search">
+                        <form class="form-search" action="{{ route('admin.users.search') }}" method="GET">
                             <fieldset class="name">
-                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value=""
-                                    aria-required="true" required="">
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2"
+                                    value="{{ request()->input('name', '') }}" aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
                                 <button class="" type="submit"><i class="icon-search"></i></button>
                             </div>
                         </form>
                     </div>
-                    <a class="tf-button style-1 w208" href="{{ route('admin.user.add') }}"><i class="icon-plus"></i>Thêm
-                        mới</a>
+                    @auth
+                        @if (Auth::user()->role === 'admin')
+                            <a class="tf-button style-1 w208" href="{{ route('admin.user.add') }}">
+                                <i class="icon-plus"></i> Thêm mới
+                            </a>
+                        @endif
+                    @endauth
                 </div>
                 <div class="wg-table table-all-user">
 
@@ -49,7 +54,11 @@
                                     <th>Số điện thoại</th>
                                     <th>Địa chỉ</th>
                                     <th>Ảnh đại diện</th>
-                                    <th>Thao tác</th>
+                                    @auth
+                                        @if (Auth::user()->role === 'admin')
+                                            <th>Thao tác</th>
+                                        @endif
+                                    @endauth
                                 </tr>
                             </thead>
                             <tbody>
@@ -77,39 +86,44 @@
                                         <td>{{ $user->phone }}</td>
                                         <td>{{ $user->address }}</td>
                                         <td>
-                                            @if ($user->avatar)
-                                                <img src="{{ asset($user->avatar) }}" alt="Avatar" width="50">
-                                            @else
-                                                <img src="{{ asset('images/default-avatar.png') }}" alt="Avatar"
-                                                    width="50">
-                                            @endif
+                                            <img src="{{ $user->avatar && file_exists(public_path($user->avatar)) 
+                                                ? asset($user->avatar) 
+                                                : asset('images/default-avatar.png') }}" 
+                                            alt="Avatar" width="60" height="60" class="rounded-circle">
                                         </td>
-                                        <td>
-                                            <div class="list-icon-function">
-                                                <a href="{{ route('admin.user.edit', ['id' => $user->id]) }}">
-                                                    <div class="item edit">
-                                                        <i class="icon-edit-3"></i>
-                                                    </div>
-                                                </a>
-                                                <form action="{{ route('admin.user.delete', ['id' => $user->id]) }}"
-                                                    method="POST">
 
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="item text-danger delete"
-                                                        onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
-                                                        <i class="icon-trash-2"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
+                                        @auth
+                                            @if (Auth::user()->role === 'admin')
+                                                <td>
+                                                    <div class="list-icon-function">
+                                                        <form action="{{ route('admin.user.edit', $user->id) }}" method="GET"
+                                                            style="display: inline;">
+                                                            <button style="border: 1px solid transparent;" type="submit"
+                                                                class="item edit">
+                                                                <i class="icon-edit-3"></i>
+                                                            </button>
+                                                        </form>
+                                                        <form action="{{ route('admin.user.delete', $user->id) }}" method="POST">
+
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button style="border: 1px solid transparent;" type="submit"
+                                                                class="item text-danger delete"
+                                                                onclick="return confirm('Bạn có chắc chắn muốn xóa?')">
+                                                                <i class="icon-trash-2"></i>
+                                                            </button>
+                                                        </form>
+                                                    </div>
+                                                </td>
+                                            @endif
+                                        @endauth
+
                                     </tr>
                                 @endforeach
-                                
+
                             </tbody>
                         </table>
                     </div>
-
                 </div>
                 <div class="divider"></div>
                 <div class="flex items-center justify-between flex-wrap gap10 wgp-pagination">

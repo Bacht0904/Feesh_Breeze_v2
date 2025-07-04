@@ -1,5 +1,15 @@
 <?php
 
+use App\Http\Controllers\BannerController;
+use App\Http\Controllers\BrandController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\CouponController;
+use App\Http\Controllers\SlideController;
+use App\Models\Banner;
+use App\Models\Contact;
+use App\Models\Slide;
+use Illuminate\Routing\RouteGroup;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
@@ -14,6 +24,8 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
+
+
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\NotificationController;
 
@@ -22,6 +34,10 @@ use App\Http\Controllers\NotificationController;
 
 Route::get('/admin/login', [AdminController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AdminController::class, 'login'])->name('admin.login.submit');
+
+
+
+
 Route::post('/admin/logout', [AdminController::class, 'logout'])->name('admin.logout');
 //Route::get('/admin/password/reset', [AdminController::class, 'showResetForm'])->name('admin.password.reset');
 //Route::post('/admin/password/email', [AdminController::class, 'sendResetLinkEmail'])->name('admin.password.email');
@@ -38,64 +54,86 @@ Route::middleware(['auth:admin'])->group(function () {
 
 Auth::routes();
 
-Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
-Route::get('/admin/brand/add', [AdminController::class, 'add_brand'])->name('admin.brand.add');
-Route::post('/admin/brand/store', [AdminController::class, 'brand_store'])->name('admin.brand.store');
-Route::get('/admin/brand/{id}/edit', [AdminController::class, 'edit_brand'])->name('admin.brand.edit');
-Route::put('/admin/brand/update', [AdminController::class, 'update_brand'])->name('admin.brand.update');
-Route::delete('/admin/brand/{id}/delete', [AdminController::class, 'delete_brand'])->name('admin.brand.delete');
-Route::get('/admin/brands', [AdminController::class, 'brands'])->name('admin.brands');
-Route::get('/admin/brands/search', [AdminController::class, 'brand_search'])->name('admin.brands.search');
+Route::middleware(['admin.staff'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
-Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
-Route::get('/admin/category/add', [AdminController::class, 'add_category'])->name('admin.category.add');
-Route::post('/admin/category/store', [AdminController::class, 'category_store'])->name('admin.category.store');
-Route::get('/admin/category/{id}/edit', [AdminController::class, 'edit_category'])->name('admin.category.edit');
-Route::put('/admin/category/update', [AdminController::class, 'update_category'])->name('admin.category.update');
-Route::delete('/admin/category/{id}/delete', [AdminController::class, 'delete_category'])->name('admin.category.delete');
-Route::get('/admin/categories/search', [AdminController::class, 'category_search'])->name('admin.categories.search');
+    Route::get('/admin/brand/add', [BrandController::class, 'add_brand'])->name('admin.brand.add');
+    Route::post('/admin/brand/store', [BrandController::class, 'brand_store'])->name('admin.brand.store');
+    Route::get('/admin/brand/{id}/edit', [BrandController::class, 'edit_brand'])->name('admin.brand.edit');
+    Route::put('/admin/brand/update', [BrandController::class, 'update_brand'])->name('admin.brand.update');
+    Route::delete('/admin/brand/{id}/delete', [BrandController::class, 'delete_brand'])->name('admin.brand.delete');
+    Route::get('/admin/brands', [BrandController::class, 'brands'])->name('admin.brands');
+    Route::get('/admin/brands/search', [BrandController::class, 'brand_search'])->name('admin.brands.search');
 
-Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
-Route::get('/admin/order/{id}detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
-Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
-Route::put('/admin/order/update-status', [AdminController::class, 'update_order_status'])->name('admin.order.status.update');
+    Route::get('/admin/categories', [CategoryController::class, 'categories'])->name('admin.categories');
+    Route::get('/admin/category/add', [CategoryController::class, 'add_category'])->name('admin.category.add');
+    Route::post('/admin/category/store', [CategoryController::class, 'category_store'])->name('admin.category.store');
+    Route::get('/admin/category/{id}/edit', [CategoryController::class, 'edit_category'])->name('admin.category.edit');
+    Route::put('/admin/category/update', [CategoryController::class, 'update_category'])->name('admin.category.update');
+    Route::delete('/admin/category/{id}/delete', [CategoryController::class, 'delete_category'])->name('admin.category.delete');
+    Route::get('/admin/categories/search', [CategoryController::class, 'category_search'])->name('admin.categories.search');
 
-Route::get('/admin/products', [AdminController::class, 'products'])->name('admin.products');
-Route::post('/admin/product/store', [AdminController::class, 'product_store'])->name('admin.product.store');
-Route::get('/admin/product/add', [AdminController::class, 'add_product'])->name('admin.product.add');
-Route::get('/admin/product/{id}/edit', [AdminController::class, 'edit_product'])->name('admin.product.edit');
-Route::put('/admin/product/{id}', [AdminController::class, 'update_product'])->name('admin.product.update');
-Route::delete('/admin/product/{id}/delete', [AdminController::class, 'delete_product'])->name('admin.product.delete');
-Route::get('/admin/product/{id}/detail', [AdminController::class, 'product_detail'])->name('admin.product.detail');
-Route::get('/admin/products/search', [AdminController::class, 'product_search'])->name('admin.products.search');
+    Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
+    Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
+    Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
 
-
-Route::get('/admin/sliders', [AdminController::class, 'sliders'])->name('admin.sliders');
-Route::get('/admin/slide/add', [AdminController::class, 'add_slide'])->name('admin.slide.add');
-Route::post('/admin/slide/store', [AdminController::class, 'slide_store'])->name('admin.slide.store');
-Route::get('/admin/slide/{id}/edit', [AdminController::class, 'edit_slide'])->name('admin.slide.edit');
-Route::put('/admin/slide/{id}', [AdminController::class, 'update_slide'])->name('admin.slide.update');
-Route::delete('/admin/slide/{id}/delete', [AdminController::class, 'delete_slide'])->name('admin.slide.delete');
-Route::put('/admin/slide/{id}/toggle', [AdminController::class, 'toggle_slide_status'])->name('admin.slide.toggle');
+    Route::get('/admin/products', [ProductController::class, 'products'])->name('admin.products');
+    Route::post('/admin/product/store', [ProductController::class, 'product_store'])->name('admin.product.store');
+    Route::get('/admin/product/add', [ProductController::class, 'add_product'])->name('admin.product.add');
+    Route::get('/admin/product/{id}/edit', [ProductController::class, 'edit_product'])->name('admin.product.edit');
+    Route::put('/admin/product/{id}', [ProductController::class, 'update_product'])->name('admin.product.update');
+    Route::delete('/admin/product/{id}/delete', [ProductController::class, 'delete_product'])->name('admin.product.delete');
+    Route::get('/admin/product/{id}/detail', [ProductController::class, 'product_detail'])->name('admin.product.detail');
+    Route::get('/admin/products/search', [ProductController::class, 'product_search'])->name('admin.products.search');
+    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 
 
-Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
-Route::get('/admin/user/add', [AdminController::class, 'add_user'])->name('admin.user.add');
-Route::post('/admin/user/store', [AdminController::class, 'user_store'])->name('admin.user.store');
-Route::get('/admin/user/{id}/edit', [AdminController::class, 'edit_user'])->name('admin.user.edit');
-Route::put('/admin/user/update', [AdminController::class, 'update_user'])->name('admin.user.update');
-Route::delete('/admin/user/{id}/delete', [AdminController::class, 'delete_user'])->name('admin.user.delete');
+    Route::get('/admin/sliders', [SlideController::class, 'sliders'])->name('admin.sliders');
+    Route::get('/admin/slide/add', [SlideController::class, 'add_slide'])->name('admin.slide.add');
+    Route::post('/admin/slide/store', [SlideController::class, 'slide_store'])->name('admin.slide.store');
+    Route::get('/admin/slide/{id}/edit', [SlideController::class, 'edit_slide'])->name('admin.slide.edit');
+    Route::put('/admin/slide/{id}', [SlideController::class, 'update_slide'])->name('admin.slide.update');
+    Route::delete('/admin/slide/{id}/delete', [SlideController::class, 'delete_slide'])->name('admin.slide.delete');
+    Route::put('/admin/slide/{id}/toggle', [SlideController::class, 'toggle_slide_status'])->name('admin.slide.toggle');
 
-Route::get('/admin/coupons', [AdminController::class, 'coupons'])->name('admin.coupons');
-Route::get('/admin/coupon/add', [AdminController::class, 'add_coupon'])->name('admin.coupon.add');
-Route::post('/admin/coupon/store', [AdminController::class, 'coupon_store'])->name('admin.coupon.store');
-Route::get('/admin/coupon/{id}/edit', [AdminController::class, 'edit_coupon'])->name('admin.coupon.edit');
-Route::put('/admin/coupon/update/{id}', [AdminController::class, 'update_coupon',])->name('admin.coupon.update');
-Route::delete('/admin/coupon/{id}/delete', [AdminController::class, 'delete_coupon'])->name('admin.coupon.delete');
+    Route::get('/admin/banners', [BannerController::class, 'banners'])->name('admin.banners');
+    Route::get('/admin/banner/add', [BannerController::class, 'add_banner'])->name('admin.banner.add');
+    Route::post('/admin/banner/store', [BannerController::class, 'banner_store'])->name('admin.banner.store');
+    Route::get('/admin/banner/{id}/edit', [BannerController::class, 'edit_banner'])->name('admin.banner.edit');
+    Route::put('/admin/banner/{id}', [BannerController::class, 'update_banner'])->name('admin.banner.update');
+    Route::delete('/admin/banner/{id}/delete', [BannerController::class, 'banner_slide'])->name('admin.banner.delete');
+    Route::put('/admin/banner/{id}/toggle', [BannerController::class, 'toggle_banner_status'])->name('admin.banner.toggle');
+
+
+    Route::get('/admin/users', [UserController::class, 'users'])->name('admin.users');
+    Route::get('/admin/user/add', [UserController::class, 'add_user'])->name('admin.user.add');
+    Route::post('/admin/user/store', [UserController::class, 'user_store'])->name('admin.user.store');
+    Route::get('/admin/user/{id}/edit', [UserController::class, 'edit_user'])->name('admin.user.edit');
+    Route::put('/admin/user/update', [UserController::class, 'update_user'])->name('admin.user.update');
+    Route::delete('/admin/user/{id}/delete', [UserController::class, 'delete_user'])->name('admin.user.delete');
+    Route::get('/admin/user/search', [UserController::class, 'search_user'])->name('admin.users.search');
+
+    Route::get('/admin/coupons', [CouponController::class, 'coupons'])->name('admin.coupons');
+    Route::get('/admin/coupon/add', [CouponController::class, 'add_coupon'])->name('admin.coupon.add');
+    Route::post('/admin/coupon/store', [CouponController::class, 'coupon_store'])->name('admin.coupon.store');
+    Route::get('/admin/coupon/{id}/edit', [CouponController::class, 'edit_coupon'])->name('admin.coupon.edit');
+    Route::put('/admin/coupon/update/{id}', [CouponController::class, 'update_coupon',])->name('admin.coupon.update');
+    Route::delete('/admin/coupon/{id}/delete', [CouponController::class, 'delete_coupon'])->name('admin.coupon.delete');
+
+    Route::put('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');
+    Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
+});
+
+//Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
+
+
+
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
 Route::get('/admin/notifications', [NotificationController::class, 'index'])->name('notifications');
+
 
 Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
@@ -117,9 +155,10 @@ Route::get('/search', [HomeController::class, 'search'])->name('search');
 Route::get('/products', [AdminController::class, 'products'])->name('products');
 
 Route::get('/password/change', [AdminController::class, 'changePassword'])->name('auth.password.change');
-Route::post('/passwords/change/store', [AdminController::class, 'changePasswordStore'])->name('auth.password.change.store');
+Route::post('/password/change', [AdminController::class, 'updatePassword'])->name('auth.password.update');
 
-Route::get('/products/{slug}', [AdminController::class, 'show'])->name('products.show');
+
+
 Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
 Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
@@ -130,7 +169,13 @@ Route::post('/profile/change-password', [UserController::class, 'changePassword'
 Route::get('/password/confirm', [HomeController::class, 'showConfirmForm'])->name('password.confirm');
 Route::post('/password/confirm', [HomeController::class, 'confirm'])->name('password.confirm.submit');
 
-Route::get('/contact', [HomeController::class, 'contact'])->name('contact');
+
+Route::get('/contact', [UserController::class, 'contact'])->name('contact');
+Route::get('/admin/contacts', [ContactController::class, 'contacts'])->name('admin.contacts');
+Route::post('/contact/store', [ContactController::class, 'contactStore'])->name('contact.store');
+Route::delete('/contact/delete/{id}', [ContactController::class, 'delete_contact'])->name('contact.delete');
+
+
 Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
 

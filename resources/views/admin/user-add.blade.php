@@ -33,7 +33,7 @@
 
                     <fieldset class="email">
                         <div class="body-title mb-10">Email<span class="tf-color-1">*</span></div>
-                        <input class="mb-10" type="text" name="email" placeholder="Nhập email" value="{{ old('email') }}"
+                        <input class="mb-10" type="email" name="email" placeholder="Nhập email" value="{{ old('email') }}"
                             required>
                     </fieldset>
                     <fieldset class="password">
@@ -74,7 +74,7 @@
                                         Drop your images here or select
                                         <span class="tf-color">click to browse</span>
                                     </span>
-                                    <input type="file" id="myFile" name="image" accept="image/*">
+                                    <input type="file" id="myFile" name="avatar" accept="image/*">
                                 </label>
                             </div>
                         </div>
