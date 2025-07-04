@@ -157,7 +157,7 @@
 
                                     <th>Yêu cầu hủy hàng</th>
                                     <td colspan="5">
-                                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                        <form action="{{ route('orders.refund', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
                                             @csrf
                                             @method('PUT')
                                             <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
