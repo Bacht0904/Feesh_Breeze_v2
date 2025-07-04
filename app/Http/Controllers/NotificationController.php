@@ -3,15 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\User;
+use App\Notifications\OrderCancelRequested;
+use Illuminate\Support\Facades\Notification;
 
 class NotificationController extends Controller
 {
     public function index(Request $request)
     {
-        dd($request);
         $user = $request->user();
 
-        // Đánh dấu tất cả là đã đọc (nếu muốn)
         $user->unreadNotifications->markAsRead();
 
         return view('admin.notifications', [
