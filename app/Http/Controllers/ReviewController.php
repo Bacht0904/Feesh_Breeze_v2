@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product_details;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Product_details as ProductDetail;
+use App\Models\ProductDetail;
 use App\Models\Product;
 
 class ReviewController extends Controller
 {
     public function index(Product $product)
     {
+
         $productDetail = $product->product_details()->first();
 
         $reviews = $product->reviews()->where('status', 1)->latest()->paginate(10);
