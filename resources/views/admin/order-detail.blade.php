@@ -49,8 +49,10 @@
                                 <span class="badge bg-success">Đã Xác Nhận</span>
                             @elseif($order->status == 'Đang Giao')
                                 <span class="badge bg-success">Đang Giao</span>
-                            @elseif($order->status == 'Đã Nhận')
-                                <span class="badge bg-success">Đã Nhận</span>
+                            @elseif($order->status == 'Đã Giao')
+                                <span class="badge bg-success">Đã Giao</span>
+                            @elseif($order->status == 'Giao Thành Công')
+                                <span class="badge bg-success">Giao Thành Công</span>
                             @else
                                 <span class="badge bg-danger">Đã Hủy</span>
                             @endif
@@ -77,27 +79,27 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($orderItems as $item)
+                            @foreach ($order->details as $item)
                             <tr>
                                 <td class="pname">
                                     <div class="image">
                                     
-                                        <img src="{{ asset('uploads/products/'.$item->image) }}"  class="image" style="max-width: 50px; height: auto;">
+                                        <img src="{{ asset($item->image) }}"  class="image" style="width: 50px; height: 50px; object-fit: cover;">
                                     </div>
                                     <div class="name">
                                         <a href="#" target="_blank" class="body-title-2">{{ $item->product_name }}</a>
                                     </div>
                                 </td>
-                                <td class="text-center">{{ $item->price }}</td>
+                                <td class="text-center">{{number_format( $item->price,'0',',','.' )}} VND</td>
                                 <td class="text-center">{{ $item->quantity }}</td>
                                 <td class="text-center">SHT01245</td>
-                                <td class="text-center">
-                                    <div class="list-icon-function view-icon">
+                                <td class="text-center">{{ $item->productDetail->product->status }} </td>
+                                    {{-- <div class="list-icon-function view-icon">
                                         <div class="item eye">
                                             <i class="icon-eye"></i>
                                         </div>
-                                    </div>
-                                </td>
+                                    </div> --}}
+                                
                             </tr>
                             @endforeach
                         </tbody>
@@ -170,35 +172,66 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
+                </div>
 
-             <div class="wg-box mt-5">
-                <h5>Cập nhật trạng thái đơn hàng </h5>
-                <form action="{{ route('admin.order.status.update') }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="id" value="{{ $order ->id}}"> 
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="select">
-                                <select id="status" name="status">
-                                    <option value="Đã Xác Nhận" {{ $order ->status == 'Đã Xác Nhận' ? "selected" :"" }}> Đã Xác Nhận</option> 
-                                    <option value="Đang Giao" {{ $order ->status == 'Đang Giao' ? "selected" :"" }}> Đang Giao </option> 
-                                    <option value="Đã Giao" {{ $order ->status == 'Đã Giao' ? "selected" :"" }}> Đã Giao </option> 
-                                    <option value="Đã Hủy" {{ $order ->status == 'Đã Hủy' ? "selected" :"" }}> Đã Hủy</option> 
-                                </select>
-                            </div>
-                        </div> 
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary tf-button w208"> Thay Đổi Trạng Thái</button>
-                        </div>
+                <div class="wg-box mt-5">
+                        <h5>Cập nhật trạng thái đơn hàng </h5>
+                        {{-- @if ($order->status != "Đã Hủy")
+                            <form action="{{ route('admin.order.status.update') }}" method="POST">
+                                @csrf
+                                @method('PUT')
+                                <input type="hidden" name="id" value="{{ $order ->id}}"> 
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="select">
+                                            <select id="status" name="status">
+                                                <option value="Đã Xác Nhận" {{ $order ->status == 'Đã Xác Nhận' ? "selected" :"" }}> Đã Xác Nhận</option> 
+                                                <option value="Đang Giao" {{ $order ->status == 'Đang Giao' ? "selected" :"" }}> Đang Giao </option> 
+                                                <option value="Đã Giao" {{ $order ->status == 'Đã Giao' ? "selected" :"" }}> Đã Giao </option> 
+                                                <option value="Đã Hủy" {{ $order ->status == 'Đã Hủy' ? "selected" :"" }}> Đã Hủy</option> 
+                                            </select>
+                                        </div>
+                                    </div> 
+                                        <div class="col-md-3">
+                                            <button type="submit" class="btn btn-primary tf-button w208"> Thay Đổi Trạng Thái</button>
+                                        </div>
 
-                    </div>
+                                </div>
+                            </form>
+                        @else
+                            <p class="text-danger mt-3">Đơn hàng đã bị hủy. Không thể cập nhật trạng thái.</p>
+                        @endif --}}
+                            
+                        <form id="orderStatusForm" action="{{ route('admin.order.status.update') }}" method="POST">
+                            @csrf
+                            @method('PUT')
+                            <input type="hidden" name="id" value="{{ $order->id }}">
+                            <input type="hidden" name="status" id="statusInput">
 
-                </form>
-                    
-                   
-                </table>
+                            @switch($order->status)
+                                @case('Chờ Xác Nhận')
+                                    <button type="button" onclick="confirmStatusChange('Đã Xác Nhận')" class="btn btn-success tf-button w208 " >Xác Nhận Đơn</button>
+                                    <button type="button" onclick="confirmStatusChange('Đã Hủy')" class="btn btn-lg btn-danger">Hủy Đơn</button>
+                                    @break
+
+                                @case('Đã Xác Nhận')
+                                    <button type="button" onclick="confirmStatusChange('Đang Giao')" class="btn btn-primary tf-button w208">Bắt Đầu Giao</button>
+                                    {{-- <button type="button" onclick="confirmStatusChange('Đã Hủy')" class="btn btn-danger">Hủy Đơn</button> --}}
+                                    @break
+
+                                @case('Đang Giao')
+                                    <button type="button" onclick="confirmStatusChange('Đã Giao')" class="btn btn-info tf-button w208">Xác Nhận Giao Thành Công</button>
+                                    {{-- <button type="button" onclick="confirmStatusChange('Đã Hủy')" class="btn btn-danger">Hủy Đơn</button> --}}
+                                    @break
+
+                                @case('Đã Giao')
+                                @case('Đã Hủy')
+                                    <div class="alert alert-secondary">Đơn hàng đang ở trạng thái {{ $order->status }}. Không thể thay đổi trạng thái.</div>
+                                    @break
+                            @endswitch
+                        </form>
+
+                    </table>
             </div>
 
         </div>

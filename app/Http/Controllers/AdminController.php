@@ -450,7 +450,7 @@ class AdminController extends Controller
 
     public function order_detail($id)
     {
-        $order = Order::find($id);
+        $order = Order::with('details.productDetail.product')->find( $id );
         $orderItems = OrderDetail ::where(  'order_id', $order->id)->orderBy('created_at','desc')->paginate(12);
         return view('admin.order-detail', compact('order','orderItems'));
     }
@@ -462,21 +462,69 @@ class AdminController extends Controller
 
     public function update_order_status(Request $request)
     {
-        $order = Order::find($request->id);
-        if (!$order) {
-        return back()->withErrors(['error' => 'Không tìm thấy đơn hàng.']);
-    }
-        $order->status = $request->status;
-        // if($request->status == 'Đã Giao')
-        // {
-        //     $order->delivered_date = Carbon::now();
+        // $order = Order::find($request->id);
+        // if (!$order) {
+        // return back()->withErrors(['error' => 'Không tìm thấy đơn hàng.']);
         // }
-        // else if($request->status == 'Đã Hủy')
-        // {
-        //     $order->canceled_date = Carbon::now();
-        // }
-        $order->save();
-        return back()->with('status','Đã cập nhật trạng thái đơn hàng thành công');
+        // $order->status = $request->status;
+        // // if($request->status == 'Đã Giao')
+        // // {
+        // //     $order->delivered_date = Carbon::now();
+        // // }
+        // // else if($request->status == 'Đã Hủy')
+        // // {
+        // //     $order->canceled_date = Carbon::now();
+        // // }
+        // $order->save();
+        // return back()->with('status','Đã cập nhật trạng thái đơn hàng thành công');
+        $order = Order::with('details.productDetail') ->find($request->id);
+        
+        if(!$order) {
+            return back()->with('error','Không tìm thấy đơn hàng.');
+        }
+
+        if($order->status ==="Đã Hủy") {
+            return back()->with('error','Đơn hàng đã bị hủy bạn không thể thay đổi trạng thái');
+        }
+
+        $newStatus =$request->status;
+        $previousStatus = $order->status;
+
+        if($newStatus === $previousStatus) {
+            return back() ->with('status', 'Trạng thái không thay đổi.');
+        }
+
+        DB::transaction(function () use ($order, $newStatus, $previousStatus)
+        {
+
+            // Nếu chuyển sang "Đã Xác Nhận" ->trừ tồn kho (chưa trừ lần nào)
+            if($previousStatus !="Đã Xác Nhận" && $newStatus =="Đã Xác Nhận") {
+
+                foreach ($order->details as $item) {
+                    $productDetail = $item ->productDetail;
+                    if($productDetail->quantity <$item->quantity) {
+                        throw new \Exception("Sản Phẩm {$productDetail ->name} không đủ số lượng tồn kho." );
+                    }
+                    $productDetail->quantity -= $item->quantity;
+                    $productDetail->save();
+
+                }
+            }
+            if($previousStatus == "Đã Xác Nhận" && $newStatus == "Đã Hủy") {
+
+                foreach ($order->details as $item) {
+                    $productDetail = $item ->productDetail;
+                    $productDetail->quantity += $item->quantity;
+                    $productDetail->save();
+
+                }
+            
+            }
+            $order->status = $newStatus;
+            $order->save();
+        });
+        return back()->with("status","Đã cập nhật trạng thái đơn hàng thành công");
+
     }
 
 

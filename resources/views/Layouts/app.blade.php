@@ -24,9 +24,12 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css')}}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css')}}" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+   
+
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
     @stack('styles')
+     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 </head>
 
 
@@ -562,7 +565,7 @@
                 <div class="footer-column footer-store-info col-12 mb-4 mb-lg-0">
                     <div class="logo">
                         <a href="{{ route('home') }}">
-                            <img src="{{asset('assets/images/logo.jpg')}}" class="logo__image d-block" />
+                            <img src="{{asset('images/logo/logo.png')}}" style="max-height: 80px ; with:auto " class="logo__image d-block" />
                         </a>
                     </div>
                     <p class="footer-address">65 Huỳnh Thúc Kháng, P.Bến Nghé, Q.1, Tp.HCM</p>
@@ -772,12 +775,21 @@
 
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Toastr JS -->
+    <script>
+        @if(session('status'))
+            toastr.success("{{ session('status') }}");
+        @endif
 
+        @if($errors->any())
+            toastr.error("{{ $errors->first() }}");
+        @endif
+    </script>
 
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
-   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+   
     <script src="{{asset('assets/js/custom.js')}}"></script>
     <script src="{{asset('assets/js/plugins/jquery.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/bootstrap.bundle.min.js')}}"></script>
