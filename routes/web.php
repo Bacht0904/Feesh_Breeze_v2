@@ -140,11 +140,8 @@ Route::post('/cart/update', [CartController::class, 'update'])->name('cart.updat
 Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
 Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
 Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-Route::get('/cart/thank-you', [CartController::class, 'thankYou'])->name('cart.thankYou');
-Route::post('/add-to-cart', [CartController::class, 'addDetail'])->name('cart.addDetail');
-Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
-Route::post('/cart/apply-coupon', [CartController::class, 'applyCoupon'])->name('cart.applyCoupon');
-Route::post('/cart/remove-coupon', [CartController::class, 'removeCoupon'])->name('cart.removeCoupon');
+
+
 
 Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
@@ -202,4 +199,3 @@ Route::get('/quick-suggestions', [HomeController::class, 'quickSuggestions']);
 
 
 Route::get('/hot-deals', [HomeController::class, 'showHotDeals'])->name('hot.deals');
-

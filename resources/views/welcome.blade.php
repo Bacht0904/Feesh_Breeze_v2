@@ -102,11 +102,11 @@
             </div>
 
         </div>
-        <div class="container">
+        <!-- <div class="container">
             <div
                 class="slideshow-pagination slideshow-number-pagination d-flex align-items-center position-absolute bottom-0 mb-5">
             </div>
-        </div>
+        </div> -->
 
     </section>
     <div class="container mw-1620 bg-white border-radius-10">
@@ -116,8 +116,8 @@
             <div class="row">
                 <div
                     class="col-md-6 col-lg-4 col-xl-20per d-flex align-items-center flex-column justify-content-center py-4 align-items-md-start">
-                    <!-- <h2>July Sale</h2>
-                    <h2 class="fw-bold">Up to 60% Off</h2> -->
+                    <!-- <h2>July Sale</h2>-->
+                    <h2 class="fw-bold">Up to 60% Off</h2>
 
 
 

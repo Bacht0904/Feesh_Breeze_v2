@@ -20,6 +20,10 @@ class OrderStatusUpdated extends Notification
     public function via($notifiable)
     {
 
+        if ($notifiable->hasRole('admin')) {
+            return []; // không gửi thông báo cho admin
+        }
+
         return ['database']; // hoặc ['mail', 'database'] nếu muốn gửi email
     }
 

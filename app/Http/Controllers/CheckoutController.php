@@ -263,7 +263,7 @@ class CheckoutController extends Controller
         if ($request->resultCode == 0) {
             // Debug thông tin trả về từ MoMo
             try {
-                DB::transaction(function () use ($order) {
+                $saved = DB::transaction(function () use ($order) {
                     $saved = Order::create([
                         'id_user'         => Auth::id() ?? null,
                         'id_payment'      => 'PMT' . time(),
@@ -298,10 +298,11 @@ class CheckoutController extends Controller
                     }
 
                     session()->forget(['cart', 'order_data']);
+                    return $saved;
                 });
 
 
-                return redirect()->route('checkout')->with('success', '🎉 Đặt hàng thành công!');
+                return redirect()->route('user.checkoutsuccess', ['id' => $saved->id]);
             } catch (\Throwable $e) {
                 dd($e);
                 return back()->with('error', 'Đặt hàng thất bại: ' . $e->getMessage());
