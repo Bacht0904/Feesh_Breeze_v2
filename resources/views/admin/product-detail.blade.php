@@ -51,6 +51,7 @@
                                     <th>Hình ảnh</th>
                                     <th>Size</th>
                                     <th>Màu sắc</th>
+                                    <th>Giá</th>
                                     <th>Số lượng</th>
                                 </tr>
                             </thead>
@@ -71,6 +72,7 @@
                                         </td>
                                         <td>{{ $detail->size }}</td>
                                         <td>{{ $detail->color }}</td>
+                                        <td>{{ $detail->price }}</td>
                                         <td>{{ $detail->quantity }}</td>
                                     </tr>
                                 @endforeach

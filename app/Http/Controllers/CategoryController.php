@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Category;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
@@ -34,6 +34,7 @@ class CategoryController extends Controller
         if (Category::where('slug', $category->slug)->exists()) {
             return back()->withErrors(['slug' => 'Slug đã tồn tại, vui lòng nhập lại!'])->withInput();
         }
+
         $category->save();
 
         return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được thêm thành công!');
@@ -57,29 +58,48 @@ class CategoryController extends Controller
         $category->slug = Str::slug($request->name);
         $category->status = $request->status;
 
-
         if (Category::where('slug', $category->slug)->where('id', '!=', $category->id)->exists()) {
             return back()->withErrors(['slug' => 'Slug đã tồn tại, vui lòng nhập lại!'])->withInput();
         }
+
         $category->save();
+
+        // 🚀 Cập nhật lại trạng thái sản phẩm liên quan
+        $products = Product::where('category_id', $category->id)->with(['brand', 'product_details'])->get();
+
+        foreach ($products as $product) {
+            $total_quantity = $product->product_details->sum('quantity');
+
+            $newStatus = (
+                $category->status === 'inactive' ||
+                $product->brand->status === 'inactive' ||
+                $total_quantity === 0
+            ) ? 'inactive' : 'active';
+
+            if ($product->status !== $newStatus) {
+                $product->status = $newStatus;
+                $product->save();
+            }
+        }
+
         return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được sửa thành công!');
     }
 
     public function delete_category($id)
     {
         $category = Category::find($id);
+        $category->status = 'inactive';
+        $category->save();
 
-            $category->status = 'inactive';
-            $category->save();
-            // Product::where('category_id', $category->id)->update(['status' => 'inactive']);
+        // 📌 Ngừng hoạt động sản phẩm gắn với loại này
+        Product::where('category_id', $category->id)->update(['status' => 'inactive']);
 
-            return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được chuyển sang trạng thái không hoạt động!');
+        return redirect()->route('admin.categories')->with('status', 'Loại sản phẩm đã được chuyển sang trạng thái không hoạt động!');
     }
-
 
     public function category_search(Request $request)
     {
-        $search = $request->input('name'); // Đổi 'search' => 'name' để khớp với input name trong form
+        $search = $request->input('name');
 
         $categories = Category::where('name', 'like', '%' . $search . '%')
             ->orWhere('slug', 'like', '%' . $search . '%')

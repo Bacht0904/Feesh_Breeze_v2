@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Brand;
+use App\Models\Product;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
@@ -23,7 +24,7 @@ class BrandController extends Controller
     {
         $rules = [
             'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
-            'slug' => 'required|unique:brands,slug,' . $request->id,
+            'slug' => 'required|unique:brands,slug',
         ];
 
         $messages = [
@@ -36,6 +37,7 @@ class BrandController extends Controller
         $brand = new Brand();
         $brand->name = $request->name;
         $brand->slug = Str::slug($request->name);
+        $brand->status = $request->status ?? 'active';
         $brand->save();
 
         return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được thêm thành công!');
@@ -67,28 +69,42 @@ class BrandController extends Controller
         $brand->status = $request->status;
         $brand->save();
 
-        $brand->save();
+        // 🔁 Cập nhật trạng thái sản phẩm liên quan
+        $products = Product::where('brand_id', $brand->id)->with(['category', 'product_details'])->get();
+
+        foreach ($products as $product) {
+            $total_quantity = $product->product_details->sum('quantity');
+
+            $newStatus = (
+                $product->category->status === 'inactive' ||
+                $brand->status === 'inactive' ||
+                $total_quantity === 0
+            ) ? 'inactive' : 'active';
+
+            if ($product->status !== $newStatus) {
+                $product->status = $newStatus;
+                $product->save();
+            }
+        }
 
         return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được sửa thành công!');
     }
 
-
-
     public function delete_brand($id)
     {
         $brand = Brand::find($id);
+        $brand->status = 'inactive';
+        $brand->save();
 
-            $brand->status = 'inactive';
-            $brand->save();
-            // Product::where('category_id', $category->id)->update(['status' => 'inactive']);
+        // ⛔ Ngừng hoạt động sản phẩm liên quan
+        Product::where('brand_id', $brand->id)->update(['status' => 'inactive']);
 
-            return redirect()->route('admin.brands')->with('status', 'Loại sản phẩm đã được chuyển sang trạng thái không hoạt động!');
-
+        return redirect()->route('admin.brands')->with('status', 'Thương hiệu đã được chuyển sang trạng thái không hoạt động!');
     }
 
     public function brand_search(Request $request)
     {
-        $search = $request->input('name'); // Đổi 'search' => 'name' để khớp với input name trong form
+        $search = $request->input('name');
 
         $brands = Brand::where('name', 'like', '%' . $search . '%')
             ->orWhere('slug', 'like', '%' . $search . '%')

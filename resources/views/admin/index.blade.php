@@ -3,8 +3,49 @@
     <div class="main-content-inner">
 
         <div class="main-content-wrap">
+            <div style="width: 100%; display: flex; justify-content: center; margin-bottom: 24px; background-color: white; padding: 16px; border-radius: 8px;">
+                <form method="GET" action="" style="display: flex; flex-wrap: wrap; gap: 16px; justify-content: center;">
+                    <!-- Bộ lọc tháng -->
+                    <div>
+                        <label for="month" style="font-weight: bold;">Tháng:</label><br>
+                        <select name="month" id="month"
+                            style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc;">
+                            @for ($i = 1; $i <= 12; $i++)
+                                <option value="{{ $i }}" {{ request('month', date('m')) == $i ? 'selected' : '' }}>
+                                    Tháng {{ $i }}
+                                </option>
+
+                            @endfor
+                        </select>
+                    </div>
+
+                    <!-- Bộ lọc năm -->
+                    <div>
+                        <label for="year" style="font-weight: bold;">Năm:</label><br>
+                        <select name="year" id="year"
+                            style="padding: 6px 12px; border-radius: 4px; border: 1px solid #ccc;">
+                            @for ($y = date('Y'); $y >= 2020; $y--)
+                                <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>
+                                    Năm {{ $y }}
+                                </option>
+
+                            @endfor
+                        </select>
+                    </div>
+
+                    <!-- Nút submit -->
+                    <div style="align-self: flex-end;">
+                        <button type="submit"
+                            style="padding: 8px 16px; background-color: #007bff; color: white; border-radius: 4px; border: none;">
+                            Lọc dữ liệu
+                        </button>
+                    </div>
+                </form>
+            </div>
             <div class="tf-section-2 mb-30">
+
                 <div class="flex gap20 flex-wrap-mobile">
+
                     <div class="w-half">
 
                         <div class="wg-chart-default mb-20">
@@ -72,7 +113,7 @@
                                     </div>
                                     <div>
                                         <div class="body-text mb-2">Tổng số tiền</div>
-                                        <h4>{{ number_format($dashboardDatas[0]->totalAmount,0,',','.') }} VNĐ</h4>
+                                        <h4>{{ number_format($dashboardDatas[0]->totalAmount, 0, ',', '.') }} VNĐ</h4>
                                     </div>
                                 </div>
                             </div>
@@ -86,7 +127,8 @@
                                     </div>
                                     <div>
                                         <div class="body-text mb-2">Tổng số tiền chờ xác nhận</div>
-                                        <h4>{{ number_format($dashboardDatas[0]->totalOrderedAmount,0,',','.') }} VNĐ</h4>
+                                        <h4>{{ number_format($dashboardDatas[0]->totalOrderedAmount, 0, ',', '.') }} VNĐ
+                                        </h4>
                                     </div>
                                 </div>
                             </div>
@@ -100,7 +142,8 @@
                                     </div>
                                     <div>
                                         <div class="body-text mb-2">Tổng số tiền đã xác nhận</div>
-                                        <h4>{{ number_format($dashboardDatas[0]->totalConfirmedAmount,0,',','.') }} VNĐ</h4>
+                                        <h4>{{ number_format($dashboardDatas[0]->totalConfirmedAmount, 0, ',', '.') }} VNĐ
+                                        </h4>
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +157,8 @@
                                     </div>
                                     <div>
                                         <div class="body-text mb-2">Tổng số tiền đã giao</div>
-                                        <h4>{{ number_format($dashboardDatas[0]->totalDeliveredAmount,0,',','.') }} VNĐ</h4>
+                                        <h4>{{ number_format($dashboardDatas[0]->totalDeliveredAmount, 0, ',', '.') }} VNĐ
+                                        </h4>
                                     </div>
                                 </div>
                             </div>
@@ -136,7 +180,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap10">
-                                <h4>{{ number_format($totalAmount,0,',','.') }} VNĐ</h4>
+                                <h4>{{ number_format($totalAmount, 0, ',', '.') }} VNĐ</h4>
 
                             </div>
                         </div>
@@ -148,7 +192,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap10">
-                                <h4>{{ number_format($totalOrderedAmount,0,',','.') }} VNĐ</h4>
+                                <h4>{{ number_format($totalOrderedAmount, 0, ',', '.') }} VNĐ</h4>
 
                             </div>
                         </div>
@@ -160,7 +204,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap10">
-                                <h4>{{ number_format($totalConfirmedAmount,0,',','.') }} VNĐ</h4>
+                                <h4>{{ number_format($totalConfirmedAmount, 0, ',', '.') }} VNĐ</h4>
 
                             </div>
                         </div>
@@ -172,7 +216,7 @@
                                 </div>
                             </div>
                             <div class="flex items-center gap10">
-                                <h4>{{ number_format($totalDeliveredAmount,0,',','.') }} VNĐ</h4>
+                                <h4>{{ number_format($totalDeliveredAmount, 0, ',', '.') }} VNĐ</h4>
 
                             </div>
                         </div>
@@ -281,101 +325,101 @@
         })(jQuery);
     </script>
     <!-- <script>
-            (function ($) {
+                                                    (function ($) {
 
-                    var tfLineChart = (function () {
+                                                            var tfLineChart = (function () {
 
-                        var chartBar = function () {
+                                                                var chartBar = function () {
 
-                            var options = {
-                                series: [{
-                                    name: 'Total',
-                                    data: {{ $amountM }}
-                                }, {
-                                    name: 'Pending',
-                                    data: {{ $orderedAmountM }}
-                                },
-                                {
-                                    name: 'Confirmed',
-                                    data: {{ $confirmedAmountM }}
-                                }, {
-                                    name: 'Delivered',
-                                    data: {{ $deliveredAmountM }}
-                                }],
-                                chart: {
-                                    type: 'bar',
-                                    height: 325,
-                                    toolbar: {
-                                        show: false,
-                                    },
-                                },
-                                plotOptions: {
-                                    bar: {
-                                        horizontal: false,
-                                        columnWidth: '10px',
-                                        endingShape: 'rounded'
-                                    },
-                                },
-                                dataLabels: {
-                                    enabled: false
-                                },
-                                legend: {
-                                    show: false,
-                                },
-                                colors: ['#2377FC', '#FFA500', '#078407', '#FF0000'],
-                                stroke: {
-                                    show: false,
-                                },
-                                xaxis: {
-                                    labels: {
-                                        style: {
-                                            colors: '#212529',
-                                        },
-                                    },
-                                    categories: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T1O', 'T11', 'T12'],
-                                },
-                                yaxis: {
-                                    show: false,
-                                },
-                                fill: {
-                                    opacity: 1
-                                },
-                                tooltip: {
-                                    y: {
-                                        formatter: function (val) {
-                                            return "$ " + val + ""
-                                        }
-                                    }
-                                }
-                            };
+                                                                    var options = {
+                                                                        series: [{
+                                                                            name: 'Total',
+                                                                            data: {{ $amountM }}
+                                                                        }, {
+                                                                            name: 'Pending',
+                                                                            data: {{ $orderedAmountM }}
+                                                                        },
+                                                                        {
+                                                                            name: 'Confirmed',
+                                                                            data: {{ $confirmedAmountM }}
+                                                                        }, {
+                                                                            name: 'Delivered',
+                                                                            data: {{ $deliveredAmountM }}
+                                                                        }],
+                                                                        chart: {
+                                                                            type: 'bar',
+                                                                            height: 325,
+                                                                            toolbar: {
+                                                                                show: false,
+                                                                            },
+                                                                        },
+                                                                        plotOptions: {
+                                                                            bar: {
+                                                                                horizontal: false,
+                                                                                columnWidth: '10px',
+                                                                                endingShape: 'rounded'
+                                                                            },
+                                                                        },
+                                                                        dataLabels: {
+                                                                            enabled: false
+                                                                        },
+                                                                        legend: {
+                                                                            show: false,
+                                                                        },
+                                                                        colors: ['#2377FC', '#FFA500', '#078407', '#FF0000'],
+                                                                        stroke: {
+                                                                            show: false,
+                                                                        },
+                                                                        xaxis: {
+                                                                            labels: {
+                                                                                style: {
+                                                                                    colors: '#212529',
+                                                                                },
+                                                                            },
+                                                                            categories: ['T1', 'T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'T8', 'T9', 'T1O', 'T11', 'T12'],
+                                                                        },
+                                                                        yaxis: {
+                                                                            show: false,
+                                                                        },
+                                                                        fill: {
+                                                                            opacity: 1
+                                                                        },
+                                                                        tooltip: {
+                                                                            y: {
+                                                                                formatter: function (val) {
+                                                                                    return "$ " + val + ""
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    };
 
-                            chart = new ApexCharts(
-                                document.querySelector("#line-chart-8"),
-                                options
-                            );
-                            if ($("#line-chart-8").length > 0) {
-                                chart.render();
-                            }
-                        };
+                                                                    chart = new ApexCharts(
+                                                                        document.querySelector("#line-chart-8"),
+                                                                        options
+                                                                    );
+                                                                    if ($("#line-chart-8").length > 0) {
+                                                                        chart.render();
+                                                                    }
+                                                                };
 
-                        /* Function ============ */
-                        return {
-                            init: function () { },
+                                                                /* Function ============ */
+                                                                return {
+                                                                    init: function () { },
 
-                            load: function () {
-                                chartBar();
-                            },
-                            resize: function () { },
-                        };
-                    })();
+                                                                    load: function () {
+                                                                        chartBar();
+                                                                    },
+                                                                    resize: function () { },
+                                                                };
+                                                            })();
 
-                    jQuery(document).ready(function () { });
+                                                            jQuery(document).ready(function () { });
 
-                    jQuery(window).on("load", function () {
-                        tfLineChart.load();
-                    });
+                                                            jQuery(window).on("load", function () {
+                                                                tfLineChart.load();
+                                                            });
 
-                    jQuery(window).on("resize", function () { });
-                })(jQuery);
-        </script> -->
+                                                            jQuery(window).on("resize", function () { });
+                                                        })(jQuery);
+                                                </script> -->
 @endpush

@@ -16,52 +16,67 @@ use App\Models\OrderDetail;
 
 class AdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
-        $orders = Order::orderBy('created_at', 'desc')->get()->take(10);
-        $dashboardDatas = DB::select("Select sum(total) as totalAmount,
-                                            sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
-                                            sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount,
-                                            sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount,
-                                            count(*) as total,
-                                            sum(if(status = 'Chờ Xác Nhận', 1, 0)) as totalOrdered,
-                                            sum(if(status = 'Đã Xác Nhận', 1, 0)) as totalConfirmed,
-                                            sum(if(status = 'Đã Giao', 1, 0)) as totalDelivered
-                                            from orders
-                                            ");
-        $monthlyDatas = DB::select("Select
-                                            M.id as month_No,
-                                            M.name as monthName,
-                                            Ifnull(D.totalAmount, 0) as totalAmount,
-                                            Ifnull(D.totalOrderedAmount, 0) as totalOrderedAmount,
-                                            Ifnull(D.totalConfirmedAmount, 0) as totalConfirmedAmount,
-                                            Ifnull(D.totalDeliveredAmount, 0) as totalDeliveredAmount
-                                            from month_names M
-                                            left join (
-                                            Select
-                                                date_format(created_at, '%b') as monthName,
-                                                month(created_at) as monthNo,
-                                                sum(total) as totalAmount,
-                                                sum(if(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
-                                                sum(if(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount,
-                                                sum(if(status = 'Đã Giao', total, 0)) as totalDeliveredAmount
-                                            from orders
-                                            where year(created_at) = year(now())
-                                            group by year(created_at), month(created_at), date_format(created_at, '%b')
-                                            order by month(created_at)
-                                            ) D on D.monthNo = M.id");
 
+        // 📆 Lấy tháng và năm từ request hoặc dùng mặc định
+        $month = $request->input('month') ?? date('m');
+        $year = $request->input('year') ?? date('Y');
+
+        // 📦 Lấy đơn hàng theo tháng/năm đã chọn
+        $orders = Order::whereMonth('created_at', $month)
+            ->whereYear('created_at', $year)
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        // 📊 Dữ liệu dashboard theo tháng/năm chọn
+        $dashboardDatas = DB::select("
+        SELECT sum(total) as totalAmount,
+               sum(IF(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
+               sum(IF(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount,
+               sum(IF(status = 'Đã Giao', total, 0)) as totalDeliveredAmount,
+               count(*) as total,
+               sum(IF(status = 'Chờ Xác Nhận', 1, 0)) as totalOrdered,
+               sum(IF(status = 'Đã Xác Nhận', 1, 0)) as totalConfirmed,
+               sum(IF(status = 'Đã Giao', 1, 0)) as totalDelivered
+        FROM orders
+        WHERE month(created_at) = ? AND year(created_at) = ?
+    ", [$month, $year]);
+
+        // 📈 Dữ liệu doanh thu từng tháng trong năm đã chọn
+        $monthlyDatas = DB::select("
+        SELECT M.id as month_No,
+               M.name as monthName,
+               IFNULL(D.totalAmount, 0) as totalAmount,
+               IFNULL(D.totalOrderedAmount, 0) as totalOrderedAmount,
+               IFNULL(D.totalConfirmedAmount, 0) as totalConfirmedAmount,
+               IFNULL(D.totalDeliveredAmount, 0) as totalDeliveredAmount
+        FROM month_names M
+        LEFT JOIN (
+            SELECT MONTH(created_at) as monthNo,
+                   SUM(total) as totalAmount,
+                   SUM(IF(status = 'Chờ Xác Nhận', total, 0)) as totalOrderedAmount,
+                   SUM(IF(status = 'Đã Xác Nhận', total, 0)) as totalConfirmedAmount,
+                   SUM(IF(status = 'Đã Giao', total, 0)) as totalDeliveredAmount
+            FROM orders
+            WHERE YEAR(created_at) = ?
+            GROUP BY MONTH(created_at)
+        ) D ON D.monthNo = M.id
+    ", [$year]);
+
+        // 🎯 Tổng doanh thu cho biểu đồ
         $amountM = collect($monthlyDatas)->pluck('totalAmount')->map(fn($v) => round($v, 2))->values();
         $orderedAmountM = collect($monthlyDatas)->pluck('totalOrderedAmount')->map(fn($v) => round($v, 2))->values();
         $confirmedAmountM = collect($monthlyDatas)->pluck('totalConfirmedAmount')->map(fn($v) => round($v, 2))->values();
         $deliveredAmountM = collect($monthlyDatas)->pluck('totalDeliveredAmount')->map(fn($v) => round($v, 2))->values();
 
-
-        $totalAmount = collect($monthlyDatas)->sum('totalAmount');
-        $totalOrderedAmount = collect($monthlyDatas)->sum('totalOrderedAmount');
-        $totalConfirmedAmount = collect($monthlyDatas)->sum('totalConfirmedAmount');
-        $totalDeliveredAmount = collect($monthlyDatas)->sum('totalDeliveredAmount');
+        // 📦 Doanh thu tổng cho tháng đã chọn (sửa từ dashboardDatas)
+        $totalAmount = $dashboardDatas[0]->totalAmount ?? 0;
+        $totalOrderedAmount = $dashboardDatas[0]->totalOrderedAmount ?? 0;
+        $totalConfirmedAmount = $dashboardDatas[0]->totalConfirmedAmount ?? 0;
+        $totalDeliveredAmount = $dashboardDatas[0]->totalDeliveredAmount ?? 0;
 
         $contactCount = Contact::count();
 
@@ -80,6 +95,7 @@ class AdminController extends Controller
             'user'
         ));
     }
+
 
     public function changePassword()
     {
@@ -119,9 +135,9 @@ class AdminController extends Controller
     public function order_detail($id)
     {
 
-        $order = Order::with('details.productDetail.product')->find( $id );
-        $orderItems = OrderDetail ::where(  'order_id', $order->id)->orderBy('created_at','desc')->paginate(12);
-        return view('admin.order-detail', compact('order','orderItems'));
+        $order = Order::with('details.productDetail.product')->find($id);
+        $orderItems = OrderDetail::where('order_id', $order->id)->orderBy('created_at', 'desc')->paginate(12);
+        return view('admin.order-detail', compact('order', 'orderItems'));
 
     }
 
@@ -148,53 +164,52 @@ class AdminController extends Controller
         // // }
         // $order->save();
         // return back()->with('status','Đã cập nhật trạng thái đơn hàng thành công');
-        $order = Order::with('details.productDetail') ->find($request->id);
-        
-        if(!$order) {
-            return back()->with('error','Không tìm thấy đơn hàng.');
+        $order = Order::with('details.productDetail')->find($request->id);
+
+        if (!$order) {
+            return back()->with('error', 'Không tìm thấy đơn hàng.');
         }
 
-        if($order->status ==="Đã Hủy") {
-            return back()->with('error','Đơn hàng đã bị hủy bạn không thể thay đổi trạng thái');
+        if ($order->status === "Đã Hủy") {
+            return back()->with('error', 'Đơn hàng đã bị hủy bạn không thể thay đổi trạng thái');
         }
 
-        $newStatus =$request->status;
+        $newStatus = $request->status;
         $previousStatus = $order->status;
 
-        if($newStatus === $previousStatus) {
-            return back() ->with('status', 'Trạng thái không thay đổi.');
+        if ($newStatus === $previousStatus) {
+            return back()->with('status', 'Trạng thái không thay đổi.');
         }
 
-        DB::transaction(function () use ($order, $newStatus, $previousStatus)
-        {
+        DB::transaction(function () use ($order, $newStatus, $previousStatus) {
 
             // Nếu chuyển sang "Đã Xác Nhận" ->trừ tồn kho (chưa trừ lần nào)
-            if($previousStatus !="Đã Xác Nhận" && $newStatus =="Đã Xác Nhận") {
+            if ($previousStatus != "Đã Xác Nhận" && $newStatus == "Đã Xác Nhận") {
 
                 foreach ($order->details as $item) {
-                    $productDetail = $item ->productDetail;
-                    if($productDetail->quantity <$item->quantity) {
-                        throw new \Exception("Sản Phẩm {$productDetail ->name} không đủ số lượng tồn kho." );
+                    $productDetail = $item->productDetail;
+                    if ($productDetail->quantity < $item->quantity) {
+                        throw new \Exception("Sản Phẩm {$productDetail->name} không đủ số lượng tồn kho.");
                     }
                     $productDetail->quantity -= $item->quantity;
                     $productDetail->save();
 
                 }
             }
-            if($previousStatus == "Đã Xác Nhận" && $newStatus == "Đã Hủy") {
+            if ($previousStatus == "Đã Xác Nhận" && $newStatus == "Đã Hủy") {
 
                 foreach ($order->details as $item) {
-                    $productDetail = $item ->productDetail;
+                    $productDetail = $item->productDetail;
                     $productDetail->quantity += $item->quantity;
                     $productDetail->save();
 
                 }
-            
+
             }
             $order->status = $newStatus;
             $order->save();
         });
-        return back()->with("status","Đã cập nhật trạng thái đơn hàng thành công");
+        return back()->with("status", "Đã cập nhật trạng thái đơn hàng thành công");
 
     }
 
@@ -312,7 +327,6 @@ class AdminController extends Controller
 
 
     public function settings()
-
     {
         // Kiểm tra nếu chưa đăng nhập
         if (!Auth::check()) {
