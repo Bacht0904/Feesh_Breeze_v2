@@ -23,12 +23,12 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css')}}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css')}}" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-   
+
 
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
     @stack('styles')
-     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 </head>
 
 
@@ -514,7 +514,9 @@
                     @endguest
                     @php
                     $unread = auth()->check() ? auth()->user()->unreadNotifications : collect();
+
                     @endphp
+
 
 
                     <div class="header-tools__item hover-container">
@@ -586,14 +588,14 @@
 
 
                     @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
-                        <div class="header-tools__item">
-                            <a href="{{ route('admin.index') }}" class="header-tools__link">
-                                <span class="d-block text-uppercase fw-medium">Quản Lý</span>
-                            </a>
-                        </div>
-                   
+                    <div class="header-tools__item">
+                        <a href="{{ route('admin.index') }}" class="header-tools__link">
+                            <span class="d-block text-uppercase fw-medium">Quản Lý</span>
+                        </a>
+                    </div>
 
-                 
+
+
                     @elseif(Auth::check())
                     <form method="post" action="{{route('logout')}}" id="logout-form">
                         @csrf
@@ -880,18 +882,17 @@
     <!-- Toastr JS -->
     <script>
         @if(session('status'))
-            toastr.success("{{ session('status') }}");
+        toastr.success(@json(session('status')));
         @endif
 
-
-        @if($errors->any())
-            toastr.error("{{ $errors->first() }}");
+        @if($errors -> any())
+        toastr.error(@json($errors -> first()));
         @endif
     </script>
 
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
-   
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 

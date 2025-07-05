@@ -75,7 +75,11 @@ Route::middleware(['admin.staff'])->group(function () {
     Route::get('/admin/categories/search', [CategoryController::class, 'category_search'])->name('admin.categories.search');
 
     Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
-    Route::get('/admin/order/detail', [AdminController::class, 'order_detail'])->name('admin.order.detail');
+    Route::put('/admin/order/status/update', [AdminController::class, 'updateStatus'])->name('admin.order.status.update');
+
+
+    Route::get('/admin/order/detail/{id}', [AdminController::class, 'order_detail'])->name('admin.order.detail');
+
     Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
 
     Route::get('/admin/products', [ProductController::class, 'products'])->name('admin.products');
@@ -126,12 +130,11 @@ Route::middleware(['admin.staff'])->group(function () {
 
     Route::get('/admin/password/change', [AdminController::class, 'changePassword'])->name('admin.password.change');
     Route::post('/admin/password/change', [AdminController::class, 'updatePassword'])->name('admin.password.update');
-
 });
 
 //Route::get('/admin', [AdminController::class, 'index'])->name('admin.index');
 
-
+Route::put('/admin/order/{id}/deliver', [AdminController::class, 'markAsDelivered'])->name('admin.order.status.deliver');
 
 
 Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
