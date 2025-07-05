@@ -38,11 +38,14 @@
 
           ] as [$name, $label, $type, $value])
           <div class="form-floating mb-3">
-            <input class="form-control"
+            <input
+              class="form-control"
               type="{{ $type }}"
               name="{{ $name }}"
               id="{{ $name }}"
-              value="{{ $value }}">
+              value="{{ old($name, $value) }}"
+              required>
+
 
             <label for="{{ $name }}">{{ $label }}</label>
           </div>
@@ -143,7 +146,7 @@
             <div class="d-flex justify-content-between">
               <span>Phí vận chuyển:</span>
               <strong>{{ ($shipping ?? 0) === 0 ? 'Miễn phí' : '₫' . number_format($shipping ?? 0) }}</strong>
-            </div>\
+            </div>
 
             <hr>
             <div class="d-flex justify-content-between fw-bold fs-5">

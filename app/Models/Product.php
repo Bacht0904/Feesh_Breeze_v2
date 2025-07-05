@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Product_details;
+use App\Models\Category;
+use App\Models\Brand;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -45,5 +48,6 @@ class Product extends Model
             ->orderBy('price')        // Giá thấp nhất trước
             ->orderBy('size')         // Size nhỏ nhất tiếp theo (nếu có)
             ->orderByRaw('RAND()');   // Chọn màu ngẫu nhiên nếu trùng
+
     }
 }

@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<link
-    rel="stylesheet"
-    href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
+<link rel="stylesheet" href="https://unpkg.com/swiper@8/swiper-bundle.min.css" />
 <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
 
 <head>
@@ -11,6 +9,7 @@
 
     <title>{{config('app.name', 'Laravel')}}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="surfside media" />
@@ -41,6 +40,14 @@
             <rect y="8" width="20" height="2" />
             <rect y="16" width="25" height="2" />
         </symbol>
+        <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+            <symbol id="icon_bell" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 16a2 2 0 0 0 1.985-1.75H6.015A2 2 0 0 0 8 16zM14 12a1 1 0 0 1-1 1H3a1
+             1 0 0 1-1-1c0-1.098.45-2.068 1.17-2.779A3.987 3.987 0 0 0 4 6V5a4
+             4 0 1 1 8 0v1c0 1.057.437 2.014 1.13 2.721A3.978 3.978 0 0 1 14 12z" />
+            </symbol>
+        </svg>
+
         <symbol id="icon_facebook" viewBox="0 0 9 15">
             <path
                 d="M7.62891 8.31543L8.01172 5.7998H5.57812V4.15918C5.57812 3.44824 5.90625 2.79199 7 2.79199H8.12109V0.631836C8.12109 0.631836 7.10938 0.44043 6.15234 0.44043C4.15625 0.44043 2.84375 1.6709 2.84375 3.8584V5.7998H0.601562V8.31543H2.84375V14.4404H5.57812V8.31543H7.62891Z" />
@@ -259,8 +266,8 @@
                 fill="currentColor" />
         </symbol>
         <symbol id="icon_star" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 17.27L18.18 21 16.54 13.97 
-    22 9.24l-7.19-.61L12 2 9.19 8.63 
+            <path fill="currentColor" d="M12 17.27L18.18 21 16.54 13.97
+    22 9.24l-7.19-.61L12 2 9.19 8.63
     2 9.24l5.46 4.73L5.82 21z" />
         </symbol>
         <symbol id="icon_cart" viewBox="0 0 20 20">
@@ -415,7 +422,7 @@
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('images/logo/logo.png') }}" class="logo__image", style="max-height: 60px ; with:auto ">
+                        <img src="{{ asset('images/logo/logo.png') }}" class="logo__image" , style="max-height: 60px ; with:auto ">
 
                     </a>
                 </div>
@@ -427,9 +434,6 @@
                         </li>
                         <li class="navigation__item">
                             <a href="{{ route('shop') }} " class="navigation__link">Sản Phẩm</a>
-                        </li>
-                        <li class="navigation__item">
-                            <a href="{{ route('cart') }} " class="navigation__link">Giỏ Hàng</a>
                         </li>
                         <li class="navigation__item">
                             <a href="{{ route('about') }} " class="navigation__link">Thông Tin</a>
@@ -508,6 +512,59 @@
                         </a>
                     </div>
                     @endguest
+                    @php
+                    $unread = auth()->check() ? auth()->user()->unreadNotifications : collect();
+                    @endphp
+
+
+                    <div class="header-tools__item hover-container">
+                        <div class="js-hover__open position-relative">
+                            <a class="js-notification-popup search-field__actor" href="#">
+                                <i data-feather="bell"></i>
+                            </a>
+                            @if($unread->count())
+                            <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-circle bg-danger">
+                                {{ $unread->count() }}
+                            </span>
+
+                            @endif
+                        </div>
+
+                        <div class="notification-popup js-hidden-content">
+                            <p class="text-uppercase text-secondary fw-semibold mb-3">🔔 Thông báo</p>
+
+                            <ul class="list-unstyled mb-0">
+                                @forelse($unread->take(3) as $notification)
+                                <li class="mb-3 pb-3 border-bottom">
+                                    <div class="d-flex gap-2 align-items-start">
+                                        <i class="icon-noti-{{ $loop->iteration }}"></i>
+                                        <div>
+                                            <div class="fw-medium">{{ $notification->data['message'] ?? 'Thông báo mới' }}</div>
+                                            <div class="text-muted small">
+                                                Đơn hàng #{{ $notification->data['order_id'] ?? '---' }}<br>
+                                                <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                                @empty
+                                <li><span class="text-muted">Không có thông báo mới</span></li>
+                                @endforelse
+                            </ul>
+
+                            @if($unread->count() > 3)
+
+                            <div class="text-center mt-2">
+                                <a href="{{ route('notifications') }}" class="btn btn-outline-secondary btn-sm">
+                                    Xem tất cả
+                                </a>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+
+
                     <a href="{{ route('wishlist') }} " class="header-tools__item">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_heart" />
@@ -521,35 +578,34 @@
                             <use href="#icon_cart" />
                         </svg>
 
-                        <span class="cart-amount d-block position-absolute">
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">
                             {{ $cartItemCount ?? 0 }}
                         </span>
                     </a>
-                    @if (Auth::check() && Auth::user()->role == 'admin')
-                    <div class="header-tools__item">
-                        <a href="{{ route('admin.index') }}" class="header-tools__link">
 
-                            <span class="d-block text-uppercase fw-medium">Quản Lý</span>
-                        </a>
-                    </div>
-                    <form method="post" action="{{route('logout')}}" id="logout-form">
-                        @csrf
-                        <a href="{{route('logout')}}" class=""
-                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                            <div class="icon"><i class="icon-settings"></i></div>
-                            <div class="text">Đăng xuất</div>
-                        </a>
-                    </form>
+
+
+                    @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
+                        <div class="header-tools__item">
+                            <a href="{{ route('admin.index') }}" class="header-tools__link">
+                                <span class="d-block text-uppercase fw-medium">Quản Lý</span>
+                            </a>
+                        </div>
+                   
+
+                 
                     @elseif(Auth::check())
                     <form method="post" action="{{route('logout')}}" id="logout-form">
                         @csrf
                         <a href="{{route('logout')}}" class=""
                             onclick="event.preventDefault();document.getElementById('logout-form').submit();">
                             <div class="icon"><i class="icon-settings"></i></div>
-                            <div class="text">Đăng xuất</div>
+                            <div class="text">ĐĂNG XUẤT</div>
                         </a>
                     </form>
                     @endif
+
+
 
                 </div>
             </div>
@@ -713,6 +769,31 @@
             </div>
         </div>
     </footer>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script>
+        feather.replace()
+        document.addEventListener('DOMContentLoaded', function() {
+            const trigger = document.querySelector('.js-notification-popup');
+            const popup = document.querySelector('.notification-popup');
+
+            if (trigger && popup) {
+                trigger.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
+
+                    // Render lại icon để tránh lỗi ẩn
+                    feather.replace();
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!popup.contains(e.target) && !trigger.contains(e.target)) {
+                        popup.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
+
     <script>
         document.getElementById('search-input').addEventListener('input', async function() {
             const keyword = this.value.trim();
@@ -741,6 +822,26 @@
             }
         });
     </script>
+
+    <style>
+        .notification-popup {
+            position: absolute;
+            top: 120%;
+            right: 0;
+            z-index: 1000;
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 6px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 300px;
+            display: none;
+        }
+
+        .hover-container:hover .notification-popup {
+            display: block;
+        }
+    </style>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const res = await fetch('/quick-suggestions');
@@ -782,6 +883,7 @@
             toastr.success("{{ session('status') }}");
         @endif
 
+
         @if($errors->any())
             toastr.error("{{ $errors->first() }}");
         @endif
@@ -790,6 +892,14 @@
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
    
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+
+    <div id="scrollTop" class="visually-hidden end-0"></div>
+    <div class="page-overlay"></div>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <script src="{{asset('assets/js/custom.js')}}"></script>
     <script src="{{asset('assets/js/plugins/jquery.min.js')}}"></script>
     <script src="{{asset('assets/js/plugins/bootstrap.bundle.min.js')}}"></script>

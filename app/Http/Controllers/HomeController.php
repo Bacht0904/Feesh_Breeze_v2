@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ProductDetail;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -12,28 +13,77 @@ use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Product_details;
 use App\Models\User;
-
+use Carbon\Carbon;
 class HomeController extends Controller
 {
+
     public function welcome()
     {
+        $start = Carbon::now()->startOfMonth();
+        $end = Carbon::now()->endOfMonth();
+
+        // Top 8 sản phẩm bán chạy nhất tháng (từ order_details)
+        $topSellingIds = DB::table('order_details')
+            ->select('product_detail_id', DB::raw('SUM(quantity) as total_sold'))
+            ->whereBetween('created_at', [$start, $end])
+            ->groupBy('product_detail_id')
+            ->orderByDesc('total_sold')
+            ->limit(8)
+            ->pluck('product_detail_id');
+
+        $hotDeals = \App\Models\Product_details::with('product')
+            ->whereIn('id', $topSellingIds)
+            ->get();
+
+        // Lấy các wishlist ID từ session
         $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
-        $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+
+        // Danh sách sản phẩm có tồn kho
+        $products = \App\Models\Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
             ->with([
                 'product_details' => fn($q) => $q->where('quantity', '>', 0),
-                'reviews' // 👈 thêm reviews để hiển thị số sao + số lượt đánh giá
+                'reviews'
             ])
             ->get();
 
-        $featuredProducts = Product::with(['product_details', 'reviews']) // cũng eager load reviews
+        // Sản phẩm nổi bật (mới nhất)
+        $featuredProducts = \App\Models\Product::with(['product_details', 'reviews'])
             ->latest()
             ->take(8)
             ->get();
 
-        $categories = Category::all(); // hoặc ->where('status', 'active')
+        // Danh mục
+        $categories = \App\Models\Category::all();
 
-        return view('welcome', compact('categories', 'products', 'featuredProducts', 'wishlistIds'));
+        return view('welcome', compact(
+            'categories',
+            'products',
+            'featuredProducts',
+            'wishlistIds',
+            'hotDeals'
+        ));
     }
+
+
+    // public function welcome()
+    // {
+    //     $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
+    //     $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+    //         ->with([
+    //             'product_details' => fn($q) => $q->where('quantity', '>', 0),
+    //             'reviews' // 👈 thêm reviews để hiển thị số sao + số lượt đánh giá
+    //         ])
+    //         ->get();
+
+    //     $featuredProducts = Product::with(['product_details', 'reviews']) // cũng eager load reviews
+    //         ->latest()
+    //         ->take(8)
+    //         ->get();
+
+    //     $categories = Category::all(); // hoặc ->where('status', 'active')
+
+    //     return view('welcome', compact('categories', 'products', 'featuredProducts', 'wishlistIds'));
+    // }
 
     public function index()
     {

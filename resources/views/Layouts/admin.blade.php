@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>{{config('app.name','Laravel')}}</title>
+    <title>{{config('app.name', 'Laravel')}}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="author" content="surfside media" />
@@ -20,11 +20,16 @@
     <link rel="apple-touch-icon-precomposed" href="{{ asset('images/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
+
     <!-- Toastr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.css" rel="stylesheet">
+
     @stack('styles')
     <style>
         #toast-container > .toast {
@@ -35,6 +40,7 @@
     </style>
     
 </head>
+
 <body class="body">
     <div id="wrapper">
         <div id="page" class="">
@@ -128,17 +134,17 @@
                                 <li class="menu-item has-children">
                                     <a href="javascript:void(0);" class="menu-item-button">
                                         <div class="icon"><i class="icon-file-plus"></i></div>
-                                        <div class="text">Hóa đơn</div>
+                                        <div class="text">Đơn hàng</div>
                                     </a>
                                     <ul class="sub-menu">
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.orders') }}" class="">
-                                                <div class="text">Danh sách hóa đơn</div>
+                                                <div class="text">Danh sách đơn hàng</div>
                                             </a>
                                         </li>
                                         <li class="sub-menu-item">
                                             <a href="{{ route('admin.order.tracking') }}" class="">
-                                                <div class="text">Trạng thái hóa đơn</div>
+                                                <div class="text">Trạng thái đơn hàng</div>
                                             </a>
                                         </li>
                                     </ul>
@@ -147,6 +153,12 @@
                                     <a href="{{ route('admin.sliders') }}" class="">
                                         <div class="icon"><i class="icon-image"></i></div>
                                         <div class="text">Slider</div>
+                                    </a>
+                                </li>
+                                <li class="menu-item">
+                                    <a href="{{ route('admin.banners') }}" class="">
+                                        <div class="icon"><i class="icon-image"></i></div>
+                                        <div class="text">Banner</div>
                                     </a>
                                 </li>
                                 <li class="menu-item">
@@ -173,10 +185,12 @@
                                 <li class="menu-item">
                                     <form method="post" action="{{route('logout')}}" id="logout-form">
                                         @csrf
-                                    <a href="{{route('logout')}}" class="" onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                                        <div class="icon"><i class="icon-settings"></i></div>
-                                        <div class="text">Đăng xuất</div>
-                                    </a>
+                                        <a href="{{route('logout')}}" class=""
+                                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                            <div class="icon"><i class="icon-log-out"></i></div>
+
+                                            <div class="text">Đăng xuất</div>
+                                        </a>
                                     </form>
                                 </li>
                             </ul>
@@ -199,7 +213,7 @@
                             </div>
                             <div class="header-grid">
 
-                                <div class="popup-wrap message type-header">
+                                <!-- <div class="popup-wrap message type-header">
                                     <div class="dropdown">
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
@@ -252,7 +266,51 @@
                                             <li><a href="#" class="tf-button w-full">View all</a></li>
                                         </ul>
                                     </div>
+                                </div> -->
+
+                                <div class="popup-wrap message type-header">
+                                    <div class="dropdown">
+                                        <button class="btn btn-secondary dropdown-toggle" type="button"
+                                            id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <span class="header-item">
+                                                <span class="text-tiny">{{ auth()->user()->unreadNotifications->count() }}</span>
+                                                <i class="icon-bell"></i>
+                                            </span>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end has-content"
+                                            aria-labelledby="dropdownMenuButton2">
+                                            <li>
+                                                <h6>Thông báo</h6>
+                                            </li>
+
+                                            @forelse(auth()->user()->unreadNotifications as $notification)
+                                            <li>
+                                                <div class="message-item">
+                                                    <div class="image">
+                                                        <i class="icon-noti-{{ $loop->iteration }}"></i> {{-- bạn có thể tùy chọn icon khác nhau --}}
+                                                    </div>
+                                                    <div>
+                                                        <div class="body-title-2">{{ $notification->data['message'] ?? 'Thông báo mới' }}</div>
+                                                        <div class="text-tiny">
+                                                            Đơn hàng #{{ $notification->data['order_id'] ?? '---' }}<br>
+                                                            <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                            @empty
+                                            <li>
+                                                <span class="dropdown-item">Không có thông báo mới</span>
+                                            </li>
+                                            @endforelse
+
+                                            <li>
+                                                <a href="{{ route('notifications') }}" class="tf-button w-full">Xem tất cả</a>
+                                            </li>
+                                        </ul>
+                                    </div>
                                 </div>
+
 
 
 
@@ -262,57 +320,50 @@
                                         <button class="btn btn-secondary dropdown-toggle" type="button"
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
-                                                <span class="image">
-                                                    <img src="images/avatar/user-1.png" alt="">
+                                                <span class="">
+                                                    <img src="{{ asset(Auth::user()->avatar) }}" width="50px"
+                                                        height="50px" style="border-radius: 50%; object-fit: cover;"
+                                                        alt="Avatar người dùng">
                                                 </span>
                                                 <span class="flex flex-column">
-                                                    <span class="body-title mb-2">Kristin Watson</span>
-                                                    <span class="text-tiny">Admin</span>
+                                                    <span class="body-title mb-2">{{ Auth::user()->name }}</span>
+                                                    <span class="text-tiny">{{ Auth::user()->role }}</span>
                                                 </span>
                                             </span>
                                         </button>
                                         <ul class="dropdown-menu dropdown-menu-end has-content"
                                             aria-labelledby="dropdownMenuButton3">
                                             <li>
-                                                <a href="#" class="user-item">
+                                                <a href="{{ route('admin.settings') }}" class="user-item">
                                                     <div class="icon">
                                                         <i class="icon-user"></i>
                                                     </div>
-                                                    <div class="body-title-2">Account</div>
+                                                    <div class="body-title-2">Tài khoản</div>
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#" class="user-item">
+                                                <a href="{{ route('admin.contacts') }}" class="user-item">
                                                     <div class="icon">
                                                         <i class="icon-mail"></i>
                                                     </div>
-                                                    <div class="body-title-2">Inbox</div>
-                                                    <div class="number">27</div>
+                                                    <div class="body-title-2">Liên hệ</div>
+                                                    <div class="number">{{ $contactCount }}</div>
                                                 </a>
                                             </li>
                                             <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-file-text"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Taskboard</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" class="user-item">
-                                                    <div class="icon">
-                                                        <i class="icon-headphones"></i>
-                                                    </div>
-                                                    <div class="body-title-2">Support</div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="login.html" class="user-item">
+                                                <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                                    style="display: none;">
+                                                    @csrf
+                                                </form>
+
+                                                <a href="{{ route('logout') }}" class="user-item"
+                                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                                                     <div class="icon">
                                                         <i class="icon-log-out"></i>
                                                     </div>
-                                                    <div class="body-title-2">Log out</div>
+                                                    <div class="body-title-2">Đăng xuất</div>
                                                 </a>
+
                                             </li>
                                         </ul>
                                     </div>
@@ -336,10 +387,11 @@
 
     <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>   
-    <script src="{{ asset('js/sweetalert.min.js') }}"></script>    
+    <script src="{{ asset('js/bootstrap-select.min.js') }}"></script>
+    <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
+
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
@@ -372,6 +424,14 @@
             }
     </script>
 
+    <!-- jQuery (bắt buộc trước Summernote) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Summernote JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.js"></script>
+
+
     @stack('scripts')
 </body>
+
 </html>

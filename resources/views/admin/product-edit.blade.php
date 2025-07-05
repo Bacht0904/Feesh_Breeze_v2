@@ -20,7 +20,8 @@
                 </ul>
             </div>
 
-            <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data" action="{{ route('admin.product.update', $product->id) }}">
+            <form class="tf-section-2 form-add-product" method="POST" enctype="multipart/form-data"
+                action="{{ route('admin.product.update', $product->id) }}">
                 @csrf
                 @method('PUT')
                 <div class="wg-box">
@@ -39,28 +40,36 @@
 
                     <div class="gap22 cols">
                         <fieldset class="category">
-                            <div class="body-title mb-10">Loại sản phẩm<span class="tf-color-1">*</span></div>
+                            <div class="body-title mb-10">Loại sản phẩm <span class="tf-color-1">*</span></div>
                             <div class="select">
                                 <select name="category_id" required>
-                                    <option disabled selected>Chọn loại sản phẩm</option>
-                                    @foreach ($categories as $category)
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    <option disabled {{ !isset($product->category_id) ? 'selected' : '' }}>Chọn loại sản phẩm</option>
+                                        @foreach ($categories as $category)
+                                            <option value="{{ $category->id }}" 
+                                                {{ (isset($product) && $product->category_id == $category->id) ? 'selected' : '' }}>
+                                                    {{ $category->name }}
+                                            </option>
+                                        @endforeach
+                                </select>
+                            </div>
+                        </fieldset>
+
+
+                        <fieldset class="brand">
+                            <div class="body-title mb-10">Thương hiệu <span class="tf-color-1">*</span></div>
+                            <div class="select">
+                                <select name="brand_id" required>
+                                    <option disabled {{ !isset($product->brand_id) ? 'selected' : '' }}>Chọn thương hiệu
+                                    </option>
+                                    @foreach ($brands as $brand)
+                                        <option value="{{ $brand->id }}" {{ (isset($product) && $product->brand_id == $brand->id) ? 'selected' : '' }}>
+                                            {{ $brand->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
                         </fieldset>
 
-                        <fieldset class="brand">
-                            <div class="body-title mb-10">Thương hiệu<span class="tf-color-1">*</span></div>
-                            <div class="select">
-                                <select name="brand_id" required>
-                                    <option disabled selected>Chọn thương hiệu</option>
-                                    @foreach ($brands as $brand)
-                                        <option value="{{ $brand->id }}">{{ $brand->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </fieldset>
                     </div>
 
                 </div>
@@ -109,7 +118,15 @@
 
                     <button type="button" id="add-variant" class="tf-button outline w-auto">+ Thêm biến thể</button>
                 </div>
-
+                @if ($errors->any())
+                    <div class="alert alert-danger">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div class="cols gap10">
                     <button class="tf-button w-full" type="submit">Sửa sản phẩm</button>
                 </div>
@@ -121,15 +138,15 @@
         let variantIndex = 1;
         document.getElementById('add-variant').addEventListener('click', function () {
             const html = `
-                        <div class="variant-item gap22 cols mb-16">
-                            <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
-                            <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
-                            <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
-                            <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
-                            <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
-                            <button type="button" class="remove-variant tf-button small danger">Xoá</button>
-                        </div>
-                    `;
+                            <div class="variant-item gap22 cols mb-16">
+                                <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
+                                <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
+                                <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
+                                <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
+                                <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
+                                <button type="button" class="remove-variant tf-button small danger">Xoá</button>
+                            </div>
+                        `;
             document.getElementById('variant-list').insertAdjacentHTML('beforeend', html);
             variantIndex++;
         });

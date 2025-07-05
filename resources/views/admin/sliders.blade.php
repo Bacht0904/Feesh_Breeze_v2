@@ -43,7 +43,6 @@
                                 <th>Tiêu đề</th>
                                 <th>Hình ảnh</th>
                                 <th>Mô tả</th>
-                                <th>Link</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
@@ -52,14 +51,13 @@
                             @foreach ($slides as $slide)
                                 <tr>
                                     <td>{{ $slide->id }}</td>
-                                    <td class="body-title-2">{{ $slide->title }}</td>
+                                    <td class="body-title-2">{{ Str::limit($slide->title,30) }}</td>
                                     <td class="pname">
                                         <div class="image">
-                                            <img src="{{ asset($slide->image) }}" width="100" alt="Ảnh slide" class="image">
+                                            <img src="{{ asset($slide->image) }}" width="100" height="100" alt="Ảnh slide" class="image">
                                         </div>
                                     </td>
-                                    <td class="body-title-2">{{ $slide->description }}</td>
-                                    <td class="body-title-2">{{ $slide->link }}</td>
+                                    <td class="body-title-2">{{ Str::limit($slide->description,62) }}</td>
                                     <!-- <td>
                                                 @if($slide->status == 'active')
                                                     <span class="badge bg-success">Hoạt động</span>
