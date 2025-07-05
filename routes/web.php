@@ -192,7 +192,7 @@ Route::post('/cart/checkout', [CartController::class, 'checkout'])->name('cart.c
 
 
 Route::put('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
-
+Route::put('/orders/{order}/refund', [OrderController::class, 'refund'])->name('orders.refund');
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink'])->name('password.email');
 Route::get('/reset-password/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');

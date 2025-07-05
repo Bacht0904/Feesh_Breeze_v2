@@ -7,20 +7,22 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class OrderPlaced extends Notification
+class OrderPlaced extends Notification implements ShouldQueue
 {
     use Queueable;
 
+    protected $order;
+
     /**
-     * Create a new notification instance.
+     * Tạo một instance mới của notification.
      */
-    public function __construct()
+    public function __construct($order)
     {
-        //
+        $this->order = $order;
     }
 
     /**
-     * Get the notification's delivery channels.
+     * Kênh gửi thông báo.
      *
      * @return array<int, string>
      */
@@ -29,7 +31,9 @@ class OrderPlaced extends Notification
         return ['mail', 'database'];
     }
 
-
+    /**
+     * Dữ liệu lưu vào database.
+     */
     public function toDatabase($notifiable)
     {
         return [
@@ -39,25 +43,15 @@ class OrderPlaced extends Notification
     }
 
     /**
-     * Get the mail representation of the notification.
+     * Định dạng thông báo gửi qua email.
      */
-    public function toMail(object $notifiable): MailMessage
+    public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->line('The introduction to the notification.')
-            ->action('Notification Action', url('/'))
-            ->line('Thank you for using our application!');
-    }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
-    {
-        return [
-            //
-        ];
+            ->greeting('Xin chào!')
+            ->line('Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được ghi nhận thành công.')
+            ->line('Mã đơn hàng: ' . $this->order->id)
+            ->action('Xem đơn hàng', url('/orders/' . $this->order->id))
+            ->line('Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!');
     }
 }

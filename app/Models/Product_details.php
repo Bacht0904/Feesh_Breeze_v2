@@ -27,5 +27,9 @@ class Product_details extends Model
         return $this->belongsTo(Product::class);
     }
     // Trong model ProductDetail
+    public function orderDetail()
+    {
+        return $this->hasMany(OrderDetail::class,'product_detail_id');
+    }
 
 }

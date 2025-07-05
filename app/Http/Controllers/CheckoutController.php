@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\DB;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\Coupon;
+use Illuminate\Support\Facades\Notification;
+use App\Notifications\OrderPlaced;
+use App\Models\User;
 // Đổi tên model cho chuẩn (không _)
 
 class CheckoutController extends Controller
@@ -171,6 +174,10 @@ class CheckoutController extends Controller
 
                 return $order; // ✅ Trả đối tượng Order ra ngoài
             });
+            $recipients = User::whereIn('role', ['admin', 'staff'])->get();
+            if ($recipients->isNotEmpty()) {
+                Notification::send($recipients, new OrderPlaced($order));
+            }
 
             // 4. Redirect đến trang cảm ơn
             return redirect()->route('user.checkoutsuccess', ['id' => $order->id]);
@@ -300,7 +307,10 @@ class CheckoutController extends Controller
                     session()->forget(['cart', 'order_data']);
                     return $saved;
                 });
-
+                $recipients = User::whereIn('role', ['admin', 'staff'])->get();
+                if ($recipients->isNotEmpty()) {
+                    Notification::send($recipients, new OrderPlaced($order));
+                }
 
                 return redirect()->route('user.checkoutsuccess', ['id' => $saved->id]);
             } catch (\Throwable $e) {
