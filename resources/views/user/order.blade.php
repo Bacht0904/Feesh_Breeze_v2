@@ -118,7 +118,16 @@
                                     </td>
                                     <td class="text-center">{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y H:i') }}</td>
                                     <td class="text-center">{{ $order->details->count() }}</td>
-                                    <td class="text-center">{{ $order->delivered_at ? \Carbon\Carbon::parse($order->delivered_at)->format('d/m/Y') : '--' }}</td>
+                                    <td class="text-center">@if ($order->status === 'Đang Giao')
+                                        <form action="{{ route('admin.order.status.deliver', $order->id) }}" method="POST" class="d-inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-sm btn-success" title="Xác nhận giao thành công">
+                                                ✅ Giao Thành Công
+                                            </button>
+                                        </form>
+                                        @elseif($order->status === 'Đã Giao'){{ $order->updated_at ? \Carbon\Carbon::parse($order->delivered_at)->format('d/m/Y') : '--' }}@endif
+                                    </td>
                                     <td class="text-center">
                                         <a href="{{ route('orders.details', $order->id) }}" class="btn btn-sm btn-outline-primary" title="Xem chi tiết">
                                             <i class="fa fa-eye"></i>

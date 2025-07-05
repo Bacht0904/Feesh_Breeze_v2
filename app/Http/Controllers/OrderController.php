@@ -65,7 +65,7 @@ class OrderController extends Controller
         $order = Order::findOrFail($id);
 
         // Cập nhật trạng thái hoặc logic tùy theo yêu cầu
-        $order->status = 'Yêu cầu trả hàng';
+        $order->status = 'Yêu Cầu Trả Hàng';
         $order->save();
 
         // Gửi thông báo đến admin và staff

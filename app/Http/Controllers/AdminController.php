@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\OrderDetail;
+use App\Notifications\OrderStatusUpdated;
+use App\Notifications\OrderDeliveredNotification;
 
 
 
@@ -120,7 +122,6 @@ class AdminController extends Controller
         $user->password = Hash::make($request->new_password);
         $user->save();
         return redirect()->route('admin.settings')->with('success', 'Đã đổi mật khẩu thành công!');
-
     }
 
 
@@ -134,20 +135,26 @@ class AdminController extends Controller
 
     public function order_detail($id)
     {
-
         $order = Order::with('details.productDetail.product')->find($id);
-        $orderItems = OrderDetail::where('order_id', $order->id)->orderBy('created_at', 'desc')->paginate(12);
-        return view('admin.order-detail', compact('order', 'orderItems'));
 
+        if (!$order) {
+            abort(404, 'Không tìm thấy đơn hàng');
+        }
+
+        $orderItems = OrderDetail::where('order_id', $order->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(12);
+
+        return view('admin.order-detail', compact('order', 'orderItems'));
     }
+
 
     public function order_tracking()
     {
         return view('admin.order-tracking');
     }
 
-
-    public function update_order_status(Request $request)
+    public function markAsDelivered($id)
     {
         // $order = Order::find($request->id);
         // if (!$order) {
@@ -168,16 +175,52 @@ class AdminController extends Controller
 
         if (!$order) {
             return back()->with('error', 'Không tìm thấy đơn hàng.');
+        $order = Order::find($id);
+
+        if (!$order) {
+            return back()->with('error', 'Không tìm thấy đơn hàng.');
+        }
+
+        if ($order->status !== 'Đang Giao') {
+            return back()->with('error', 'Chỉ có thể xác nhận đơn hàng đang giao.');
+        }
+
+        $order->status = 'Đã Giao';
+        $order->payment_status = 'Đã Thanh Toán';
+        $order->updated_at = now();
+        $order->save();
+        // Gửi thông báo cho tất cả admin
+        $admins = \App\Models\User::whereIn('role', ['admin', 'staff'])->get();
+
+        foreach ($admins as $admin) {
+            $admin->notify(new OrderDeliveredNotification($order));
+        }
+
+        return back()->with('status', 'Đơn hàng đã được đánh dấu là Giao Thành Công.');
+    }
+
+    public function updateStatus(Request $request)
+    {
+        $order = Order::with(['details.productDetail', 'user'])->find($request->id);
+
+        if (!$order) {
+            return back()->with('error', 'Không tìm thấy đơn hàng.');
         }
 
         if ($order->status === "Đã Hủy") {
             return back()->with('error', 'Đơn hàng đã bị hủy bạn không thể thay đổi trạng thái');
+        if ($order->status === 'Đã Hủy') {
+            return back()->with('error', 'Đơn hàng đã bị hủy, không thể thay đổi trạng thái.');
         }
 
         $newStatus = $request->status;
         $previousStatus = $order->status;
+        $newStatus = $request->status;
+        $oldStatus = $order->status;
 
         if ($newStatus === $previousStatus) {
+            return back()->with('status', 'Trạng thái không thay đổi.');
+        if ($newStatus === $oldStatus) {
             return back()->with('status', 'Trạng thái không thay đổi.');
         }
 
@@ -210,120 +253,109 @@ class AdminController extends Controller
             $order->save();
         });
         return back()->with("status", "Đã cập nhật trạng thái đơn hàng thành công");
+        try {
+            DB::transaction(function () use ($order, $newStatus, $oldStatus) {
+                // ✅ Trừ tồn kho khi xác nhận đơn
+                if ($oldStatus !== 'Đã Xác Nhận' && $newStatus === 'Đã Xác Nhận') {
+                    foreach ($order->details as $item) {
+                        $product = $item->productDetail;
 
-    }
+                        if ($product->quantity < $item->quantity) {
+                            throw new \Exception("Sản phẩm {$product->name} không đủ số lượng tồn kho.");
+                        }
 
+                        $product->quantity -= $item->quantity;
+                        $product->save();
+                    }
+                }
 
-    public function sliders()
-    {
-        $slides = Slide::orderBy('id', 'asc')->paginate(10);
-        return view('admin.sliders', compact('slides'));
-    }
+                // ✅ Hoàn lại kho nếu hủy khi đã xác nhận
+                if ($oldStatus === 'Đã Xác Nhận' && $newStatus === 'Đã Hủy') {
+                    foreach ($order->details as $item) {
+                        $product = $item->productDetail;
+                        $product->quantity += $item->quantity;
+                        $product->save();
+                    }
+                }
 
-    public function add_slide()
-    {
-        return view('admin.slide-add');
-    }
+                $order->status = $newStatus;
+                $order->updated_at = now();
+                $order->save();
+            });
 
-    public function slide_store(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'required|string|max:1024',
-            'link' => 'required|url',
-        ]);
-
-        $slide = new Slide();
-        $slide->title = $request->title;
-        $slide->description = $request->description;
-        $slide->link = $request->link;
-
-        if ($request->hasFile('image')) {
-            $image = $request->file('image');
-            $uploadFolder = 'uploads/slides/';
-            $savePath = public_path($uploadFolder);
-
-            if (!file_exists($savePath)) {
-                mkdir($savePath, 0777, true);
+            if ($order->user && !$order->user->isAdmin()) {
+                $order->user->notify(new OrderStatusUpdated($order));
             }
 
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $fullPath = $savePath . '/' . $filename;
+            return back()->with('status', 'Đã cập nhật trạng thái đơn hàng thành công.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Lỗi khi cập nhật trạng thái: ' . $e->getMessage());
+        }
+    }
 
-            // Resize ảnh và lưu
-            $manager = new ImageManager(new Driver());
-            $manager->read($image->getRealPath())
-                ->resize(800, 400)
-                ->save($fullPath);
 
-            $slide->image = $uploadFolder . $filename;
+
+    public function updateStatus(Request $request)
+    {
+        $order = Order::with(['details.productDetail', 'user'])->find($request->id);
+
+        if (!$order) {
+            return back()->with('error', 'Không tìm thấy đơn hàng.');
         }
 
-        $slide->save();
-
-        return redirect()->route('admin.sliders')->with('status', 'Slide đã được thêm thành công!');
-    }
-
-    public function edit_slide($id)
-    {
-        $slide = Slide::find($id);
-        return view('admin.slide-edit', compact('slide'));
-    }
-
-    public function update_slide(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'image' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'required|string|max:1024',
-            'link' => 'required|url',
-        ]);
-
-        $slide = Slide::find($request->id);
-        $slide->title = $request->title;
-        $slide->description = $request->description;
-        $slide->link = $request->link;
-
-        if ($request->hasFile('image')) {
-            // Xóa ảnh cũ nếu có
-            if ($slide->image && File::exists(public_path($slide->image))) {
-                File::delete(public_path($slide->image));
-            }
-
-            $image = $request->file('image');
-            $uploadFolder = 'uploads/slides/';
-            $savePath = public_path($uploadFolder);
-
-            if (!file_exists($savePath)) {
-                mkdir($savePath, 0777, true);
-            }
-
-            $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
-            $fullPath = $savePath . '/' . $filename;
-
-            // Resize ảnh và lưu
-            $manager = new ImageManager(new Driver());
-            $manager->read($image->getRealPath())
-                ->resize(800, 400)
-                ->save($fullPath);
-
-            $slide->image = $uploadFolder . $filename;
+        if ($order->status === 'Đã Hủy') {
+            return back()->with('error', 'Đơn hàng đã bị hủy, không thể thay đổi trạng thái.');
         }
 
-        $slide->save();
+        $newStatus = $request->status;
+        $oldStatus = $order->status;
 
-        return redirect()->route('admin.sliders')->with('status', 'Slide đã được cập nhật thành công!');
+        if ($newStatus === $oldStatus) {
+            return back()->with('status', 'Trạng thái không thay đổi.');
+        }
+
+        try {
+            DB::transaction(function () use ($order, $newStatus, $oldStatus) {
+                // ✅ Trừ tồn kho khi xác nhận đơn
+                if ($oldStatus !== 'Đã Xác Nhận' && $newStatus === 'Đã Xác Nhận') {
+                    foreach ($order->details as $item) {
+                        $product = $item->productDetail;
+
+                        if ($product->quantity < $item->quantity) {
+                            throw new \Exception("Sản phẩm {$product->name} không đủ số lượng tồn kho.");
+                        }
+
+                        $product->quantity -= $item->quantity;
+                        $product->save();
+                    }
+                }
+
+                // ✅ Hoàn lại kho nếu hủy khi đã xác nhận
+                if ($oldStatus === 'Đã Xác Nhận' && $newStatus === 'Đã Hủy') {
+                    foreach ($order->details as $item) {
+                        $product = $item->productDetail;
+                        $product->quantity += $item->quantity;
+                        $product->save();
+                    }
+                }
+
+                $order->status = $newStatus;
+                $order->updated_at = now();
+                $order->save();
+            });
+
+            if ($order->user && !$order->user->isAdmin()) {
+                $order->user->notify(new OrderStatusUpdated($order));
+            }
+
+            return back()->with('status', 'Đã cập nhật trạng thái đơn hàng thành công.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Lỗi khi cập nhật trạng thái: ' . $e->getMessage());
+        }
     }
 
-    public function toggle_slide_status($id)
-    {
-        $slide = Slide::findOrFail($id);
-        $slide->status = $slide->status === 'active' ? 'inactive' : 'active';
-        $slide->save();
 
-        return redirect()->route('admin.sliders')->with('status', 'Trạng thái đã được cập nhật!');
-    }
+
 
 
     public function settings()

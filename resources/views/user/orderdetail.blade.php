@@ -157,7 +157,7 @@
 
                                     <th>Yêu cầu hủy hàng</th>
                                     <td colspan="5">
-                                        <form action="{{ route('orders.refund', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                        <form action="{{ route('orders.cancel', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
                                             @csrf
                                             @method('PUT')
                                             <button type="submit" class="btn btn-danger">Hủy đơn hàng</button>
@@ -165,7 +165,18 @@
                                     </td>
 
                                     @break
+                                    @case('Đã Giao')
 
+                                    <th>Yêu cầu hủy hàng</th>
+                                    <td colspan="5">
+                                        <form action="{{ route('orders.refund', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-danger">trả hàng</button>
+                                        </form>
+                                    </td>
+
+                                    @break
                                     @case('Xác Nhận Hủy')
 
                                     <th>Trạng thái đơn hàng</th>
@@ -433,7 +444,7 @@
     }
 
     .text-warning-custom {
-        color:rgb(255, 147, 24) !important;
+        color: rgb(255, 147, 24) !important;
         /* Màu vàng rực rỡ */
     }
 

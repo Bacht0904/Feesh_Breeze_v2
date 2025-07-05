@@ -5,6 +5,7 @@ namespace App\Notifications;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
 use Illuminate\Validation\Rules\Enum;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class OrderStatusUpdated extends Notification
 {
@@ -20,8 +21,8 @@ class OrderStatusUpdated extends Notification
     public function via($notifiable)
     {
 
-        if (!$notifiable->isAdmin()) {
-            return ['database']; // chỉ gửi nếu không phải admin
+        if ($notifiable->role === 'user') {
+            return ['database', 'mail'];
         }
 
         return []; // hoặc ['mail', 'database'] nếu muốn gửi email
@@ -35,7 +36,16 @@ class OrderStatusUpdated extends Notification
             'status' => $this->order->status,
         ];
     }
-
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('Cập nhật trạng thái đơn hàng #' . $this->order->id)
+            ->greeting('Xin chào!')
+            ->line('Trạng thái đơn hàng #' . $this->order->id . ' đã được cập nhật:')
+            ->line('👉 ' . $this->getFormattedStatusAttribute($this->order->status))
+            ->action('Xem đơn hàng', url('/orders/' . $this->order->id))
+            ->line('Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!');
+    }
     //  $table->enum('status', ['Chờ Xác Nhận','Đã Xác Nhận','Chờ Lấy Hàng','Đã Lấy Hàng','Đang Giao','Đã Giao','Giao Thành Công','Xác Nhận Hủy','Đã Hủy'])->default('Chờ Xác Nhận');
     public function getFormattedStatusAttribute($status)
     {
