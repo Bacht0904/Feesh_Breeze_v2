@@ -83,7 +83,7 @@ class AdminController extends Controller
 
     public function changePassword()
     {
-        return view('auth.password.change');
+        return view('admin.change-password');
     }
 
     public function updatePassword(Request $request)

@@ -121,8 +121,11 @@ Route::middleware(['admin.staff'])->group(function () {
     Route::put('/admin/coupon/update/{id}', [CouponController::class, 'update_coupon',])->name('admin.coupon.update');
     Route::delete('/admin/coupon/{id}/delete', [CouponController::class, 'delete_coupon'])->name('admin.coupon.delete');
 
-    Route::put('/admin/setting', [AdminController::class, 'setting'])->name('admin.setting');
+    Route::put('/admin/setting/{id}', [AdminController::class, 'setting'])->name('admin.setting');
     Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
+
+    Route::get('/admin/password/change', [AdminController::class, 'changePassword'])->name('admin.password.change');
+    Route::post('/admin/password/change', [AdminController::class, 'updatePassword'])->name('admin.password.update');
 
 });
 

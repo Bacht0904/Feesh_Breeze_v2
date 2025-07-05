@@ -62,9 +62,9 @@
                                             <a href="#" class="body-title-2">{{ $product->name }}</a>
                                         </td>
                                         <td>
-                                            @if($product->product_details->count() && $product->product_details->first()->image)
-                                                <img src="{{ asset($product->product_details->first()->image) }}"
-                                                    alt="{{ $product->name }}" style="max-width: 80px; height: auto;">
+                                            @if($detail->image)
+                                                <img src="{{ asset($detail->image) }}" alt="Ảnh biến thể {{ $detail->id }}"
+                                                    style="max-width: 80px; height: auto;">
                                             @else
                                                 <span>Không có hình ảnh</span>
                                             @endif

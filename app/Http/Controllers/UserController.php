@@ -65,7 +65,7 @@ class UserController extends Controller
                 ->resize(800, 400)
                 ->save($fullPath);
 
-            $user->avatar = $uploadFolder . $filename; // 🔄 sửa từ "image" thành "avatar"
+            $user->avatar = $uploadFolder . $filename;
         }
 
 

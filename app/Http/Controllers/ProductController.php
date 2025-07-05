@@ -113,6 +113,7 @@ class ProductController extends Controller
 
         foreach ($request->variants as $variant) {
             if (!isset($variant['image']) || !$variant['image']->isValid()) {
+
                 continue; // Bỏ qua nếu không có ảnh hợp lệ
             }
 
@@ -291,11 +292,25 @@ class ProductController extends Controller
     {
         $search = $request->input('name');
 
-        $products = Product::where('name', 'like', '%' . $search . '%')
-            ->orWhere('slug', 'like', '%' . $search . '%')
-            ->with(['category', 'brand'])
+        $products = Product::where(function ($query) use ($search) {
+            $query->where('name', 'like', '%' . $search . '%')
+                ->orWhere('slug', 'like', '%' . $search . '%')
+                ->orWhere('description', 'like', '%' . $search . '%');
+        })
+            ->orWhereHas('category', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->orWhereHas('brand', function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->orWhereHas('product_details', function ($query) use ($search) {
+                $query->where('price', 'like', '%' . $search . '%');
+            })
+            ->with(['category', 'brand', 'product_details'])
             ->paginate(10);
 
         return view('admin.products', compact('products', 'search'));
     }
+
+
 }

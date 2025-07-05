@@ -15,11 +15,11 @@ class UserSeeder extends Seeder
         $users = [
           
             [
-                'name' => 'A B C',
-                'email' => 'abc@gmail.com',
+                'name' => 'admin',
+                'email' => 'admin@gmail.com',
                 'phone' => '0912123456',
                 'address' => 'Đà Nẵng',
-                'role' => 'user',
+                'role' => 'admin',
                 'status' => 'active',
                 'avatar' => 'avatars/user2.jpg',
                 'password' => Hash::make('12345678'),
