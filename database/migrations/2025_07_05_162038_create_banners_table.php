@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title')->nullable();
             $table->string('image')->nullable();
-            $table->string('description')->nullable();
             $table->unsignedBigInteger('brand_id')->nullable();
+            // $table->string('description')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->foreign('brand_id')->references('id')->on('brands')->onDelete('set null');
             $table->timestamps();

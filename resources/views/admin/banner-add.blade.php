@@ -67,11 +67,11 @@
                         </fieldset>
 
                     <!-- Ghi chú -->
-                    <fieldset class="name">
+                    <!-- <fieldset class="name">
                         <div class="body-title">Ghi chú <span class="tf-color-1">*</span></div>
                         <textarea id="note" name="description" required placeholder="Nhập ghi chú..."
                             class="form-control"></textarea>
-                    </fieldset>
+                    </fieldset> -->
 
 
 
@@ -94,7 +94,7 @@
     </div>
 @endsection
 
-@push('scripts')
+<!-- @push('scripts')
     <script>
         $(document).ready(function () {
             $('#note').summernote({
@@ -146,4 +146,4 @@
         padding: 7px 10px !important;
     }
 </style>
-@endpush
+@endpush -->

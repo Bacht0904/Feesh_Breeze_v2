@@ -65,11 +65,11 @@
                             </select>
                         </div>
                     </fieldset>
-                    <fieldset class="name">
+                    <!-- <fieldset class="name">
                         <div class="body-title">Ghi chú <span class="tf-color-1">*</span></div>
                         <textarea id="note" class="flex-grow form-control" name="description" required
                             placeholder="Nhập ghi chú...">{{ $banner->description }}</textarea>
-                    </fieldset>
+                    </fieldset> -->
 
 
 
@@ -83,7 +83,7 @@
     </div>
 @endsection
 
-@push('scripts')
+<!-- @push('scripts')
     <script>
         $(document).ready(function () {
             $('#note').summernote({
@@ -135,4 +135,4 @@
             padding: 7px 10px !important;
         }
     </style>
-@endpush
+@endpush -->

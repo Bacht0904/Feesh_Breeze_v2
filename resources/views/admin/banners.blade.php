@@ -43,7 +43,7 @@
                                 <th>Tiêu đề</th>
                                 <th>Hình ảnh</th>
                                 <th>Thương hiệu</th>
-                                <th>Mô tả</th>
+                                <!-- <th>Mô tả</th> -->
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
                             </tr>
@@ -59,7 +59,7 @@
                                         </div>
                                     </td>
                                     <td>{{ $banner->brand->name ?? 'Chưa có thương hiệu' }}</td>
-                                    <td class="body-title-2">{{ Str::limit($banner->description,62) }}</td>
+                                    <!-- <td class="body-title-2">{{ Str::limit($banner->description,62) }}</td> -->
                                     <!-- <td>
                                                 @if($banner->status == 'active')
                                                     <span class="badge bg-success">Hoạt động</span>
