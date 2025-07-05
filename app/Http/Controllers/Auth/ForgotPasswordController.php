@@ -61,11 +61,11 @@ class ForgotPasswordController extends Controller
             $status= Password::sendResetLink($request->only('email'));
             if($status === Password::RESET_LINK_SENT)
             {
-                toastr()->success('Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.');
-                return back();
+                //toastr()->success('Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.');
+                return back()->with('status','Liên kết đặt lại mật khẩu đã được gửi đến email của bạn.');
             }
             
-            toastr()->error('Không thể gửi lại email đặt lại mật khẩu.');
+            //toastr()->error('Không thể gửi lại email đặt lại mật khẩu.');
             return back()->withErrors(['email'=>__($status)]);
     }
 }

@@ -20,9 +20,25 @@
     <link rel="apple-touch-icon-precomposed" href="{{ asset('images/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
+
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
     <!-- Summernote CSS -->
     <link href="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.css" rel="stylesheet">
+
     @stack('styles')
+    <style>
+        #toast-container > .toast {
+            font-size: 18px !important;      /* tăng cỡ chữ */
+            padding: 20px 30px !important;   /* tăng padding */
+            border-radius: 8px !important;   /* bo góc nhẹ */
+    }
+    </style>
+    
 </head>
 
 <body class="body">
@@ -375,11 +391,45 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+        @if(session('status'))
+            toastr.success("{{ session('status') }}");
+        @endif
+
+        @if($errors->any())
+            toastr.error("{{ $errors->first() }}");
+        @endif
+    </script>
+    <script>
+            function confirmStatusChange(status) {
+                Swal.fire({
+                    title: 'Bạn có chắc?',
+                    text: "Thay đổi trạng thái đơn hàng thành '" + status + "'?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Xác nhận',
+                    cancelButtonText: 'Hủy'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        document.getElementById('statusInput').value = status;
+                        document.getElementById('orderStatusForm').submit();
+                    }
+                })
+            }
+    </script>
+
     <!-- jQuery (bắt buộc trước Summernote) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Summernote JS -->
     <script src="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.js"></script>
+
 
     @stack('scripts')
 </body>
