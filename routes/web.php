@@ -90,7 +90,7 @@ Route::middleware(['admin.staff'])->group(function () {
     Route::delete('/admin/product/{id}/delete', [ProductController::class, 'delete_product'])->name('admin.product.delete');
     Route::get('/admin/product/{id}/detail', [ProductController::class, 'product_detail'])->name('admin.product.detail');
     Route::get('/admin/products/search', [ProductController::class, 'product_search'])->name('admin.products.search');
-    Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+
 
 
     Route::get('/admin/sliders', [SlideController::class, 'sliders'])->name('admin.sliders');
@@ -141,7 +141,11 @@ Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin
 Route::get('/admin/notifications', [NotificationController::class, 'index'])->name('notifications');
 
 
-Route::get('/', [HomeController::class, 'welcome'])->name('welcome');
+// VD: trang chào mừng sau khi đăng ký
+Route::get('/', function () {
+    return view('welcome');
+})->name('welcome');
+
 Route::get('/login', [HomeController::class, 'showLoginForm'])->name('Login');
 Route::post('/login', [HomeController::class, 'login'])->name('login');
 
@@ -150,7 +154,7 @@ Route::post('/logout', [HomeController::class, 'logout'])
 
 
 Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
-Route::get('/register', [HomeController::class, 'showRegistrationForm'])->name('register');
+
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [HomeController::class, 'about'])->name('about');
@@ -210,28 +214,31 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/account', [UserController::class, 'index'])->name('account');
     Route::post('/account/update', [UserController::class, 'update'])->name('account.update');
     Route::post('/account/change-password', [UserController::class, 'changePassword'])->name('account.changePassword');
+    Route::put('/profile', [UserController::class, 'update'])->name('profile.update');
+    Route::put('/profile/avatar', [UserController::class, 'updateAvatar'])->name('profile.avatar');
+    Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
+    Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
+    Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
+    Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('cart.applyCoupon');
+    Route::post('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('cart.removeCoupon');
+    Route::get('/checkout/success/{id}', [CheckoutController::class, 'success'])->name('user.checkoutsuccess');
+    Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
+    Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
+
+    Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
+    Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
 });
 
 // web.php
-Route::post('/review', [ReviewController::class, 'store'])->name('review.store');
-Route::get('/reviews/{id}/edit', [ReviewController::class, 'edit'])->name('review.edit');
 
-Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
-Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
 Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->name('product.reviews');
-
+Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
 
-Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
-Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
-Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('cart.applyCoupon');
-Route::post('/checkout/remove-coupon', [CheckoutController::class, 'removeCoupon'])->name('cart.removeCoupon');
-Route::get('/checkout/success/{id}', [CheckoutController::class, 'success'])->name('user.checkoutsuccess');
 
 
-Route::get('/vnpay-payment', [VNPayController::class, 'createPayment'])->name('vnpay.payment');
-Route::get('/vnpay-return', [VNPayController::class, 'return'])->name('vnpay.return');
+
 
 
 Route::match(['GET', 'POST'], '/momo-return', [CheckoutController::class, 'handleMomoCallback'])->name('momo.callback');

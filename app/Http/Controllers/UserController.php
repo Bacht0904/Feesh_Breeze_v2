@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Auth;
 
 class UserController extends Controller
 {
@@ -152,33 +153,12 @@ class UserController extends Controller
             return redirect()->route('admin.users')->with('error', 'Người dùng không tồn tại!');
         }
     }
-    /**
-     * Display a listing of the resource.
-     */
-    // public function about()
-    // {
-    //     return view('user.about');
-    // }
-    // public function shop()
-    // {
-    //     return view('user.shop');
-    // }
+
     public function contact()
     {
         return view('user.contact');
     }
-    // public function cart()
-    // {
-    //     return view('user.cart');
-    // }
-    // public function wishlist()
-    // {
-    //     return view('user.wishlist');
-    // }
-    // public function checkout()
-    // {
-    //     return view('user.checkout');
-    // }
+
     public function profile()
     {
         return view('user.profile');
@@ -188,50 +168,84 @@ class UserController extends Controller
         //
     }
 
-
-
-    // public function create()
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Store a newly created resource in storage.
-    //  */
-    // public function store(Request $request)
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Display the specified resource.
-    //  */
-    // public function show(string $id)
-    // {
-    //     //
-    // }
-
-    // /**
-    //  * Show the form for editing the specified resource.
-    //  */
-    // public function edit(string $id)
-    // {
-    //     //
-    // }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function updateAvatar(Request $request)
     {
-        //
+        $request->validate([
+            'avatar' => 'required|image|mimes:jpeg,png,jpg,gif|',
+        ]);
+
+        $user = Auth::user();
+
+        if ($request->hasFile('avatar')) {
+            $avatar = $request->file('avatar');
+            $uploadFolder = 'uploads/users/';
+            $savePath = public_path($uploadFolder);
+
+            if (!file_exists($savePath)) {
+                mkdir($savePath, 0755, true);
+            }
+
+            $filename = time() . '_' . uniqid() . '.' . $avatar->getClientOriginalExtension();
+            $fullPath = $savePath . '/' . $filename;
+
+            $manager = new ImageManager(new Driver());
+            $manager->read($avatar->getRealPath())
+                ->resize(800, 400)
+                ->save($fullPath);
+
+            // Optionally xoá avatar cũ
+            if ($user->avatar && file_exists(public_path($user->avatar)) && $user->avatar !== 'images/default-avatar.png') {
+                unlink(public_path($user->avatar));
+            }
+
+            // ✅ GÁN & LƯU
+            $user->avatar = $uploadFolder . $filename;
+            $user->save(); // ❗ KHÔNG được quên dòng này
+        }
+
+
+        return back()->with('success', 'Cập nhật ảnh đại diện thành công!');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    // public function destroy(string $id)
-    // {
-    //     //
-    // }
+    public function update(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
+            'address' => 'nullable|string|max:255',
+            'current_password' => 'required',
+        ]);
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không chính xác.']);
+        }
+
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'address' => $request->address,
+        ]);
+
+        return back()->with('success', 'Cập nhật thông tin thành công!');
+    }
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $user = Auth::user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Mật khẩu hiện tại không đúng']);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return back()->with('success', 'Đổi mật khẩu thành công!');
+    }
 }

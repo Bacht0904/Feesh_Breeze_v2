@@ -50,4 +50,15 @@ class Product extends Model
             ->orderByRaw('RAND()');   // Chọn màu ngẫu nhiên nếu trùng
 
     }
+    public function order_details()
+    {
+        return $this->hasManyThrough(
+            \App\Models\OrderDetail::class,
+            \App\Models\Product_details::class,
+            'product_id',          // Khóa ngoại trên bảng product_details
+            'product_detail_id',   // Khóa ngoại trên bảng order_details
+            'id',                  // Khóa chính của bảng products
+            'id'                   // Khóa chính của bảng product_details
+        );
+    }
 }

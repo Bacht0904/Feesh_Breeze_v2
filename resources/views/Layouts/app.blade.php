@@ -294,44 +294,41 @@
                 </svg>
                 <button class="btn-close-lg position-absolute top-0 start-0 w-100"></button>
             </a>
-
-            <div class="logo">
-                <a href="{{route('home')}}">
-                    <img src="{{asset('(images/logo/logo.png')}}" class="logo__image d-block" />
-                </a>
-            </div>
-
-            <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart" data-aside="cartDrawer">
-                <span class="header-item">
-                    <span class="text-tiny">{{ $cartItemCount ?? 0 }}</span>
-                    <use href="#icon_cart" />
-                </span>
-
-                <span class="cart-amount d-block position-absolute">
-                    {{ $cartItemCount ?? 0 }}
-                </span>
-            </a>
-
         </div>
 
         <nav
             class="header-mobile__navigation navigation d-flex flex-column w-100 position-absolute top-100 bg-body overflow-auto">
             <div class="container">
-                <form action="#" method="GET" class="search-field position-relative mt-4 mb-3">
+                <form action="{{ route('shop') }}" method="GET" class="search-field container" id="search-form">
+                    <p class="text-uppercase text-secondary fw-medium mb-4">Bạn đang tìm gì?</p>
+
                     <div class="position-relative">
-                        <input class="search-field__input w-100 border rounded-1" type="text" name="search-keyword"
-                            placeholder="Search products" />
-                        <button class="btn-icon search-popup__submit pb-0 me-2" type="submit">
-                            <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
+                        <input type="text"
+                            name="search"
+                            value="{{ request('search') }}"
+                            id="search-input"
+                            placeholder="Tìm sản phẩm..."
+                            class="search-field__input search-popup__input w-100 fw-medium"
+                            autocomplete="off">
+
+                        <button class="btn-icon search-popup__submit" type="submit">
+                            <svg class="d-block" width="20" height="20">
                                 <use href="#icon_search" />
                             </svg>
                         </button>
-                        <button class="btn-icon btn-close-lg search-popup__reset pb-0 me-2" type="reset"></button>
+
+                        <button class="btn-icon btn-close-lg search-popup__reset" type="reset"></button>
                     </div>
 
-                    <div class="position-absolute start-0 top-100 m-0 w-100">
-                        <div class="search-result"></div>
+                    <div class="search-popup__results mt-3">
+                        {{-- Gợi ý liên kết nhanh --}}
+                        <div class="sub-menu search-suggestion" id="quick-links">
+                            <h6 class="sub-menu__title fs-base">Liên kết nhanh</h6>
+                            <ul class="sub-menu__list list-unstyled" id="quick-links-list"></ul>
+                        </div>
+
+                        {{-- Kết quả sản phẩm gợi ý tìm kiếm --}}
+                        <div class="search-result row row-cols-2 row-cols-md-4 row-cols-xl-5 mt-3" id="search-suggestions"></div>
                     </div>
                 </form>
             </div>
@@ -359,13 +356,16 @@
             </div>
 
             <div class="border-top mt-auto pb-2">
-                <div class="customer-links container mt-4 mb-2 pb-1">
-                    <svg class="d-inline-block align-middle" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <use href="#icon_user" />
-                    </svg>
-                    <span class="d-inline-block ms-2 text-uppercase align-middle fw-medium">Tài Khoản Của Tôi</span>
-                </div>
+                <a href="{{ route('profile') }}" class="text-decoration-none text-dark">
+                    <div class="customer-links container mt-4 mb-2 pb-1">
+                        <svg class="d-inline-block align-middle" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <use href="#icon_user" />
+                        </svg>
+                        <span class="d-inline-block ms-2 text-uppercase align-middle fw-medium">Tài Khoản Của Tôi</span>
+                    </div>
+                </a>
+
 
 
 
@@ -735,42 +735,7 @@
     </footer>
 
 
-    <footer class="footer-mobile container w-100 px-5 d-md-none bg-body">
-        <div class="row text-center">
-            <div class="col-4">
-                <a href=" {{ route('Login') }} " class="footer-mobile__link d-flex flex-column align-items-center">
-                    <svg class="d-block" width="18" height="18" viewBox="0 0 18 18" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <use href="#icon_home" />
-                    </svg>
-                    <span>Trang Chủ</span>
-                </a>
-            </div>
 
-            <div class="col-4">
-                <a href="{{ route('home') }} " class="footer-mobile__link d-flex flex-column align-items-center">
-                    <svg class="d-block" width="18" height="18" viewBox="0 0 18 18" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <use href="#icon_hanger" />
-                    </svg>
-                    <span>Sản Phẩm</span>
-                </a>
-            </div>
-
-            <div class="col-4">
-                <a href="{{ route('wishlist') }}" class="footer-mobile__link d-flex flex-column align-items-center">
-                    <div class="position-relative">
-                        <svg class="d-block" width="18" height="18" viewBox="0 0 20 20" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <use href="#icon_heart" />
-                        </svg>
-                        <span class="wishlist-amount d-block position-absolute js-wishlist-count">3</span>
-                    </div>
-                    <span>Yêu Thích</span>
-                </a>
-            </div>
-        </div>
-    </footer>
     <script src="https://unpkg.com/feather-icons"></script>
     <script>
         feather.replace()

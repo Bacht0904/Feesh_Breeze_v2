@@ -4,7 +4,7 @@
 <main class="pt-90">
     <div class="mb-4 pb-4"></div>
     <section class="shop-checkout container">
-        <div class="checkout-steps">
+        <!-- <div class="checkout-steps">
             <div class="checkout-steps__item active">
                 <span class="checkout-steps__item-number">01</span>
                 <span class="checkout-steps__item-title">
@@ -26,7 +26,7 @@
                     <em>Kiểm tra & gửi đơn</em>
                 </span>
             </div>
-        </div>
+        </div> -->
 
         <div class="order-complete">
             <div class="order-complete__message text-center">

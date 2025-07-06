@@ -10,7 +10,7 @@
     @endif
 
     {{-- Tiến trình thanh toán --}}
-    <div class="checkout-steps d-flex mb-5">
+    <!-- <div class="checkout-steps d-flex mb-5">
       @foreach ([
       ['text' => 'Giỏ Hàng', 'sub' => 'Sản phẩm'],
       ['text' => 'Thanh toán', 'sub' => 'Thông tin'],
@@ -23,7 +23,7 @@
         </span>
       </div>
       @endforeach
-    </div>
+    </div> -->
 
     <div class="row">
       {{-- Form khách hàng --}}
@@ -95,7 +95,7 @@
           @foreach([
           ['cod', 'Thanh toán khi nhận hàng', 'cash_logo.jpg'],
           ['momo', 'Ví MOMO', 'momo_logo.jpg'],
-          ['vnpay', 'VNPAY', 'vnpay_logo.jpg']
+
           ] as [$id, $name, $logo])
           <div class="form-check mb-2 d-flex align-items-center">
             <input class="form-check-input me-2" type="radio" name="payment_method" id="{{ $id }}" value="{{ $id }}" {{ $loop->first ? 'checked' : '' }}>
