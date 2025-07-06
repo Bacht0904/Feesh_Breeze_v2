@@ -21,7 +21,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
     </div>
     @endif
-
     <section class="swiper-container js-swiper-slider slideshow swiper-number-pagination"
         data-settings='{
            "autoplay": { "delay": 5000 },
@@ -44,10 +43,12 @@
                         <div class="col-md-6">
                             <div class="slideshow-text">
                                 <!-- Pre-title (New Arrivals) -->
-                                <h6 class="pre-title text-uppercase text-muted mb-2 animate animate_fade animate_btt animate_delay-3">
+                                <!-- <h6 class="pre-title text-uppercase text-muted mb-2 animate animate_fade animate_btt animate_delay-3">
+                                    {{ $banner->brand->name ?? 'No brand' }}
+                                </h6> -->
+                                <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
                                     {{ $banner->brand->name ?? 'No brand' }}
                                 </h6>
-
                                 <!-- Main title -->
                                 <h2 class="main-title fw-bold display-5 mb-1 animate animate_fade animate_btt animate_delay-5">
                                     {{ $banner->title }}
@@ -60,7 +61,7 @@
 
                                 <!-- CTA -->
                                 <a href="{{ $banner->link }}"
-                                    class="btn btn-dark text-uppercase px-4 py-2 animate animate_fade animate_btt animate_delay-7">
+                                    class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">
                                     {{ $banner->cta_text }}
                                 </a>
                             </div>
@@ -86,10 +87,8 @@
             </div>
         </div>
     </section>
-
-
     <div class="container mw-1620 bg-white border-radius-10">
-        <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
+        @if($hotDeals)
         <section class="hot-deals container">
             <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">BÁN CHẠY</h2>
             <div class="row">
@@ -205,6 +204,7 @@
                 </div>
             </div>
         </section>
+        @endif
         <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
         <section class="container py-5">
             <h2 class="text-center fw-bold mb-4">Sản phẩm nổi bật</h2>

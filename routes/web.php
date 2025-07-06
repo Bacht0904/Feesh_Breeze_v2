@@ -153,7 +153,7 @@ Route::post('/logout', [HomeController::class, 'logout'])
     ->name('logout');
 
 
-Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
+
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/home', [HomeController::class, 'index'])->name('home');
@@ -169,9 +169,6 @@ Route::post('/password/change', [AdminController::class, 'updatePassword'])->nam
 
 
 
-Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
-Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
-Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
 //Route::get('/password/reset', [HomeController::class, 'showResetForm'])->name('password.request');
 //Route::post('/password/email', [HomeController::class, 'sendResetLinkEmail'])->name('password.email');
 // Route::post('/password/reset', [HomeController::class, 'reset'])->name('password.update');
@@ -217,6 +214,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile', [UserController::class, 'update'])->name('profile.update');
     Route::put('/profile/avatar', [UserController::class, 'updateAvatar'])->name('profile.avatar');
     Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
+    Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
+    Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
+    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');
     Route::post('/checkout/apply-coupon', [CheckoutController::class, 'applyCoupon'])->name('cart.applyCoupon');

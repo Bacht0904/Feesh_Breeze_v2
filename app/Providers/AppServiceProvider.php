@@ -7,6 +7,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\Paginator;
+use App\Models\Category;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -36,6 +37,9 @@ class AppServiceProvider extends ServiceProvider
                 $view->with('contactCount', \App\Models\Contact::count());
             }
         });
+        View::composer('*', function ($view) {
+        $view->with('categories', Category::all());
+    });
 
     }
 }

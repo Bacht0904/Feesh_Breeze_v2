@@ -83,7 +83,12 @@ class HomeController extends Controller
         ));
     }
 
-
+    public function about()
+    {
+         $categories = \App\Models\Category::all();
+        return view('user.about',compact(
+            'categories',));
+    }
 
 
     public function index()

@@ -103,22 +103,7 @@
         </div>
 
         {{-- GIÁ --}}
-        <!-- <div class="accordion mb-3" id="price-accordion">
-          <div class="accordion-item">
-            <h5 class="accordion-header">
-              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#filter-price">Giá</button>
-            </h5>
-            <div id="filter-price" class="accordion-collapse collapse show">
-              <div class="accordion-body px-0 pt-3 d-flex flex-column gap-2">
-                <input type="number" name="min_price" class="form-control" placeholder="Giá từ"
-                  value="{{ request('min_price') }}">
-                <input type="number" name="max_price" class="form-control" placeholder="Đến"
-                  value="{{ request('max_price') }}">
-              </div>
-            </div>
-          </div>
-        </div> -->
+
         <div class="accordion" id="price-filters">
           <div class="accordion-item mb-4">
             <h5 class="accordion-header mb-2" id="accordion-heading-price">

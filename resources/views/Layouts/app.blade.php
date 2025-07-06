@@ -514,11 +514,7 @@
                     @endguest
                     @php
                     $unread = auth()->check() ? auth()->user()->unreadNotifications : collect();
-
                     @endphp
-
-
-
                     <div class="header-tools__item hover-container">
                         <div class="js-hover__open position-relative">
                             <a class="js-notification-popup search-field__actor" href="#">
@@ -528,10 +524,8 @@
                             <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-circle bg-danger">
                                 {{ $unread->count() }}
                             </span>
-
                             @endif
                         </div>
-
                         <div class="notification-popup js-hidden-content">
                             <p class="text-uppercase text-secondary fw-semibold mb-3">🔔 Thông báo</p>
 
@@ -579,23 +573,18 @@
                             xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_cart" />
                         </svg>
-
+                        @if($cartItemCount !=0)
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">
                             {{ $cartItemCount ?? 0 }}
                         </span>
+                        @endif
                     </a>
-
-
-
                     @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
                     <div class="header-tools__item">
                         <a href="{{ route('admin.index') }}" class="header-tools__link">
                             <span class="d-block text-uppercase fw-medium">Quản Lý</span>
                         </a>
                     </div>
-
-
-
                     @elseif(Auth::check())
                     <form method="post" action="{{route('logout')}}" id="logout-form">
                         @csrf
@@ -606,133 +595,78 @@
                         </a>
                     </form>
                     @endif
-
-
-
                 </div>
             </div>
         </div>
     </header>
-
     @yield('content')
-
     <hr class="mt-5 text-secondary" />
     <footer class="footer footer_type_2">
         <div class="footer-middle container">
             <div class="row row-cols-lg-5 row-cols-2">
+
+                {{-- Logo và thông tin liên hệ --}}
                 <div class="footer-column footer-store-info col-12 mb-4 mb-lg-0">
-                    <div class="logo">
+                    <div class="logo mb-3">
                         <a href="{{ route('home') }}">
-                            <img src="{{asset('images/logo/logo.png')}}" style="max-height: 80px ; with:auto " class="logo__image d-block" />
+                            <img src="{{ asset('images/logo/logo.png') }}" alt="Logo" style="max-height: 80px; width: auto;" class="logo__image d-block">
                         </a>
                     </div>
                     <p class="footer-address">65 Huỳnh Thúc Kháng, P.Bến Nghé, Q.1, Tp.HCM</p>
-                    <p class="m-0"><strong class="fw-medium">caothang@caothang.com</strong></p>
+                    <p class="mb-1"><strong class="fw-medium">caothang@caothang.com</strong></p>
                     <p><strong class="fw-medium">028 38 212 868 - 028 38 212 360</strong></p>
 
-                    <ul class="social-links list-unstyled d-flex flex-wrap mb-0">
+                    {{-- Mạng xã hội --}}
+                    <ul class="social-links list-unstyled d-flex flex-wrap gap-2 mt-3">
+                        @foreach (['facebook', 'twitter', 'instagram', 'youtube', 'pinterest'] as $social)
                         <li>
                             <a href="#" class="footer__social-link d-block">
-                                <svg class="svg-icon svg-icon_facebook" width="9" height="15" viewBox="0 0 9 15"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_facebook" />
+                                <svg class="svg-icon svg-icon_{{ $social }}" width="16" height="16">
+                                    <use href="#icon_{{ $social }}" />
                                 </svg>
                             </a>
                         </li>
-                        <li>
-                            <a href="#" class="footer__social-link d-block">
-                                <svg class="svg-icon svg-icon_twitter" width="14" height="13" viewBox="0 0 14 13"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_twitter" />
-                                </svg>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="footer__social-link d-block">
-                                <svg class="svg-icon svg-icon_instagram" width="14" height="13" viewBox="0 0 14 13"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_instagram" />
-                                </svg>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="footer__social-link d-block">
-                                <svg class="svg-icon svg-icon_youtube" width="16" height="11" viewBox="0 0 16 11"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M15.0117 1.8584C14.8477 1.20215 14.3281 0.682617 13.6992 0.518555C12.5234 0.19043 7.875 0.19043 7.875 0.19043C7.875 0.19043 3.19922 0.19043 2.02344 0.518555C1.39453 0.682617 0.875 1.20215 0.710938 1.8584C0.382812 3.00684 0.382812 5.46777 0.382812 5.46777C0.382812 5.46777 0.382812 7.90137 0.710938 9.07715C0.875 9.7334 1.39453 10.2256 2.02344 10.3896C3.19922 10.6904 7.875 10.6904 7.875 10.6904C7.875 10.6904 12.5234 10.6904 13.6992 10.3896C14.3281 10.2256 14.8477 9.7334 15.0117 9.07715C15.3398 7.90137 15.3398 5.46777 15.3398 5.46777C15.3398 5.46777 15.3398 3.00684 15.0117 1.8584ZM6.34375 7.68262V3.25293L10.2266 5.46777L6.34375 7.68262Z" />
-                                </svg>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#" class="footer__social-link d-block">
-                                <svg class="svg-icon svg-icon_pinterest" width="14" height="15" viewBox="0 0 14 15"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <use href="#icon_pinterest" />
-                                </svg>
-                            </a>
-                        </li>
+                        @endforeach
                     </ul>
                 </div>
 
+                {{-- Cột: Company --}}
                 <div class="footer-column footer-menu mb-4 mb-lg-0">
-                    <h6 class="sub-menu__title text-uppercase">Company</h6>
+                    <h6 class="sub-menu__title text-uppercase">Công Ty</h6>
                     <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="about-2.html" class="menu-link menu-link_us-s">Về Chúng
-                                Tôi</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Tuyển dụng</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Đối tác</a></li>
-                        <li class="sub-menu__item"><a href="blog_list1.html" class="menu-link menu-link_us-s">Blog</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="contact-2.html" class="menu-link menu-link_us-s">Liên hệ với
-                                chúng tôi</a></li>
+                        <li><a href="{{ route('about') }}" class="menu-link menu-link_us-s">Về Chúng Tôi</a></li>
+
                     </ul>
                 </div>
 
-                <div class="footer-column footer-menu mb-4 mb-lg-0">
-                    <h6 class="sub-menu__title text-uppercase">Shop</h6>
-                    <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="shop2.html" class="menu-link menu-link_us-s">Sản Phẩm
-                                Mới</a></li>
-                        <li class="sub-menu__item"><a href="shop3.html" class="menu-link menu-link_us-s">Phụ kiện</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="shop4.html" class="menu-link menu-link_us-s">Nam</a></li>
-                        <li class="sub-menu__item"><a href="shop5.html" class="menu-link menu-link_us-s">Nữ</a></li>
-                        <li class="sub-menu__item"><a href="shop1.html" class="menu-link menu-link_us-s">Tất Cả</a></li>
-                    </ul>
-                </div>
 
+                {{-- Cột: Hỗ Trợ --}}
                 <div class="footer-column footer-menu mb-4 mb-lg-0">
                     <h6 class="sub-menu__title text-uppercase">Hỗ Trợ</h6>
                     <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Chăm Sóc Khách Hàng</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="account_dashboard.html" class="menu-link menu-link_us-s">Tài
-                                Khoản Của Tôi</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="store_location.html" class="menu-link menu-link_us-s">Tìm
-                                cửa hàng</a>
-                        </li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Pháp lý & Quyền riêng
-                                tư</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Thẻ quà tặng</a></li>
+                        <li><a href="{{ route('contact') }}" class="menu-link menu-link_us-s">Chăm Sóc Khách Hàng</a></li>
+                        <li><a href="{{ route('profile') }}" class="menu-link menu-link_us-s">Tài Khoản Của Tôi</a></li>
                     </ul>
                 </div>
 
+                {{-- Cột: Danh Mục --}}
                 <div class="footer-column footer-menu mb-4 mb-lg-0">
                     <h6 class="sub-menu__title text-uppercase">Danh Mục</h6>
                     <ul class="sub-menu__list list-unstyled">
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shirts</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Jeans</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shoes</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Bags</a></li>
-                        <li class="sub-menu__item"><a href="#" class="menu-link menu-link_us-s">Shop All</a></li>
+                        @foreach($categories->take(4) as $cat)
+                        <li>
+                            <a href="{{ route('shop', ['slug' => $cat->slug]) }}" class="menu-link menu-link_us-s">
+                                {{ $cat->name }}
+                            </a>
+                        </li>
+                        @endforeach
                     </ul>
                 </div>
+
             </div>
         </div>
-
     </footer>
+
 
 
 
@@ -845,15 +779,7 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- Toastr JS -->
-    <script>
-        @if(session('status'))
-        toastr.success(@json(session('status')));
-        @endif
 
-        @if($errors -> any())
-        toastr.error(@json($errors -> first()));
-        @endif
-    </script>
 
     <div id="scrollTop" class="visually-hidden end-0"></div>
     <div class="page-overlay"></div>
