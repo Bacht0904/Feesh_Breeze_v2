@@ -29,14 +29,14 @@ class BannerController extends Controller
             'title' => ['required', 'string', 'max:255', 'regex:/^[\p{L}0-9\s\/\-\!,]+$/u'],
             'image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
             'brand_id' => 'required|exists:brands,id',
-            'description' => 'required|string|max:1024',
+            // 'description' => 'required|string|max:1024',
         ]);
 
         $brand = Brand::findOrFail($request->brand_id);
 
         $banner = new Banner();
         $banner->title = $request->title;
-        $banner->description = $request->description;
+        // $banner->description = $request->description;
         $banner->brand_id = $request->brand_id;
 
         if ($brand->status === 'inactive')
@@ -83,14 +83,14 @@ class BannerController extends Controller
         $request->validate([
             'title' => ['required', 'string', 'max:255', 'regex:/^[\p{L}0-9\s\/\-\!,]+$/u'],
             'image' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
-            'description' => 'required|string|max:1024',
+            // 'description' => 'required|string|max:1024',
             'brand_id' => 'required|exists:brands,id',
         ]);
 
 
         $banner = Banner::find($request->id);
         $banner->title = $request->title;
-        $banner->description = $request->description;
+        // $banner->description = $request->description;
         $banner->brand_id = $request->brand_id;
 
         if ($request->hasFile('image')) {
