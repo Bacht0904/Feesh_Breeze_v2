@@ -34,7 +34,9 @@
                             <div class="profile-info">
                                 <h3>{{ Auth::user()->name }}</h3>
                                 <p>Email: {{ Auth::user()->email }}</p>
-                                <p>Joined: {{ Auth::user()->created_at->format('d M Y') }}</p>
+                                <p>Số điện thoại: {{ Auth::user()->phone }}</p>
+                                <p>Địa chỉ: {{ Auth::user()->address }}</p>
+                                <p>Ngày gia nhập: {{ Auth::user()->created_at->format('d/m/Y') }}</p>
                             </div>
                         </div>
                         <!-- <div class="profile-actions">
