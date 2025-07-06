@@ -215,7 +215,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/avatar', [UserController::class, 'updateAvatar'])->name('profile.avatar');
     Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
     Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
-    Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
+
     Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
     Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
@@ -238,7 +238,7 @@ Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('or
 
 
 
-
+ Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 
 
 

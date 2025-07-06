@@ -315,11 +315,15 @@ class HomeController extends Controller
         ]);
 
         // Tạo người dùng mới
-        $user = User::create([
-            'name'      => $request->name,
-            'email'     => $request->email,
-            'password'  => bcrypt($request->password),
-        ]);
+
+         $user = User::create([
+        'name'     => $request->name,
+        'email'    => $request->email,
+        'password' => bcrypt($request->password),
+        'role'     => 'user', // mặc định
+        'status'   => 'active', // hoặc 'pending' nếu cần kích hoạt
+        'avatar'   => 'default-avatar.png', // fallback ảnh mặc định
+    ]);
 
         // Đăng nhập tự động
         Auth::login($user);
