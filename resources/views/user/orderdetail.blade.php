@@ -255,7 +255,6 @@
                                         $review = $item->review ?? null;
                                         $canReview = !$review || $review->status == 0;
                                         @endphp
-
                                         @if ($review && $review->status == 1)
                                         <div class="d-flex justify-content-center gap-1 mb-1">
                                             @for ($i = 1; $i <= 5; $i++)
@@ -266,22 +265,23 @@
                                         @else
                                         <span class="badge bg-warning">Chưa đánh giá</span>
                                         @endif
-
-
                                     </td>
-
                                     <!-- Size, Màu -->
                                     <td class="text-center">{{ $item->size ?? '--' }}{{ $item->color ? ', '.$item->color : '' }}</td>
-
                                     <!-- Trả hàng -->
                                     <td class="text-center">Không</td>
 
+
                                     <!-- Thao tác -->
                                     <td class="text-center">
+                                        @if($order->status != 'Đã Giao')
+                                        <button class="btn btn-warning radius">Chưa thể đánh giá</button>
+                                        @else
                                         @php
                                         $review = $item->review ?? null;
                                         $canReview = !$review || $review->status == 0;
                                         @endphp
+
                                         @if ($review && $review->status == 1)
                                         <div class="d-flex flex-wrap gap-2">
                                             <button class="btn btn-warning btn-sm px-3 shadow-sm d-flex align-items-center"
@@ -309,6 +309,8 @@
                                             onclick="showReviewForm({{ $product->id }}, '{{ $product->name }}', {{ $productDetail->id ?? 'null' }})">
                                             Đánh giá
                                         </button>
+                                        @endif
+
                                         @endif
                                     </td>
                                 </tr>
