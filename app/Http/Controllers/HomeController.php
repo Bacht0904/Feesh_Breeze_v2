@@ -14,11 +14,17 @@ use App\Models\Brand;
 use App\Models\Product_details;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Models\Banner;
+
 class HomeController extends Controller
 {
 
     public function welcome()
     {
+        $banners = Banner::with('brand')
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get();
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();
 
@@ -60,7 +66,7 @@ class HomeController extends Controller
             'products',
             'featuredProducts',
             'wishlistIds',
-            'hotDeals'
+            'hotDeals','banners'
         ));
     }
 
