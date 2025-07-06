@@ -216,7 +216,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
     Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
     Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
-    Route::post('/profile/update', [UserController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
     Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
     Route::post('/checkout', [CheckoutController::class, 'process'])->name('checkout.process');

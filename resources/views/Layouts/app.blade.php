@@ -601,27 +601,23 @@
     </header>
     @yield('content')
     <hr class="mt-5 text-secondary" />
-    <footer class="footer footer_type_2">
-        <div class="footer-middle container">
-            <div class="row row-cols-lg-5 row-cols-2">
+    <footer class="footer bg-light pt-5">
+        <div class="container">
+            <div class="row row-cols-lg-5 row-cols-md-2 row-cols-1 gy-4">
 
-                {{-- Logo và thông tin liên hệ --}}
-                <div class="footer-column footer-store-info col-12 mb-4 mb-lg-0">
-                    <div class="logo mb-3">
-                        <a href="{{ route('home') }}">
-                            <img src="{{ asset('images/logo/logo.png') }}" alt="Logo" style="max-height: 80px; width: auto;" class="logo__image d-block">
-                        </a>
-                    </div>
-                    <p class="footer-address">65 Huỳnh Thúc Kháng, P.Bến Nghé, Q.1, Tp.HCM</p>
-                    <p class="mb-1"><strong class="fw-medium">caothang@caothang.com</strong></p>
-                    <p><strong class="fw-medium">028 38 212 868 - 028 38 212 360</strong></p>
-
-                    {{-- Mạng xã hội --}}
-                    <ul class="social-links list-unstyled d-flex flex-wrap gap-2 mt-3">
-                        @foreach (['facebook', 'twitter', 'instagram', 'youtube', 'pinterest'] as $social)
+                {{-- Cột: Giới thiệu & mạng xã hội --}}
+                <div class="footer-column col">
+                    <a href="{{ route('home') }}" class="d-inline-block mb-3">
+                        <img src="{{ asset('images/logo/logo.png') }}" alt="Logo" style="max-height: 60px;">
+                    </a>
+                    <p class="small text-muted">
+                        Chúng tôi hiểu rằng một đôi giày tốt không chỉ mang lại sự thoải mái mà còn là biểu tượng của phong cách và cá tính.
+                    </p>
+                    <ul class="d-flex gap-2 list-unstyled mt-3">
+                        @foreach (['facebook', 'twitter', 'instagram', 'youtube'] as $social)
                         <li>
-                            <a href="#" class="footer__social-link d-block">
-                                <svg class="svg-icon svg-icon_{{ $social }}" width="16" height="16">
+                            <a href="#" class="text-muted" aria-label="{{ ucfirst($social) }}">
+                                <svg class="svg-icon svg-icon_{{ $social }}" width="18" height="18">
                                     <use href="#icon_{{ $social }}" />
                                 </svg>
                             </a>
@@ -630,32 +626,44 @@
                     </ul>
                 </div>
 
-                {{-- Cột: Company --}}
-                <div class="footer-column footer-menu mb-4 mb-lg-0">
-                    <h6 class="sub-menu__title text-uppercase">Công Ty</h6>
-                    <ul class="sub-menu__list list-unstyled">
-                        <li><a href="{{ route('about') }}" class="menu-link menu-link_us-s">Về Chúng Tôi</a></li>
-
+                {{-- Cột: Về chúng tôi --}}
+                <div class="footer-column col">
+                    <h6 class="fw-semibold text-uppercase mb-3">Thông Tin</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="{{ route('about') }}" class="text-muted d-block mb-2">Giới Thiệu</a></li>
+                        <li><a href="#" class="text-muted d-block mb-2">Điều Khoản & Điều Kiện</a></li>
+                        <li><a href="#" class="text-muted d-block mb-2">Hỗ Trợ</a></li>
+                        <li><a href="{{ route('contact') }}" class="text-muted d-block">Liên Hệ</a></li>
                     </ul>
                 </div>
 
-
                 {{-- Cột: Hỗ Trợ --}}
-                <div class="footer-column footer-menu mb-4 mb-lg-0">
-                    <h6 class="sub-menu__title text-uppercase">Hỗ Trợ</h6>
-                    <ul class="sub-menu__list list-unstyled">
-                        <li><a href="{{ route('contact') }}" class="menu-link menu-link_us-s">Chăm Sóc Khách Hàng</a></li>
-                        <li><a href="{{ route('profile') }}" class="menu-link menu-link_us-s">Tài Khoản Của Tôi</a></li>
+                <div class="footer-column col">
+                    <h6 class="fw-semibold text-uppercase mb-3">Hỗ Trợ</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="#" class="text-muted d-block mb-2">Phương thức thanh toán</a></li>
+                        <li><a href="#" class="text-muted d-block mb-2">Chính sách hoàn trả</a></li>
+                        <li><a href="#" class="text-muted d-block mb-2">Chính sách giao hàng</a></li>
+                        <li><a href="#" class="text-muted d-block">Bảo mật</a></li>
+                    </ul>
+                </div>
+
+                {{-- Cột: Tài khoản --}}
+                <div class="footer-column col">
+                    <h6 class="fw-semibold text-uppercase mb-3">Tài Khoản</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="{{ route('profile') }}" class="text-muted d-block mb-2">Thông tin cá nhân</a></li>
+                        <li><a href="{{ route('contact') }}" class="text-muted d-block">Chăm sóc khách hàng</a></li>
                     </ul>
                 </div>
 
                 {{-- Cột: Danh Mục --}}
-                <div class="footer-column footer-menu mb-4 mb-lg-0">
-                    <h6 class="sub-menu__title text-uppercase">Danh Mục</h6>
-                    <ul class="sub-menu__list list-unstyled">
+                <div class="footer-column col">
+                    <h6 class="fw-semibold text-uppercase mb-3">Danh Mục</h6>
+                    <ul class="list-unstyled small">
                         @foreach($categories->take(4) as $cat)
                         <li>
-                            <a href="{{ route('shop', ['slug' => $cat->slug]) }}" class="menu-link menu-link_us-s">
+                            <a href="{{ route('shop', ['slug' => $cat->slug]) }}" class="text-muted d-block mb-2">
                                 {{ $cat->name }}
                             </a>
                         </li>
@@ -664,8 +672,21 @@
                 </div>
 
             </div>
+
+            <hr class="my-4">
+
+            {{-- Footer bottom --}}
+            <div class="row text-center text-md-start align-items-center">
+                <div class="col-md-6 small text-muted">
+                    © {{ date('Y') }} Fresh Breeze – All Rights Reserved.
+                </div>
+                <div class="col-md-6 text-md-end">
+                    {{-- Logo thanh toán hoặc phần mở rộng khác (nếu có) --}}
+                </div>
+            </div>
         </div>
     </footer>
+
 
 
 

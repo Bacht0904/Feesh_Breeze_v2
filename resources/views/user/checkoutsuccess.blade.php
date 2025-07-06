@@ -91,7 +91,7 @@
                             @foreach($order->orderDetails as $item)
                             <tr>
                                 <td>{{ $item->product_name }} x {{ $item->quantity }}</td>
-                                <td>{{ number_format($item->price * $item->quantity, 0) }} đ</td>
+                                <td class="text-end">{{ number_format($item->price * $item->quantity, 0) }} đ</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -101,21 +101,21 @@
                         <tbody>
                             <tr>
                                 <th>Tạm tính</th>
-                                <td>{{ number_format($order->suptotal, 0) }} đ</td>
+                                <td class="text-end">{{ number_format($order->suptotal, 0) }} đ</td>
                             </tr>
                             @if($order->coupon_discount > 0)
                             <tr>
                                 <th>Giảm giá</th>
-                                <td>-{{ number_format($order->coupon_discount, 0) }} đ</td>
+                                <td class="text-end">-{{ number_format($order->coupon_discount, 0) }} đ</td>
                             </tr>
                             @endif
                             <tr>
                                 <th>Phí vận chuyển</th>
-                                <td>{{ number_format($order->shipping_fee, 0) }} đ</td>
+                                <td class="text-end">{{ number_format($order->shipping_fee, 0) }} đ</td>
                             </tr>
                             <tr>
                                 <th>Tổng cộng</th>
-                                <td><strong>{{ number_format($order->total, 0) }} đ</strong></td>
+                                <td class="text-end"><strong>{{ number_format($order->total, 0) }} đ</strong></td>
                             </tr>
                         </tbody>
                     </table>

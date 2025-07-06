@@ -214,7 +214,8 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'address' => 'nullable|string|max:255',
+            'address' => 'nullable|string',
+            'phone'=>'min:10|max:10',
             'current_password' => 'required',
         ]);
 
@@ -226,9 +227,10 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'address' => $request->address,
+            'phone'=>$request->phone,
         ]);
 
-        return back()->with('success', 'Cập nhật thông tin thành công!');
+        return redirect()->route('profile')->with('success', 'Cập nhật thành công!');
     }
     public function updatePassword(Request $request)
     {

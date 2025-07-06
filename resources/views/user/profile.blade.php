@@ -62,31 +62,77 @@
 
 
     <!-- Modal: Cập nhật thông tin -->
-    <!-- Modal: Cập nhật thông tin cá nhân -->
     <div class="modal fade" id="modalProfile" tabindex="-1" aria-labelledby="modalProfileLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered">
             <div class="modal-content rounded-3 shadow">
                 <form method="POST" action="{{ route('profile.update') }}">
                     @csrf
-                    @method('PUT')
+
+
                     <div class="modal-header bg-light border-0 rounded-top-3">
                         <h5 class="modal-title">Cập nhật thông tin</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                     </div>
+
                     <div class="modal-body px-4 py-3">
                         <div class="row g-3">
-                            @foreach (['name' => 'Họ và tên', 'email' => 'Email', 'phone' => 'Số điện thoại', 'address' => 'Địa chỉ'] as $field => $label)
+                            @foreach (['name' => 'Họ và tên', 'email' => 'Email', 'phone' => 'Số điện thoại'] as $field => $label)
                             <div class="col-md-6 form-floating">
-                                <input type="{{ $field === 'email' ? 'email' : 'text' }}" class="form-control" id="{{ $field }}" name="{{ $field }}" value="{{ Auth::user()->$field }}" required>
+                                <input type="{{ $field === 'email' ? 'email' : 'text' }}"
+                                    class="form-control"
+                                    id="{{ $field }}"
+                                    name="{{ $field }}"
+                                    value="{{ Auth::user()->$field }}"
+                                    required>
                                 <label for="{{ $field }}">{{ $label }}</label>
                             </div>
                             @endforeach
+
+                            {{-- Địa chỉ cụ thể --}}
                             <div class="col-12 form-floating">
-                                <input type="password" class="form-control" id="current_password" name="current_password" required placeholder="••••••••">
+                                <input type="text"
+                                    class="form-control"
+                                    id="address_detail"
+                                    placeholder="Số nhà, tên đường...">
+                                <label for="address_detail">Địa chỉ cụ thể</label>
+                            </div>
+
+                            {{-- Ô ẩn lưu toàn bộ --}}
+                            <input type="hidden" id="address" name="address" value="{{ Auth::user()->address }}">
+
+                            {{-- Dropdown địa phương --}}
+                            <div class="col-md-4">
+                                <label class="form-label">Tỉnh/Thành phố</label>
+                                <select class="form-select" id="city">
+                                    <option value="">Chọn tỉnh thành</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Quận/Huyện</label>
+                                <select class="form-select" id="district">
+                                    <option value="">Chọn quận huyện</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Phường/Xã</label>
+                                <select class="form-select" id="ward">
+                                    <option value="">Chọn phường xã</option>
+                                </select>
+                            </div>
+
+                            {{-- Xác thực mật khẩu --}}
+                            <div class="col-12 form-floating">
+                                <input type="password"
+                                    class="form-control"
+                                    id="current_password"
+                                    name="current_password"
+                                    placeholder="••••••••"
+                                    required>
                                 <label for="current_password">Nhập mật khẩu hiện tại để xác nhận</label>
                             </div>
                         </div>
                     </div>
+
                     <div class="modal-footer px-4 py-3 border-0">
                         <button type="button" class="btn btn-light" data-bs-dismiss="modal">Hủy</button>
                         <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
@@ -95,6 +141,55 @@
             </div>
         </div>
     </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js">
+    </script>
+    <script>
+        const citis = document.getElementById("city");
+        const districts = document.getElementById("district");
+        const wards = document.getElementById("ward");
+        const address = document.getElementById("address");
+        const addressDetail = document.getElementById("address_detail");
+
+        axios.get("https://raw.githubusercontent.com/kenzouno1/DiaGioiHanhChinhVN/master/data.json").then(res => {
+            const data = res.data;
+
+            data.forEach(city => citis.add(new Option(city.Name, city.Id)));
+
+            citis.onchange = function() {
+                districts.length = 1;
+                wards.length = 1;
+                const selectedCity = data.find(c => c.Id === this.value);
+                selectedCity?.Districts.forEach(d => {
+                    districts.add(new Option(d.Name, d.Id));
+                });
+                updateAddress();
+            };
+
+            districts.onchange = function() {
+                wards.length = 1;
+                const city = data.find(c => c.Id === citis.value);
+                const district = city?.Districts.find(d => d.Id === this.value);
+                district?.Wards.forEach(w => {
+                    wards.add(new Option(w.Name, w.Id));
+                });
+                updateAddress();
+            };
+
+            wards.onchange = updateAddress;
+            addressDetail.oninput = updateAddress;
+
+            function updateAddress() {
+                const detail = addressDetail.value.trim();
+                const ward = wards.options[wards.selectedIndex]?.text || '';
+                const district = districts.options[districts.selectedIndex]?.text || '';
+                const city = citis.options[citis.selectedIndex]?.text || '';
+
+                const parts = [detail, ward, district, city].filter(Boolean);
+                address.value = parts.join(', ');
+            }
+        });
+    </script>
+
 
     <!-- Modal: Đổi mật khẩu -->
     <div class="modal fade" id="modalChangePassword" tabindex="-1" aria-labelledby="modalChangePasswordLabel" aria-hidden="true">

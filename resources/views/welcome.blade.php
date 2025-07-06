@@ -186,7 +186,8 @@
                                                 </a>
                                             </h6>
                                             @if($detail)
-                                            <span class="money price">${{ number_format($detail->price, 2) }}</span>
+                                            <span class="money price">{{ number_format($detail->price, 0, ',', '.') }} đ
+                                            </span>
                                             @else
                                             <span class="text-muted">Chưa có giá</span>
                                             @endif
@@ -260,7 +261,8 @@
                                     </a>
                                 </h6>
                                 @if($detail)
-                                <span class="money price">${{ number_format($detail->price, 2) }}</span>
+                                <span class="money price">{{ number_format($detail->price, 0, ',', '.') }} đ
+                                </span>
                                 @else
                                 <span class="text-muted">Chưa có giá</span>
                                 @endif

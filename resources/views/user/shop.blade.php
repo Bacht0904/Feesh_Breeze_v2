@@ -330,7 +330,8 @@
               </h6>
 
               <span class="money price">
-                ${{ number_format($firstDetail->price, 2) }}
+                {{ number_format($firstDetail->price, 0, ',', '.') }} đ
+
               </span>
 
               @if($product->product_details->isNotEmpty())
