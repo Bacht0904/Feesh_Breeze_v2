@@ -22,6 +22,35 @@
     {{-- Danh sách đánh giá --}}
     @if($reviews->count())
     @foreach($reviews as $review)
+    <!-- <div class="card review-card border-0 shadow-sm mb-4">
+      <div class="card-body">
+        <div class="d-flex align-items-start gap-3 mb-3">
+          {{-- Avatar + tên + thời gian --}}
+          <img src="{{ asset($review->user->avatar ?? 'images/default-avatar.png') }}"
+            class="avatar rounded-circle"
+            alt="avatar">
+
+          <div class="flex-grow-1">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <strong class="text-dark">{{ $review->user->name ?? 'Khách hàng' }}</strong><br>
+                <small class="text-muted fst-italic">{{ $review->created_at->format('d/m/Y H:i') }}</small>
+              </div>
+              {{-- Hiển thị sao --}}
+              <div class="rating-stars d-inline-flex align-items-center gap-1">
+                @for ($i = 1; $i <= 5; $i++)
+                  <i class="fa fa-star{{ $i <= $review->rating ? ' text-shopee' : ' text-muted' }}"></i>
+                  @endfor
+              </div>
+
+            </div>
+
+            {{-- Nội dung bình luận --}}
+            <p class="mb-1 mt-2 text-secondary" style="white-space: pre-line;">{{ $review->comment }}</p>
+          </div>
+        </div>
+      </div>
+    </div> -->
     <div class="card review-card border-0 shadow-sm mb-3">
       <div class="card-body">
         <div class="d-flex align-items-start gap-3 mb-3">
