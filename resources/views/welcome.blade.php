@@ -46,11 +46,11 @@
                                 <!-- <h6 class="pre-title text-uppercase text-muted mb-2 animate animate_fade animate_btt animate_delay-3">
                                     {{ $banner->brand->name ?? 'No brand' }}
                                 </h6> -->
-                                <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
+                                <h6 class="text_dash text-uppercase fs-3 fw-medium animate animate_fade animate_btt animate_delay-3">
                                     {{ $banner->brand->name ?? 'No brand' }}
                                 </h6>
                                 <!-- Main title -->
-                                <h2 class="main-title fw-bold display-5 mb-1 animate animate_fade animate_btt animate_delay-5">
+                                <h2 class="main-title fw-bold fs-2 mb-1 animate animate_fade animate_btt animate_delay-5">
                                     {{ $banner->title }}
                                 </h2>
 
