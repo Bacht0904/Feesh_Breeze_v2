@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Product_details;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
-use App\Models\Product_details as ProductDetail;
+use App\Models\ProductDetail;
 use App\Models\Product;
 
 class ReviewController extends Controller
 {
     public function index(Product $product)
     {
+
         $productDetail = $product->product_details()->first();
 
         $reviews = $product->reviews()->where('status', 1)->latest()->paginate(10);
@@ -76,7 +78,6 @@ class ReviewController extends Controller
         $review->status = 0; // Đánh dấu đánh giá là đã xóa (ẩn)
         $review->save();
         // Ẩn đánh giá thay vì xóa
-        return redirect()->route('product.show', $review->product_id)
-            ->with('success', '✅ Đánh giá đã được xóa thành công!');
+        return redirect()->back()->with('success', '✅ Đánh giá đã được xóa thành công!');
     }
 }

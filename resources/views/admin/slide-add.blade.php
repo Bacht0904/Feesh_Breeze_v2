@@ -54,18 +54,14 @@
                         </div>
                     </fieldset>
 
-                    <!-- Link -->
-                    <fieldset class="name">
-                        <div class="body-title">Link <span class="tf-color-1">*</span></div>
-                        <input class="flex-grow" type="url" name="link" placeholder="Nhập link (ví dụ: https://...)"
-                            required>
-                    </fieldset>
-
                     <!-- Ghi chú -->
                     <fieldset class="name">
                         <div class="body-title">Ghi chú <span class="tf-color-1">*</span></div>
-                        <input class="flex-grow" type="text" name="description" placeholder="Nhập ghi chú" required>
+                        <textarea id="note" name="description" required placeholder="Nhập ghi chú..."
+                            class="form-control"></textarea>
                     </fieldset>
+
+
 
                     <div class="bot">
                         @if ($errors->any())
@@ -85,3 +81,57 @@
         </div>
     </div>
 @endsection
+
+@push('scripts')
+    <script>
+        $(document).ready(function () {
+            $('#note').summernote({
+                placeholder: "Nhập ghi chú ngắn...",
+                tabsize: 2,
+                height: 200,
+                toolbar: [
+                    ['style', ['style']],
+                    ['font', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['fontsize', ['fontsize']],
+                    ['color', ['color']],
+                    ['para', ['ul', 'ol', 'paragraph']],
+                    ['table', ['table']],
+                    ['insert', ['link', 'picture', 'video']],
+                    ['view', ['fullscreen', 'codeview', 'help']]
+                ]
+            });
+        });
+    </script>
+@endpush
+
+@push('styles')
+<style>
+    /* Căn chiều ngang của Summernote bằng input tiêu đề */
+    #note,
+    .note-editor,
+    .note-editor .note-editing-area,
+    .note-editor .note-editable {
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    /* Font và padding vùng soạn thảo */
+    .note-editor .note-editable {
+        font-size: 14px;
+        padding: 10px 12px;
+    }
+
+    /* 📏 Icon trong toolbar to 1.3 lần */
+    .note-editor .note-toolbar .note-icon {
+        font-size: 1.3rem !important;
+    }
+
+    /* Tuỳ chọn: tăng nhẹ kích thước nút cho cân đối */
+    .note-editor .note-toolbar .note-btn,
+    .note-editor .note-toolbar .btn {
+        font-size: 1.1rem !important;
+        padding: 7px 10px !important;
+    }
+</style>
+@endpush

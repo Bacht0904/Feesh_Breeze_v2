@@ -24,8 +24,8 @@
                     <div class="wg-filter flex-grow">
                         <form class="form-search" method="GET" action="{{ route('admin.categories.search') }}">
                             <fieldset class="name">
-                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2" value="{{ request()->input('name') }}"
-                                    aria-required="true" required="">
+                                <input type="text" placeholder="Tìm kiếm..." class="" name="name" tabindex="2"
+                                    value="{{ request()->input('name') }}" aria-required="true" required="">
                             </fieldset>
                             <div class="button-submit">
                                 <button class="" type="submit"><i class="icon-search"></i></button>
@@ -43,7 +43,7 @@
                         <table class="table table-striped table-bordered">
                             <thead>
                                 <tr>
-                                    <th>STT</th>
+                                    <th>#</th>
                                     <th>Tên loại sản phẩm</th>
                                     <th>slug</th>
                                     <th>Trạng thái</th>
@@ -61,18 +61,20 @@
 
                                         </td>
                                         <td>{{ $category->slug }}</td>
-                                        <td>{{ $category->status }}</td>
+                                        <td>
+                                            {{ $category->status === 'active' ? 'Hoạt động' : 'Ngừng hoạt động' }}
+                                        </td>
+
                                         <td>
                                             <div class="list-icon-function">
-                                                <form action="{{ route('admin.category.edit', ['id' => $category->id]) }}"
-                                                    method="GET" style="display: inline;">
+                                                <form action="{{ route('admin.category.edit', $category->id) }}" method="GET"
+                                                    style="display: inline;">
                                                     <button style="border: 1px solid transparent;" type="submit"
                                                         class="item edit">
                                                         <i class="icon-edit-3"></i>
                                                     </button>
                                                 </form>
-                                                <form action="{{ route('admin.category.delete', ['id' => $category->id]) }}"
-                                                    method="POST">
+                                                <form action="{{ route('admin.category.delete', $category->id) }}" method="POST">
 
                                                     @csrf
                                                     @method('DELETE')

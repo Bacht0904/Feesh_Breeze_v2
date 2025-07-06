@@ -77,7 +77,34 @@
                             </thead>
                             <tbody>
                                 @forelse ($orders as $order)
+                                @php
+                                $statusColors = [
+                                'Chờ Xác Nhận' => 'secondary',
+                                'Đã Xác Nhận' => 'primary',
+                                'Chờ Lấy Hàng' => 'info',
+                                'Đã Lấy Hàng' => 'info',
+                                'Đang Giao' => 'warning',
+                                'Đã Giao' => 'success',
+                                'Giao Thành Công' => 'success',
+                                'Xác Nhận Hủy' => 'dark',
+                                'Đã Hủy' => 'danger',
+                                ];
 
+                                $statusLabels = [
+                                'Chờ Xác Nhận' => '⏳ Chờ xác nhận',
+                                'Đã Xác Nhận' => '✅ Đã xác nhận',
+                                'Chờ Lấy Hàng' => '📦 Chờ lấy hàng',
+                                'Đã Lấy Hàng' => '📦 Đã lấy hàng',
+                                'Đang Giao' => '🚚 Đang giao',
+                                'Đã Giao' => '📬 Đã giao',
+                                'Giao Thành Công' => '🎉 Thành công',
+                                'Xác Nhận Hủy' => '⛔ Chờ xác nhận hủy',
+                                'Đã Hủy' => '❌ Đã hủy',
+                                ];
+
+                                $color = $statusColors[$order->status] ?? 'secondary';
+                                $label = $statusLabels[$order->status] ?? $order->status;
+                                @endphp
                                 <tr>
                                     <td class="text-center">{{ $order->id }}</td>
                                     <td class="text-center">{{ $order->name }}</td>
@@ -85,8 +112,8 @@
                                     <td class="text-center">{{ number_format($order->suptotal, 0, ',', '.') }}₫</td>
                                     <td class="text-center">{{ number_format($order->total, 0, ',', '.') }}₫</td>
                                     <td class="text-center">
-                                        <span class="badge bg-{{ $order->status === 'Canceled' ? 'danger' : ($order->status === 'Ordered' ? 'warning' : 'success') }}">
-                                            {{ $order->status === 'Canceled' ? 'Đã hủy' : ($order->status === 'Ordered' ? 'Chờ xác nhận' : 'Hoàn tất') }}
+                                        <span class="badge bg-{{ $color }}">
+                                            {{ $label }}
                                         </span>
                                     </td>
                                     <td class="text-center">{{ \Carbon\Carbon::parse($order->order_date)->format('d/m/Y H:i') }}</td>

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Order;
+use Auth;
 
 class OrderDetail extends Model
 {
@@ -33,6 +34,6 @@ class OrderDetail extends Model
     public function review()
     {
         return $this->hasOne(Review::class, 'product_detail_id', 'product_detail_id')
-            ->where('user_id', auth()->id());
+            ->where('user_id', Auth::id());
     }
 }

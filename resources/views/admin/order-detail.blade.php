@@ -7,7 +7,7 @@
             <ul class="breadcrumbs flex items-center flex-wrap justify-start gap10">
                 <li>
                     <a href="{{ route('admin.index') }}">
-                        <div class="text-tiny">Trang chủ</div>  
+                        <div class="text-tiny">Trang chủ</div>
                     </a>
                 </li>
                 <li>
@@ -28,7 +28,7 @@
             </div>
             <div class="table-responsive">
                 @if(Session::has('status'))
-                    <p class="alert alert-success">{{Session::get('status')}}</p>
+                <p class="alert alert-success">{{Session::get('status')}}</p>
                 @endif
                 <table class="table table-striped table-bordered">
                     <tr>
@@ -40,21 +40,19 @@
                         <td>{{ $order->order_date }}</td>
                     </tr>
 
-                    <tr> 
+                    <tr>
                         <th>Trạng thái đơn hàng</th>
                         <td colspan="5">
                             @if($order->status == 'Chờ Xác Nhận')
-                                <span class="badge bg-success">Chờ Xác Nhận</span>
+                            <span class="badge bg-success">Chờ Xác Nhận</span>
                             @elseif($order->status == 'Đã Xác Nhận')
-                                <span class="badge bg-success">Đã Xác Nhận</span>
+                            <span class="badge bg-success">Đã Xác Nhận</span>
                             @elseif($order->status == 'Đang Giao')
                                 <span class="badge bg-success">Đang Giao</span>
-                            @elseif($order->status == 'Đã Giao')
-                                <span class="badge bg-success">Đã Giao</span>
-                            @elseif($order->status == 'Giao Thành Công')
-                                <span class="badge bg-success">Giao Thành Công</span>
+                            @elseif($order->status == 'Đã Nhận')
+                                <span class="badge bg-success">Đã Nhận</span>
                             @else
-                                <span class="badge bg-danger">Đã Hủy</span>
+                            <span class="badge bg-danger">Đã Hủy</span>
                             @endif
                         </td>
                     </tr>
@@ -84,7 +82,7 @@
                                 <td class="pname">
                                     <div class="image">
                                     
-                                        <img src="{{ asset($item->image) }}"  class="image" style="width: 50px; height: 50px; object-fit: cover;">
+                                        <img src="{{ asset($item->image) }}"  class="image" style="max-width: 50px; height: auto;">
                                     </div>
                                     <div class="name">
                                         <a href="#" target="_blank" class="body-title-2">{{ $item->product_name }}</a>
@@ -125,58 +123,60 @@
 
             <div class="wg-box mt-1" ">
                 <h5>Giao dịch</h5>
-                <table class="table table-striped table-bordered table-transaction">
-                    <tbody>
-                        <tr>
-                            <th>Tổng tiền hàng</th>
-                            <td>{{number_format( $order->total,'0',',','.' )}} VND </td>
-                            <th>Phí giao hàng</th>
-                            <td>{{number_format($order->shipping_fee,'0',',','.')}} VND</td>
-                            <th>Giảm giá</th>
-                            <td>{{number_format( $order->coupon_discount, '0',',','.' )}}</td>
-                            <th>Trạng thái đơn hàng</th>
-                            <td colspan="5" style="text-align: center;">
-                                @if($order->status == 'Chờ Xác Nhận')
-                                    <span  class="badge bg-success">Chờ Xác Nhận</span>
-                                @elseif($order->status == 'Đã Xác Nhận')
-                                    <span class="badge bg-success">Đã Xác Nhận</span>
-                                @elseif($order->status == 'Đang Giao')
-                                    <span class="badge bg-success">Đang Giao</span>
-                                @elseif($order->status == 'Đã Nhận')
-                                    <span class="badge bg-success">Đã Nhận</span>
-                                @else
-                                    <span class="badge bg-danger">Đã Hủy</span>
-                                @endif
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Thành tiền</th>
-                            <td>{{number_format( $order->suptotal,'0',',','.' )}} VND </td>
-                            <th>Phương thức thanh toán</th>
-                            <td>{{ $order->payment_method }}</td>
-                             <th>Trạng thái thanh toán</th>
-                            <td colspan="2" style="text-align: center;">
-                                @if($order->payment_status == 'Chưa Thanh Toán')
-                                    <span class="badge bg-success">Chưa Thanh Toán</span>
-                                @elseif($order->payment_status == 'Đã Thanh Toán')
-                                    <span class="badge bg-success">Đã Thanh Toán</span>
-                            
-                                @endif
-                            </td>
-                            <th>Ngày đặt hàng</th>
-                            <td>{{ $order->order_date }}</td>
-                            
-                            
-                            
-                          
-                        </tr>
-                    </tbody>
+                <table class=" table table-striped table-bordered table-transaction">
+                <tbody>
+                    <tr>
+                        <th>Tổng tiền hàng</th>
+                        <td>{{number_format( $order->total,'0',',','.' )}} VND </td>
+                        <th>Phí giao hàng</th>
+                        <td>{{number_format($order->shipping_fee,'0',',','.')}} VND</td>
+                        <th>Giảm giá</th>
+                        <td>{{number_format( $order->coupon_discount, '0',',','.' )}}</td>
+                        <th>Trạng thái đơn hàng</th>
+                        <td colspan="5" style="text-align: center;">
+                            @if($order->status == 'Chờ Xác Nhận')
+                                <span class="badge bg-success">Chờ Xác Nhận</span>
+                            @elseif($order->status == 'Đã Xác Nhận')
+                                <span class="badge bg-success">Đã Xác Nhận</span>
+                            @elseif($order->status == 'Đang Giao')
+                                <span class="badge bg-success">Đang Giao</span>
+                            @elseif($order->status == 'Đã Giao')
+                                <span class="badge bg-success">Đã Giao</span>
+                            @elseif($order->status == 'Đã Nhận')
+                                <span class="badge bg-success">Đã Nhận</span>
+                            @else
+                                <span class="badge bg-danger">Đã Hủy</span>
+                            @endif
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Thành tiền</th>
+                        <td>{{number_format( $order->suptotal,'0',',','.' )}} VND </td>
+                        <th>Phương thức thanh toán</th>
+                        <td>{{ $order->payment_method }}</td>
+                        <th>Trạng thái thanh toán</th>
+                        <td colspan="2" style="text-align: center;">
+                            @if($order->payment_status == 'Chưa Thanh Toán')
+                            <span class="badge bg-success">Chưa Thanh Toán</span>
+                            @elseif($order->payment_status == 'Đã Thanh Toán')
+                            <span class="badge bg-success">Đã Thanh Toán</span>
+
+                            @endif
+                        </td>
+                        <th>Ngày đặt hàng</th>
+                        <td>{{ $order->order_date }}</td>
+
+
+
+
+                    </tr>
+                </tbody>
                 </table>
                 </div>
 
-                <div class="wg-box mt-5">
-                        <h5>Cập nhật trạng thái đơn hàng </h5>
-                        {{-- @if ($order->status != "Đã Hủy")
+             <div class="wg-box mt-5">
+                <h5>Cập nhật trạng thái đơn hàng </h5>
+                {{-- @if ($order->status != "Đã Hủy")
                             <form action="{{ route('admin.order.status.update') }}" method="POST">
                                 @csrf
                                 @method('PUT')
@@ -210,7 +210,7 @@
 
                             @switch($order->status)
                                 @case('Chờ Xác Nhận')
-                                    <button type="button" onclick="confirmStatusChange('Đã Xác Nhận')" class="btn btn-success tf-button w208 " >Xác Nhận Đơn</button>
+                                    <button type="button" onclick="confirmStatusChange('Đã Xác Nhận')" class="btn btn-lg btn-success  " >Xác Nhận Đơn</button>
                                     <button type="button" onclick="confirmStatusChange('Đã Hủy')" class="btn btn-lg btn-danger">Hủy Đơn</button>
                                     @break
 
@@ -223,15 +223,18 @@
                                     <button type="button" onclick="confirmStatusChange('Đã Giao')" class="btn btn-info tf-button w208">Xác Nhận Giao Thành Công</button>
                                     {{-- <button type="button" onclick="confirmStatusChange('Đã Hủy')" class="btn btn-danger">Hủy Đơn</button> --}}
                                     @break
-
+                                @case('Xác Nhận Hủy')
+                                    <button type="button" onclick="confirmStatusChange('Đã Hủy')" class="btn btn-info tf-button w208">Xác Nhận Giao Thành Công</button>
+                                    {{-- <button type="button" onclick="confirmStatusChange('Đã Hủy')" class="btn btn-danger">Hủy Đơn</button> --}}
+                                    @break
                                 @case('Đã Giao')
                                 @case('Đã Hủy')
-                                    <div class="alert alert-secondary">Đơn hàng đang ở trạng thái {{ $order->status }}. Không thể thay đổi trạng thái.</div>
-                                    @break
+                                        <div class="alert alert-secondary">Đơn hàng đang ở trạng thái {{ $order->status }}. Không thể thay đổi trạng thái.</div>
+                                @break
                             @endswitch
                         </form>
-
-                    </table>
+                   
+                </table>
             </div>
 
         </div>
