@@ -42,7 +42,6 @@
                                 <th>#</th>
                                 <th class="items-center">Tên sản phẩm</th>
                                 <th>Slug</th>
-                                <th>Giá</th>
                                 <th>Loại sản phẩm</th>
                                 <th>Thương hiệu</th>
                                 <th>Mô tả</th>
@@ -61,13 +60,6 @@
                                     </td>
                                     <td class="align-middle text-center">
                                         <div class="">{{ $product->slug }}</div>
-                                    </td>
-                                    <td>
-                                        @if($product->product_details->count())
-                                            {{ number_format($product->product_details->min('price'), 0, ',', '.') }}&nbsp;VND
-                                        @else
-                                            <span class="">Chưa có giá</span>
-                                        @endif
                                     </td>
                                     <td>{{ $product->category->name ?? 'Chưa có loại' }}</td>
                                     <td>{{ $product->brand->name ?? 'Chưa có thương hiệu' }}</td>

@@ -7,18 +7,36 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\DB;
-
+use App\Models\Slide;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Brand;
 use App\Models\Product_details;
 use App\Models\User;
 use Carbon\Carbon;
+use App\Models\Banner;
+
 class HomeController extends Controller
 {
 
     public function welcome()
     {
+
+        $banners = Banner::with('brand')
+            ->where('status', 1)
+            ->orderBy('id', 'desc')
+            ->get()->map(function ($banner) {
+                if ($banner->brand) {
+                    // Link tới /shop?brand=brand-slug
+                    $banner->link = route('shop', [
+                        'brand' => $banner->brand->slug
+                    ]);
+                } else {
+                    $banner->link = route('shop.index');
+                }
+                $banner->cta_text = 'MUA NGAY';
+                return $banner;
+            });
         $start = Carbon::now()->startOfMonth();
         $end = Carbon::now()->endOfMonth();
 
@@ -60,30 +78,18 @@ class HomeController extends Controller
             'products',
             'featuredProducts',
             'wishlistIds',
-            'hotDeals'
+            'hotDeals',
+            'banners'
         ));
     }
 
+    public function about()
+    {
+         $categories = \App\Models\Category::all();
+        return view('user.about',compact(
+            'categories',));
+    }
 
-    // public function welcome()
-    // {
-    //     $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
-    //     $products = Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
-    //         ->with([
-    //             'product_details' => fn($q) => $q->where('quantity', '>', 0),
-    //             'reviews' // 👈 thêm reviews để hiển thị số sao + số lượt đánh giá
-    //         ])
-    //         ->get();
-
-    //     $featuredProducts = Product::with(['product_details', 'reviews']) // cũng eager load reviews
-    //         ->latest()
-    //         ->take(8)
-    //         ->get();
-
-    //     $categories = Category::all(); // hoặc ->where('status', 'active')
-
-    //     return view('welcome', compact('categories', 'products', 'featuredProducts', 'wishlistIds'));
-    // }
 
     public function index()
     {
@@ -92,6 +98,9 @@ class HomeController extends Controller
 
     public function shop(Request $request)
     {
+        $slides = Slide::active()
+            ->orderByDesc('id')
+            ->get();
         $sort = $request->input('sort', 'default');
         $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
 
@@ -139,15 +148,14 @@ class HomeController extends Controller
             $q->whereRaw('LOWER(color) = ?', [strtolower($request->input('color'))]));
         }
 
-        if ($request->filled('min_price')) {
-            $productQuery->whereHas('product_details', fn($q) =>
-            $q->where('price', '>=', $request->input('min_price')));
+        if ($request->filled('price_range')) {
+            [$min, $max] = explode(',', str_replace(['[', ']'], '', $request->input('price_range')));
+
+            $productQuery->whereHas('product_details', function ($q) use ($min, $max) {
+                $q->whereBetween('price', [$min, $max]);
+            });
         }
 
-        if ($request->filled('max_price')) {
-            $productQuery->whereHas('product_details', fn($q) =>
-            $q->where('price', '<=', $request->input('max_price')));
-        }
 
 
         // Sắp xếp
@@ -165,6 +173,15 @@ class HomeController extends Controller
                 ->select('products.*'),
 
             'newest' => $productQuery->latest(),
+            'best-sellers' => $productQuery
+                ->withCount([
+                    'order_details as sold_quantity' => fn($q) =>
+                    $q->select(DB::raw('SUM(order_details.quantity)'))
+                ])
+
+
+                ->orderByDesc('sold_quantity'),
+
 
             default => $productQuery->orderBy('products.id'),
         };
@@ -174,10 +191,23 @@ class HomeController extends Controller
         $categories = Category::all();
         $brands = Brand::withCount('products')->get();
         $sizes = Product_details::select('size')->distinct()->pluck('size');
-        $colors = Product_details::select('color')->distinct()->pluck('color')->map(fn($color) => [
-            'name' => $color,
-            'code' => config('colormap')[mb_strtolower(trim($color))] ?? '#cccccc',
-        ]);
+        $colors = Product_details::pluck('color')
+            ->unique()
+            ->map(function ($color) {
+                $key = mb_strtolower(preg_replace('/\s+/', ' ', trim($color)));
+                $code = config('colormap')[$key] ?? '#cccccc';
+
+                if ($code === '#cccccc') {
+                    \Log::warning("⛔️ Thiếu map: [$color] → [$key]");
+                }
+
+                return [
+                    'name' => $color,
+                    'code' => $code,
+                ];
+            });
+
+
 
         return view('user.shop', compact(
             'products',
@@ -186,7 +216,8 @@ class HomeController extends Controller
             'sizes',
             'colors',
             'sort',
-            'wishlistIds'
+            'wishlistIds',
+            'slides'
         ));
     }
 
@@ -261,24 +292,43 @@ class HomeController extends Controller
         return back();
     }
 
+    /**
+     * Xử lý đăng ký người dùng mới
+     */
     public function register(Request $request)
     {
+        // Validate đầu vào với thông báo lỗi tiếng Việt
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
+            'name'                  => 'required|string|max:255',
+            'email'                 => 'required|email|max:255|unique:users',
+            'password'              => 'required|string|min:6|confirmed',
+        ], [
+            'name.required'         => 'Bạn chưa nhập họ và tên',
+            'name.string'           => 'Họ và tên phải là chuỗi ký tự',
+            'name.max'              => 'Họ và tên tối đa 255 ký tự',
+            'email.required'        => 'Bạn chưa nhập email',
+            'email.email'           => 'Định dạng email không hợp lệ',
+            'email.unique'          => 'Email này đã được đăng ký',
+            'password.required'     => 'Bạn chưa nhập mật khẩu',
+            'password.min'          => 'Mật khẩu phải có tối thiểu 6 ký tự',
+            'password.confirmed'    => 'Xác nhận mật khẩu không khớp',
         ]);
 
+        // Tạo người dùng mới
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
+            'name'      => $request->name,
+            'email'     => $request->email,
+            'password'  => bcrypt($request->password),
         ]);
 
+        // Đăng nhập tự động
         Auth::login($user);
 
-        return redirect()->route('welcome');
+        // Chuyển hướng kèm thông báo thành công
+        return redirect()->route('welcome')
+            ->with('success', 'Chúc mừng bạn đã đăng ký thành công!');
     }
+
 
     public function logout(Request $request)
     {

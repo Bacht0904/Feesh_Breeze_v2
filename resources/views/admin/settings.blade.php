@@ -72,7 +72,7 @@
                                 <div class="row">
                                     <div class="row mb-0">
                                         <div class="col-md-8 offset-md-4">
-                                            <a class="btn btn-link" href="{{ route('auth.password.change') }}"
+                                            <a class="btn btn-link" href="{{ route('admin.password.change') }}"
                                                 style="font-size: 1.5em;">
                                                 {{ __('Đổi mật khẩu?') }}
                                             </a>

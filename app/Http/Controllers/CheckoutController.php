@@ -92,11 +92,11 @@ class CheckoutController extends Controller
 
         $method = $request->payment_method;
 
-        $totals = $this->calculateTotals($cart);
+        $totals = $this->calculateTotals($cart, $request->address);
+
 
         return match ($method) {
             'momo' => $this->handleMomo($request, $cart, $totals),
-            'vnpay' => $this->handleVnPay($request, $cart, $totals),
             'cod' => $this->handleCashOnDelivery($request, $cart, $totals),
             default => back()->with('error', 'Phương thức thanh toán không hợp lệ!'),
         };

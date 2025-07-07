@@ -103,18 +103,39 @@
         </div>
 
         {{-- GIÁ --}}
-        <div class="accordion mb-3" id="price-accordion">
-          <div class="accordion-item">
-            <h5 class="accordion-header">
-              <button class="accordion-button fs-5 text-uppercase p-0 border-0" type="button" data-bs-toggle="collapse"
-                data-bs-target="#filter-price">Giá</button>
+
+        <div class="accordion" id="price-filters">
+          <div class="accordion-item mb-4">
+            <h5 class="accordion-header mb-2" id="accordion-heading-price">
+              <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
+                data-bs-target="#accordion-filter-price" aria-expanded="true" aria-controls="accordion-filter-price">
+                Giá
+                <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
+                  <g aria-hidden="true" stroke="none" fill-rule="evenodd">
+                    <path
+                      d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
+                  </g>
+                </svg>
+              </button>
             </h5>
-            <div id="filter-price" class="accordion-collapse collapse show">
-              <div class="accordion-body px-0 pt-3 d-flex flex-column gap-2">
-                <input type="number" name="min_price" class="form-control" placeholder="Giá từ"
-                  value="{{ request('min_price') }}">
-                <input type="number" name="max_price" class="form-control" placeholder="Đến"
-                  value="{{ request('max_price') }}">
+            <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
+              aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
+
+              <!-- Thanh trượt giá (từ 10.000 đến 1.000.000 VNĐ) -->
+              <input class="price-range-slider" type="text" name="price_range"
+                data-slider-min="10000" data-slider-max="1000000"
+                data-slider-step="10000" data-slider-value="[100000,500000]"
+                data-currency="₫" />
+
+              <div class="price-range__info d-flex align-items-center mt-2">
+                <div class="me-auto">
+                  <span class="text-secondary"></span>
+                  <span class="price-range__min">10.000 ₫</span>
+                </div>
+                <div>
+                  <span class="text-secondary"></span>
+                  <span class="price-range__max">1.000.000 ₫</span>
+                </div>
               </div>
             </div>
           </div>
@@ -135,138 +156,7 @@
 
       </form>
 
-      <!-- <div class="accordion" id="categories-list">
-        <div class="accordion-item mb-4 pb-3">
-          <h5 class="accordion-header" id="accordion-heading-1">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
-              data-bs-target="#accordion-filter-1" aria-expanded="true" aria-controls="accordion-filter-1">
-              Danh Mục
-              <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-                <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                  <path
-                    d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
-                </g>
-              </svg>
-            </button>
-          </h5>
-          <div id="accordion-filter-1" class="accordion-collapse collapse show border-0"
-            aria-labelledby="accordion-heading-1" data-bs-parent="#categories-list">
-            <div class="accordion-body px-0 pb-0 pt-3">
-              <ul class="list list-inline mb-0">
-                @foreach ($categories as $category)
-                <li class="list-item">
-                  <a href="{{ route('shop.category', $category->slug) }}" class="menu-link py-1">
-                    {{ $category->name }}
-                  </a>
-                </li>
-                @endforeach
-              </ul>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="accordion" id="color-filters">
-        <div class="accordion-item mb-4 pb-3">
-          <h5 class="accordion-header" id="accordion-heading-1">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
-              data-bs-target="#accordion-filter-2" aria-expanded="true" aria-controls="accordion-filter-2">
-              Màu
-              <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-                <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                  <path
-                    d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
-                </g>
-              </svg>
-            </button>
-          </h5>
-
-          <div id="accordion-filter-2" class="accordion-collapse collapse show border-0"
-            aria-labelledby="accordion-heading-1" data-bs-parent="#color-filters">
-            <div class="accordion-body px-0 pb-0">
-              <div class="d-flex flex-wrap gap-2 mb-3">
-                @foreach ($colors as $color)
-                @if (!empty($color['code']))
-                <a href="#"
-                  class="swatch-color js-filter position-relative rounded-circle border border-light shadow-sm"
-                  style="background-color: {{ $color['code'] }}; width: 32px; height: 32px;"
-                  title="{{ ucfirst($color['name']) }}">
-                  <span class="visually-hidden">{{ ucfirst($color['name']) }}</span>
-                </a>
-                @endif
-                @endforeach
-              </div>
-
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-      <div class="accordion" id="size-filters">
-        <div class="accordion-item mb-4 pb-3">
-          <h5 class="accordion-header" id="accordion-heading-size">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
-              data-bs-target="#accordion-filter-size" aria-expanded="true" aria-controls="accordion-filter-size">
-              Sizes
-              <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-                <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                  <path
-                    d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
-                </g>
-              </svg>
-            </button>
-          </h5>
-          <div id="accordion-filter-size" class="accordion-collapse collapse show border-0"
-            aria-labelledby="accordion-heading-size" data-bs-parent="#size-filters">
-            <div class="accordion-body px-0 pb-0">
-              <div class="d-flex flex-wrap">
-                @foreach ($sizes as $size)
-                <a href="#"
-                  class="swatch-size btn btn-sm btn-outline-light mb-3 me-3 js-filter">{{ strtoupper($size) }}</a>
-                @endforeach
-              </div>
-
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="accordion" id="brand-filters">
-        <div class="accordion-item mb-4 pb-3">
-          <h5 class="accordion-header" id="heading-brand">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
-              data-bs-target="#filter-brand" aria-expanded="true" aria-controls="filter-brand">
-              Thương hiệu
-              <span class="badge bg-secondary ms-2">({{ count($brands) }})</span>
-              <svg class="accordion-button__icon type2" viewBox="0 0 10 6">
-                <use href="#icon_arrow" />
-              </svg>
-            </button>
-          </h5>
-          <div id="filter-brand" class="accordion-collapse collapse show border-0" aria-labelledby="heading-brand"
-            data-bs-parent="#brand-filters">
-            <div class="accordion-body px-0 pb-0">
-              <div class="search-field__input-wrapper mb-3">
-                <input type="text" class="form-control form-control-sm border-light border-2"
-                  placeholder="Tìm thương hiệu...">
-              </div>
-              <ul class="multi-select__list list-unstyled">
-                @foreach ($brands as $brand)
-                <li class="multi-select__item js-search-select js-multi-select text-primary">
-                  <span class="me-auto">{{ $brand->name }}</span>
-                  <span class="text-secondary">{{ $brand->products_count ?? 0 }}</span>
-                </li>
-                @endforeach
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <!--
 
       <div class="accordion" id="price-filters">
         <div class="accordion-item mb-4">
@@ -302,89 +192,68 @@
     </div>
 
     <div class="shop-list flex-grow-1">
-      <div class="swiper-container js-swiper-slider slideshow slideshow_small slideshow_split" data-settings='{
-        "autoplay": {
-          "delay": 5000
-        },
-        "slidesPerView": 1,
-        "effect": "fade",
-        "loop": true,
-        "pagination": {
-          "el": ".slideshow-pagination",
-          "type": "bullets",
-          "clickable": true
-        }
-        }'>
+      {{-- resources/views/partials/slider-split.blade.php --}}
+      <section class="swiper-container js-swiper-slider slideshow slideshow_small slideshow_split"
+        data-settings='{
+           "modules": ["Parallax","Pagination","EffectFade","Autoplay"],
+           "autoplay": { "delay": 5000 },
+           "slidesPerView": 1,
+           "effect": "fade",
+           "loop": true,
+           "parallax": true,
+           "pagination": {
+             "el": ".slideshow-pagination",
+             "type": "bullets",
+             "clickable": true
+           }
+         }'>
+
         <div class="swiper-wrapper">
+          @foreach($slides as $slide)
           <div class="swiper-slide">
             <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-              <div class="slide-split_text position-relative d-flex align-items-center"
-                style="background-color: #f5e6e0;">
-                <div class="slideshow-text container p-3 p-xl-5">
-                  <h2
-                    class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                    Women's <br /><strong>ACCESSORIES</strong></h2>
-                  <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                    update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
-                </div>
-              </div>
-              <div class="slide-split_media position-relative">
-                <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                  <img loading="lazy" src="{{asset('assets/images/shop/shop_banner3.jpg')}}" width="630" height="450"
-                    alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div class="swiper-slide">
-            <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-              <div class="slide-split_text position-relative d-flex align-items-center"
-                style="background-color: #f5e6e0;">
-                <div class="slideshow-text container p-3 p-xl-5">
-                  <h2
-                    class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                    Women's <br /><strong>ACCESSORIES</strong></h2>
-                  <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                    update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
-                </div>
-              </div>
-              <div class="slide-split_media position-relative">
-                <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                  <img loading="lazy" src="{{asset('assets/images/shop/shop_banner3.jpg')}}" width="630" height="450"
-                    alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
-                </div>
-              </div>
-            </div>
-          </div>
+              {{-- Left panel: Text (layer 1) --}}
+              <div class="slide-split_text d-flex align-items-center"
+                data-swiper-parallax="-200"
+                style="background-color: {{ $slide->bg_color ?? '#f5e6e0' }};">
+                <div class="slideshow-text container p-3 p-xl-5 text-center text-md-start">
+                  <h2 class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2"
+                    data-swiper-parallax="-400">
+                    {!! nl2br(e($slide->title)) !!}
+                  </h2>
+                  <p class="mb-0 animate animate_fade animate_btt animate_delay-5"
+                    data-swiper-parallax="-300">
+                    {!! \Illuminate\Support\Str::markdown($slide->description) !!}
 
-          <div class="swiper-slide">
-            <div class="slide-split h-100 d-block d-md-flex overflow-hidden">
-              <div class="slide-split_text position-relative d-flex align-items-center"
-                style="background-color: #f5e6e0;">
-                <div class="slideshow-text container p-3 p-xl-5">
-                  <h2
-                    class="text-uppercase section-title fw-normal mb-3 animate animate_fade animate_btt animate_delay-2">
-                    Women's <br /><strong>ACCESSORIES</strong></h2>
-                  <p class="mb-0 animate animate_fade animate_btt animate_delay-5">Accessories are the best way to
-                    update your look. Add a title edge with new styles and new colors, or go for timeless pieces.</h6>
+                  </p>
                 </div>
               </div>
-              <div class="slide-split_media position-relative">
-                <div class="slideshow-bg" style="background-color: #f5e6e0;">
-                  <img loading="lazy" src="{{asset('assets/images/shop/shop_banner3.jpg')}}" width="630" height="450"
-                    alt="Women's accessories" class="slideshow-bg__img object-fit-cover" />
+
+              {{-- Right panel: Image (layer 2) --}}
+              <div class="slide-split_media position-relative"
+                data-swiper-parallax="200">
+                <div class="slideshow-bg"
+                  style="background-color: {{ $slide->bg_color ?? '#f5e6e0' }};">
+                  <img loading="lazy"
+                    src="{{ asset($slide->image) }}"
+                    alt="{{ $slide->title }}"
+                    class="slideshow-bg__img object-fit-cover w-100 h-100" />
                 </div>
               </div>
+
             </div>
           </div>
+          @endforeach
         </div>
 
+        {{-- Pagination bullets --}}
         <div class="container p-3 p-xl-5">
-          <div class="slideshow-pagination d-flex align-items-center position-absolute bottom-0 mb-4 pb-xl-2"></div>
-
+          <div class="slideshow-pagination d-flex justify-content-center
+                position-absolute bottom-0 mb-4 pb-xl-2"></div>
         </div>
-      </div>
+      </section>
+
 
       <div class="mb-3 pb-2 pb-xl-3"></div>
 
@@ -461,17 +330,19 @@
               </h6>
 
               <span class="money price">
-                ${{ number_format($firstDetail->price, 2) }}
+                {{ number_format($firstDetail->price, 0, ',', '.') }} đ
+
               </span>
 
-              @if($product->product_details->count())
+              @if($product->product_details->isNotEmpty())
               <div class="product-sizes text-muted small">
                 Size:
-                @foreach($product->product_details as $detail)
+                @foreach($product->product_details->unique('size') as $detail)
                 <span class="badge bg-light border text-dark me-1">{{ $detail->size }}</span>
                 @endforeach
               </div>
               @endif
+
 
 
               {{-- Đánh giá --}}
@@ -639,6 +510,30 @@
     }
   }, 3000);
 </script>
+<script>
+  // resources/js/slider-split.js
+  import Swiper, {
+    Parallax,
+    Pagination,
+    EffectFade,
+    Autoplay
+  } from 'swiper';
+
+  new Swiper('.js-swiper-slider', {
+    modules: [Parallax, Pagination, EffectFade, Autoplay],
+    autoplay: {
+      delay: 5000
+    },
+    effect: 'fade',
+    loop: true,
+    parallax: true,
+    pagination: {
+      el: '.slideshow-pagination',
+      type: 'bullets',
+      clickable: true
+    }
+  });
+</script>
 @endpush
 @push('styles')
 <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
@@ -753,6 +648,90 @@
 
   .btn:hover {
     transform: scale(1.02);
+  }
+
+  /* Toàn slide full-height */
+  .slide-split {
+    height: 100vh;
+  }
+
+  /* Panel text 50% desktop, 100% mobile */
+  .slide-split_text {
+    width: 100%;
+  }
+
+  @media(min-width: 768px) {
+    .slide-split_text {
+      width: 50%;
+    }
+
+    .slide-split_media {
+      width: 50%;
+    }
+  }
+
+  /* Ảnh cover full-panel */
+  .slideshow-bg__img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  /* Pagination bullets */
+  .swiper-pagination-bullet {
+    background: rgba(0, 0, 0, 0.3);
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+  }
+
+  .swiper-pagination-bullet-active {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  /* resources/css/slider-split.css */
+  /* Slide full-height */
+  .slide-split {
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* Text panel: 100% mobile, 50% desktop */
+  .slide-split_text {
+    width: 100%;
+  }
+
+  .slide-split_media {
+    width: 100%;
+  }
+
+  @media(min-width: 768px) {
+    .slide-split_text {
+      width: 50%;
+    }
+
+    .slide-split_media {
+      width: 50%;
+    }
+  }
+
+  /* Image cover panel */
+  .slideshow-bg__img {
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
+  }
+
+  /* Pagination bullets */
+  .swiper-pagination-bullet {
+    background: rgba(0, 0, 0, 0.3);
+    width: 8px;
+    height: 8px;
+    margin: 0 4px;
+  }
+
+  .swiper-pagination-bullet-active {
+    background: rgba(0, 0, 0, 0.8);
   }
 </style>
 @endpush

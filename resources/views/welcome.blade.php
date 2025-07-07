@@ -1,9 +1,6 @@
 @extends('layouts.app')
 @section('content')
 <main>
-    <section class="container pt-90 pb-5">
-        <h1 class="page-title text-center mb-4">Chào mừng đến với Feesh Breeze</h1>
-    </section>
 
     @if(session('success') || session('error'))
     <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 px-4 py-3
@@ -24,104 +21,87 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
     </div>
     @endif
+    <section class="swiper-container js-swiper-slider slideshow swiper-number-pagination"
+        data-settings='{
+           "autoplay": { "delay": 5000 },
+           "slidesPerView": 1,
+           "effect": "fade",
+           "loop": true,
+           "pagination": {
+             "el": ".swiper-pagination",
+             "clickable": true
+           }
+         }'>
 
-
-    <section class="swiper-container js-swiper-slider swiper-number-pagination slideshow" data-settings='{
-        "autoplay": {
-          "delay": 5000
-        },
-        "slidesPerView": 1,
-        "effect": "fade",
-        "loop": true
-      }'>
         <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <div class="overflow-hidden position-relative h-100">
-                    <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                        <img loading="lazy" src="assets/images/home/demo3/slideshow-character1.png" width="542" height="733"
-                            alt="Woman Fashion 1"
-                            class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto" />
-                        <div class="character_markup type2">
-                            <p
-                                class="text-uppercase font-sofia mark-grey-color animate animate_fade animate_btt animate_delay-10 mb-0">
-                                Dresses</p>
+            @foreach($banners as $banner)
+            <div class="swiper-slide h-100">
+                <div class="container h-100 d-flex align-items-center">
+                    <div class="row w-100 align-items-center">
+
+                        <!-- TEXT bên trái -->
+                        <div class="col-md-6">
+                            <div class="slideshow-text">
+                                <!-- Pre-title (New Arrivals) -->
+                                <!-- <h6 class="pre-title text-uppercase text-muted mb-2 animate animate_fade animate_btt animate_delay-3">
+                                    {{ $banner->brand->name ?? 'No brand' }}
+                                </h6> -->
+                                <h6 class="text_dash text-uppercase fs-3 fw-medium animate animate_fade animate_btt animate_delay-3">
+                                    {{ $banner->brand->name ?? 'No brand' }}
+                                </h6>
+                                <!-- Main title -->
+                                <h2 class="main-title fw-bold fs-2 mb-1 animate animate_fade animate_btt animate_delay-5">
+                                    {{ $banner->title }}
+                                </h2>
+
+                                <!-- Brand/subtitle -->
+                                <p class="brand-title fs-5 fw-medium mb-4 animate animate_fade animate_btt animate_delay-5">
+
+                                </p>
+
+                                <!-- CTA -->
+                                <a href="{{ $banner->link }}"
+                                    class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">
+                                    {{ $banner->cta_text }}
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                    <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
-                        <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
-                            New Arrivals</h6>
-                        <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Night Spring</h2>
-                        <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Dresses</h2>
-                        <a href="#"
-                            class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
-                            Now</a>
-                    </div>
-                </div>
-            </div>
 
-            <div class="swiper-slide">
-                <div class="overflow-hidden position-relative h-100">
-                    <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                        <img loading="lazy" src="assets/images/slideshow-character1.png" width="400" height="733"
-                            alt="Woman Fashion 1"
-                            class="slideshow-character__img animate animate_fade animate_btt animate_delay-9 w-auto h-auto" />
-                        <div class="character_markup">
-                            <p class="text-uppercase font-sofia fw-bold animate animate_fade animate_rtl animate_delay-10">Summer
-                            </p>
+                        <!-- ẢNH bên phải -->
+                        <div class="col-md-6 d-flex justify-content-end align-items-end">
+                            <img loading="lazy"
+                                src="{{ asset($banner->image) }}"
+                                alt="{{ $banner->title }}"
+                                class="img-fluid slideshow-character__img animate animate_fade animate_btt animate_delay-9"
+                                style="max-height: 95vh; object-fit: contain; width: auto;" />
                         </div>
-                    </div>
-                    <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
-                        <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
-                            New Arrivals</h6>
-                        <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Night Spring</h2>
-                        <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Dresses</h2>
-                        <a href="#"
-                            class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
-                            Now</a>
+
                     </div>
                 </div>
             </div>
-
-            <div class="swiper-slide">
-                <div class="overflow-hidden position-relative h-100">
-                    <div class="slideshow-character position-absolute bottom-0 pos_right-center">
-                        <img loading="lazy" src="assets/images/slideshow-character2.png" width="400" height="690"
-                            alt="Woman Fashion 2"
-                            class="slideshow-character__img animate animate_fade animate_rtl animate_delay-10 w-auto h-auto" />
-                    </div>
-                    <div class="slideshow-text container position-absolute start-50 top-50 translate-middle">
-                        <h6 class="text_dash text-uppercase fs-base fw-medium animate animate_fade animate_btt animate_delay-3">
-                            New Arrivals</h6>
-                        <h2 class="h1 fw-normal mb-0 animate animate_fade animate_btt animate_delay-5">Night Spring</h2>
-                        <h2 class="h1 fw-bold animate animate_fade animate_btt animate_delay-5">Dresses</h2>
-                        <a href="#"
-                            class="btn-link btn-link_lg default-underline fw-medium animate animate_fade animate_btt animate_delay-7">Shop
-                            Now</a>
-                    </div>
-                </div>
-            </div>
-
+            @endforeach
         </div>
-        <!-- <div class="container">
+        <div class="container">
             <div
                 class="slideshow-pagination slideshow-number-pagination d-flex align-items-center position-absolute bottom-0 mb-5">
             </div>
-        </div> -->
-
+        </div>
     </section>
     <div class="container mw-1620 bg-white border-radius-10">
-        <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
+        @if($hotDeals)
         <section class="hot-deals container">
             <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">BÁN CHẠY</h2>
             <div class="row">
-                <div
-                    class="col-md-6 col-lg-4 col-xl-20per d-flex align-items-center flex-column justify-content-center py-4 align-items-md-start">
-                    <!-- <h2>July Sale</h2>-->
-                    <h2 class="fw-bold">Up to 60% Off</h2>
+                <div class="col-md-6 col-lg-4 col-xl-20per d-flex align-items-center flex-column justify-content-center py-4 align-items-md-start">
+                    <h2 class="fw-bold">Được ưa chuộng nhất</h2>
 
-
+                    <a href="{{ route('shop', ['sort' => 'best-sellers']) }}"
+                        class="btn-link default-underline text-uppercase fw-medium mt-3">
+                        Xem tất cả
+                    </a>
 
                 </div>
+
 
                 <div class="col-md-6 col-lg-8 col-xl-80per">
                     <div class="position-relative">
@@ -206,7 +186,8 @@
                                                 </a>
                                             </h6>
                                             @if($detail)
-                                            <span class="money price">${{ number_format($detail->price, 2) }}</span>
+                                            <span class="money price">{{ number_format($detail->price, 0, ',', '.') }} đ
+                                            </span>
                                             @else
                                             <span class="text-muted">Chưa có giá</span>
                                             @endif
@@ -224,6 +205,7 @@
                 </div>
             </div>
         </section>
+        @endif
         <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
         <section class="container py-5">
             <h2 class="text-center fw-bold mb-4">Sản phẩm nổi bật</h2>
@@ -279,7 +261,8 @@
                                     </a>
                                 </h6>
                                 @if($detail)
-                                <span class="money price">${{ number_format($detail->price, 2) }}</span>
+                                <span class="money price">{{ number_format($detail->price, 0, ',', '.') }} đ
+                                </span>
                                 @else
                                 <span class="text-muted">Chưa có giá</span>
                                 @endif
@@ -442,6 +425,13 @@
         max-width: 300px;
     }
 
+    .slideshow-character__img {
+        max-height: 100vh;
+        /* chiếm toàn bộ chiều cao màn hình */
+        height: auto;
+        width: auto;
+        object-fit: contain;
+    }
 
 
     .form-check-label {

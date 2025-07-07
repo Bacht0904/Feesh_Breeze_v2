@@ -171,9 +171,18 @@
                                     @break
                                     @case('Giao Thành Công')
                                     @break
-                                    
-                                    <th>Trạng thái đơn hàng</th>
+                                    @case('Đã Giao')
 
+                                    <th>Yêu cầu hủy hàng</th>
+                                    <td colspan="5">
+                                        <form action="{{ route('orders.refund', $order->id) }}" method="POST" onsubmit="return confirm('Bạn có chắc muốn hủy đơn hàng này?')">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit" class="btn btn-danger">trả hàng</button>
+                                        </form>
+                                    </td>
+
+                                    @break
                                     @case('Xác Nhận Hủy')
                                     <th>Trạng thái đơn hàng</th>
                                     <td colspan="5">
@@ -422,6 +431,10 @@
         margin-bottom: 10px;
     }
 
+    .text-warning-custom {
+        color: rgb(255, 147, 24) !important;
+        /* Màu vàng rực rỡ */
+    }
 
 
     .star-rating input[type="radio"]:not(:checked)~label {

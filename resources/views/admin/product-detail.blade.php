@@ -51,6 +51,7 @@
                                     <th>Hình ảnh</th>
                                     <th>Size</th>
                                     <th>Màu sắc</th>
+                                    <th>Giá</th>
                                     <th>Số lượng</th>
                                 </tr>
                             </thead>
@@ -62,15 +63,16 @@
                                             <a href="#" class="body-title-2">{{ $product->name }}</a>
                                         </td>
                                         <td>
-                                            @if($product->product_details->count() && $product->product_details->first()->image)
-                                                <img src="{{ asset($product->product_details->first()->image) }}"
-                                                    alt="{{ $product->name }}" style="max-width: 80px; height: auto;">
+                                            @if($detail->image)
+                                                <img src="{{ asset($detail->image) }}" alt="Ảnh biến thể {{ $detail->id }}"
+                                                    style="max-width: 80px; height: auto;">
                                             @else
                                                 <span>Không có hình ảnh</span>
                                             @endif
                                         </td>
                                         <td>{{ $detail->size }}</td>
                                         <td>{{ $detail->color }}</td>
+                                        <td>{{ $detail->price }}</td>
                                         <td>{{ $detail->quantity }}</td>
                                     </tr>
                                 @endforeach
