@@ -19,4 +19,15 @@ class NotificationController extends Controller
             'notifications' => $user->notifications()->latest()->paginate(10),
         ]);
     }
+
+     public function indexUser(Request $request)
+    {
+        $user = $request->user();
+
+        $user->unreadNotifications->markAsRead();
+
+        return view('user.notifications', [
+            'notifications' => $user->notifications()->latest()->paginate(10),
+        ]);
+    }
 }

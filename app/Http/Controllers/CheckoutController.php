@@ -176,8 +176,14 @@ class CheckoutController extends Controller
             });
             $recipients = User::whereIn('role', ['admin', 'staff'])->get();
             if ($recipients->isNotEmpty()) {
+
                 Notification::send($recipients, new OrderPlaced($order));
             }
+            $recipients->each(function ($user) {
+                logger('🔔 Notifying user: ' . $user->name . ' | ' . $user->email);
+            });
+
+
 
             // 4. Redirect đến trang cảm ơn
             return redirect()->route('user.checkoutsuccess', ['id' => $order->id]);
