@@ -381,6 +381,16 @@
                                                 </a>
                                             </li>
                                             <li>
+                                                <a href="{{ route('admin.comments') }}" class="user-item">
+                                                    <div class="icon">
+                                                        <i class="icon-message-square"></i>
+                                                    </div>
+                                                    <div class="body-title-2">Bình luận</div>
+                                                    <div class="number">{{ $pendingComments }}</div>
+                                                </a>
+                                            </li>
+
+                                            <li>
                                                 <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                                     style="display: none;">
                                                     @csrf

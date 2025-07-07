@@ -125,6 +125,10 @@ Route::middleware(['admin.staff'])->group(function () {
     Route::put('/admin/coupon/update/{id}', [CouponController::class, 'update_coupon',])->name('admin.coupon.update');
     Route::delete('/admin/coupon/{id}/delete', [CouponController::class, 'delete_coupon'])->name('admin.coupon.delete');
 
+    Route::get('/comments', [AdminController::class, 'comments'])->name('admin.comments');
+    Route::put('/comments/{id}/toggle', [AdminController::class, 'comment_toggle'])->name('admin.comment.toggle');
+    Route::delete('/comments/{id}', [AdminController::class, 'delete_comment'])->name('admin.comment.delete');
+
     Route::put('/admin/setting/{id}', [AdminController::class, 'setting'])->name('admin.setting');
     Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
 
