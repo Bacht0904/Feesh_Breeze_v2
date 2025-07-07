@@ -55,17 +55,37 @@ class ProductController extends Controller
         return view('admin.add_product'); // hoặc tên view của bạn
     }
 
-    public function show($Slug)
+    public function show(string $slug)
     {
         $product = Product::with(['category', 'brand', 'product_details'])
-            ->where('slug', $Slug)
+            ->where('slug', $slug)
             ->firstOrFail();
 
-        if (!$product) {
-            abort(404, view('errors.product-not-found'));
-        }
-        return view('user.product', compact('product'));
+        // Lấy unique list màu, normalize ngay tại đây
+        $colors = $product->product_details
+            ->pluck('color')
+            ->filter() // bỏ null
+            ->unique()
+            ->map(function ($color) {
+                // 1. Xoá spaces thừa  2. lowercase
+                $normalized = mb_strtolower(trim(preg_replace('/\s+/', ' ', $color)));
+                $code = config('colormap')[$normalized] ?? '#cccccc';
+
+                if ($code === '#cccccc') {
+                    \Log::warning("Thiếu map màu: [$color] → [$normalized]");
+                }
+
+                return [
+                    'name'  => $normalized,           // dùng cho value
+                    'label' => ucfirst($normalized),  // hiển thị tooltip, có hoa đầu
+                    'code'  => $code,
+                ];
+            })
+            ->values(); // reset index
+
+        return view('user.product', compact('product', 'colors'));
     }
+
 
     public function product_store(Request $request)
     {
@@ -311,6 +331,4 @@ class ProductController extends Controller
 
         return view('admin.products', compact('products', 'search'));
     }
-
-
 }

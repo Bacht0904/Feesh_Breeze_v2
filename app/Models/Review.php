@@ -9,7 +9,16 @@ use App\Models\Product_details as ProductDetail;
 
 class Review extends Model
 {
-    protected $fillable = ['user_id', 'product_id', 'product_detail_id', 'rating', 'comment'];
+    protected $fillable = [
+        'user_id',
+        'order_id',
+        'order_detail_id',
+        'product_id',
+        'product_detail_id',
+        'rating',
+        'comment',
+        'status'
+    ];
 
     public function user()
     {
@@ -25,10 +34,5 @@ class Review extends Model
     public function productDetail()
     {
         return $this->belongsTo(ProductDetail::class, 'product_detail_id');
-    }
-    public function review()
-    {
-        return $this->hasOne(Review::class, 'product_detail_id', 'product_detail_id')
-            ->where('user_id', auth()->id());
     }
 }

@@ -315,7 +315,7 @@ class CheckoutController extends Controller
                 });
                 $recipients = User::whereIn('role', ['admin', 'staff'])->get();
                 if ($recipients->isNotEmpty()) {
-                    Notification::send($recipients, new OrderPlaced($order));
+                    Notification::send($recipients, new OrderPlaced($saved));
                 }
 
                 return redirect()->route('user.checkoutsuccess', ['id' => $saved->id]);

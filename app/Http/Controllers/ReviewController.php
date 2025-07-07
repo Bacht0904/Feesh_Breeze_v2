@@ -6,7 +6,7 @@ use App\Models\Product_details;
 use Illuminate\Http\Request;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
-use App\Models\ProductDetail;
+use App\Models\Order;
 use App\Models\Product;
 
 class ReviewController extends Controller
@@ -16,7 +16,7 @@ class ReviewController extends Controller
 
         $productDetail = $product->product_details()->first();
 
-        $reviews = $product->reviews()->where('status', 1)->latest()->paginate(10);
+        $reviews = $product->reviews()->where('status', 'active')->latest()->paginate(10);
         $reviewCount = $product->reviews()->count();
         $reviewAvg = $product->reviews()->avg('rating');
 
@@ -24,24 +24,46 @@ class ReviewController extends Controller
     }
 
 
-    public function store(Request $request)
+    public function store(Request $req)
     {
-        $request->validate([
-            'product_id' => 'required|exists:products,id',
-            'rating'     => 'required|integer|min:1|max:5',
-            'comment'    => 'nullable|string|max:1000',
+
+        $data = $req->validate([
+            'order_id'          => 'required|exists:orders,id',
+            'order_detail_id'   => 'required|exists:order_details,id',
+            'product_id'        => 'required|exists:products,id',
+            'product_detail_id' => 'nullable|exists:product_details,id',
+            'rating'            => 'required|integer|min:1|max:5',
+            'comment'           => 'nullable|string',
         ]);
 
-        Review::create([
-            'user_id'          => Auth::id(),
-            'product_id'       => $request->product_id,
-            'product_detail_id' => $request->product_detail_id,
-            'rating'           => $request->rating,
-            'comment'          => $request->comment,
-        ]);
+        // xác nhận order thuộc user
+        $order = Order::where('id', $data['order_id'])
+            ->where('id_user', auth()->id())
+            ->firstOrFail();
 
-        return back()->with('success', '✅ Cảm ơn bạn đã đánh giá sản phẩm!');
+        // xác nhận detail đúng order
+        $order->details()->findOrFail($data['order_detail_id']);
+
+
+        try {
+            $review = Review::create([
+                'user_id'           => auth()->id(),
+                'order_id'          => $data['order_id'],
+                'order_detail_id'   => $data['order_detail_id'],
+                'product_id'        => $data['product_id'],
+                'product_detail_id' => $data['product_detail_id'],
+                'rating'            => $data['rating'],
+                'comment'           => $data['comment'],
+                'status'            => 'active', // ✅ khớp enum
+            ]);
+
+        } catch (\Exception $e) {
+            dd($e->getMessage());
+        }
+
+        return back()->with('success', '✅ Cảm ơn bạn đã đánh giá!');
     }
+
     public function edit($id)
     {
         $review = Review::findOrFail($id);

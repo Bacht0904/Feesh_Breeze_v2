@@ -44,11 +44,11 @@
               <div class="accordion-body px-0 pt-3 d-flex flex-wrap gap-2">
                 @foreach ($colors as $color)
                 @if (!empty($color['code']))
-                <label class="position-relative" title="{{ ucfirst($color['name']) }}">
+                <label class="color-swatch" title="{{ ucfirst($color['name']) }}">
                   <input type="radio" name="color" value="{{ strtolower($color['name']) }}"
-                    class="visually-hidden"
+                    class="d-none"
                     {{ request('color') === strtolower($color['name']) ? 'checked' : '' }}>
-                  <span class="d-inline-block rounded-circle border shadow-sm"
+                  <span class="swatch-circle"
                     style="background-color: {{ $color['code'] }}; width: 32px; height: 32px;"></span>
                 </label>
                 @endif
@@ -563,7 +563,24 @@
     /* xám nhạt cho sao chưa đánh giá */
   }
 
+  .color-swatch {
+    display: inline-block;
+    cursor: pointer;
+  }
 
+  .swatch-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .color-swatch input:checked+.swatch-circle {
+    border: 2px solid #000;
+    box-shadow: 0 0 0 2px #fff inset;
+  }
 
 
   /* ✅ Wrapper giữ tỷ lệ khung hình (nếu cần) */

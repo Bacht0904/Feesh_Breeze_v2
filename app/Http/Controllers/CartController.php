@@ -18,7 +18,7 @@ class CartController extends Controller
         return view('user.cart', compact('cart'));
     }
 
- 
+
     // 👉 Thêm sản phẩm chi tiết vào giỏ hàng
     public function addDetail(Request $request)
     {
@@ -28,34 +28,38 @@ class CartController extends Controller
         ]);
 
         $detail = Product_details::findOrFail($request->product_detail_id);
-        $cart   = session()->get('cart', []);
-        $key    = "{$detail->id}-{$detail->size}-{$detail->color}";
+        $cart   = session('cart', []);
 
-        if (isset($cart[$key])) {
-            $cart[$key]['quantity'] += $request->quantity;
+        // Tìm key đầu tiên có cùng product_detail_id (bất kể size, color)
+        $existingKey = collect($cart)->search(fn($item) => $item['product_detail_id'] == $detail->id);
+
+        if ($existingKey !== false) {
+            $cart[$existingKey]['quantity'] += $request->quantity;
         } else {
+            // Tạo key mới theo chuẩn
+            $size  = $detail->size ?? 'default';
+            $color = $detail->color ?? 'default';
+            $key   = "{$detail->id}-{$size}-{$color}";
+
             $cart[$key] = [
                 'product_detail_id' => $detail->id,
                 'product_name'      => $detail->product->name,
-                'size'              => $detail->size,
-                'color'             => $detail->color,
+                'size'              => $size,
+                'color'             => $color,
                 'price'             => $detail->price,
                 'quantity'          => $request->quantity,
                 'image'             => $detail->image,
             ];
         }
+
         session()->put('cart', $cart);
 
-        // Nếu là AJAX request thì trả về JSON
-        if ($request->ajax()) {
-            return response()->json([
+        return $request->ajax()
+            ? response()->json([
                 'message'   => 'Đã thêm vào giỏ hàng!',
                 'cartCount' => array_sum(array_column($cart, 'quantity')),
-            ]);
-        }
-
-        // Ngược lại redirect bình thường
-        return back()->with('success', 'Đã thêm vào giỏ hàng!');
+            ])
+            : back()->with('success', 'Đã thêm vào giỏ hàng!');
     }
 
 
