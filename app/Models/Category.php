@@ -13,14 +13,14 @@ class Category extends Model
         'parent_id',
     ];
     
-    protected static function booted()
-    {
-        static::updated(function ($category) {
-            if ($category->status === 'inactive') {
-                $category->products()->update(['status' => 'inactive']);
-            }
-        });
-    }
+    // protected static function booted()
+    // {
+    //     static::updated(function ($category) {
+    //         if ($category->status === 'inactive') {
+    //             $category->products()->update(['status' => 'inactive']);
+    //         }
+    //     });
+    // }
 
     public function products()
     {

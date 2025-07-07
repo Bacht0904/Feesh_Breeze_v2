@@ -13,6 +13,7 @@ use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\OrderDetail;
 use App\Notifications\OrderStatusUpdated;
 use App\Notifications\OrderDeliveredNotification;
+use App\Models\Comment;
 
 
 
@@ -81,6 +82,7 @@ class AdminController extends Controller
         $totalDeliveredAmount = $dashboardDatas[0]->totalDeliveredAmount ?? 0;
 
         $contactCount = Contact::count();
+        $pendingComments = Comment::where('is_approved', false)->count();
 
         return view('admin.index', compact(
             'orders',
@@ -94,7 +96,8 @@ class AdminController extends Controller
             'totalConfirmedAmount',
             'totalDeliveredAmount',
             'contactCount',
-            'user'
+            'user',
+            'pendingComments'
         ));
     }
 
@@ -270,6 +273,12 @@ class AdminController extends Controller
             'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->phone = $request->input('phone');
+        $user->address = $request->input('address');
+
+
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
             $uploadFolder = 'uploads/users/';
@@ -294,4 +303,28 @@ class AdminController extends Controller
 
         return redirect()->route('admin.users')->with('status', 'Thông tin người dùng đã được cập nhật!');
     }
+
+    public function comments()
+    {
+        $comments = Comment::with(['product', 'user'])->latest()->paginate(15);
+        return view('admin.comments', compact('comments'));
+    }
+
+    public function comment_toggle($id)
+    {
+        $comment = Comment::findOrFail($id);
+        $comment->is_approved = !$comment->is_approved;
+        $comment->save();
+
+        return back()->with('status', 'Cập nhật trạng thái bình luận thành công!');
+    }
+
+    public function delete_comment($id)
+    {
+        $comment = Comment::findOrFail($id);
+        $comment->delete();
+
+        return back()->with('status', 'Đã xóa bình luận!');
+    }
+
 }
