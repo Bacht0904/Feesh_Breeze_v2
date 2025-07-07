@@ -24,7 +24,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
-
+use Illuminate\Http\Request;
 
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\NotificationController;
@@ -228,6 +228,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
     Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
+
+    Route::get('/notifications', [NotificationController::class, 'indexUser'])->name('user.notifications');
 });
 
 // web.php
@@ -238,7 +240,10 @@ Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('or
 
 
 
- Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
+
+
+
+Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 
 
 

@@ -228,7 +228,7 @@
                     @break
 
                     @case('Đã Xác Nhận')
-                    <button type="button" onclick="confirmStatusChange('Chờ Lấy Hàng')"
+                    <button type="button" onclick="confirmStatusChange('Đang Giao')"
                         class="btn btn-primary btn-lg w-100 mb-2 shadow fw-bold">
                         🚚 Bắt Đầu Giao
                     </button>
@@ -238,21 +238,14 @@
                     </button>
                     @break
 
-                    @case('Chờ Lấy Hàng')
-                    <button type="button" onclick="confirmStatusChange('Đang Giao')"
-                        class="btn btn-warning btn-lg w-100 mb-2 shadow fw-bold">
-                        📦 Xác Nhận Đã Lấy Hàng
-                    </button>
-                    <button type="button" onclick="confirmStatusChange('Đã Hủy')"
-                        class="btn btn-danger btn-lg w-100 shadow fw-bold">
-                        ❌ Hủy Đơn
-                    </button>
+
+
                     @break
 
                     @case('Đang Giao')
-                    <button type="button" onclick="confirmStatusChange('Đã Giao')"
+                    <button type="button"
                         class="btn btn-info btn-lg w-100 shadow fw-bold">
-                        📬 Xác Nhận Đã Giao
+                        📬 Đang Giao
                     </button>
                     @break
 

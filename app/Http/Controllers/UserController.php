@@ -8,9 +8,16 @@ use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use Auth;
+use Illuminate\Notifications\Notifiable;
 
 class UserController extends Controller
 {
+
+
+
+    use Notifiable;
+
+
     public function users()
     {
         $users = User::orderBy('id', 'asc')->paginate(10);

@@ -280,7 +280,7 @@
                                                 <i class="icon-bell"></i>
                                             </span>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content"
+                                        <!-- <ul class="dropdown-menu dropdown-menu-end has-content"
                                             aria-labelledby="dropdownMenuButton2">
                                             <li>
                                                 <h6>Thông báo</h6>
@@ -317,7 +317,41 @@
                                             <li>
                                                 <a href="{{ route('notifications') }}" class="tf-button w-full">Xem tất cả</a>
                                             </li>
+                                        </ul> -->
+                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton2">
+                                            <li>
+                                                <h6>Thông báo</h6>
+                                            </li>
+
+                                            @forelse(auth()->user()->unreadNotifications as $notification)
+                                            @php
+                                            $orderId = $notification->data['order_id'] ?? null;
+                                            $message = $notification->data['message'] ?? 'Thông báo mới';
+                                            @endphp
+
+                                            <li>
+                                                <a href="{{ $orderId ? route('admin.order.detail', $orderId) : '#' }}"
+                                                    class="dropdown-item d-flex align-items-start gap-2 small text-wrap">
+                                                    <i class="icon-noti-{{ $loop->iteration }}"></i>
+
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-semibold text-dark">{{ $message }}</div>
+                                                        <div class="text-muted">
+                                                            Đơn hàng #{{ $orderId ?? '---' }}<br>
+                                                            <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            @empty
+                                            <li><span class="dropdown-item text-muted">Không có thông báo mới</span></li>
+                                            @endforelse
+
+                                            <li>
+                                                <a href="{{ route('notifications') }}" class="tf-button w-full text-center">Xem tất cả</a>
+                                            </li>
                                         </ul>
+
                                     </div>
                                 </div>
 

@@ -561,15 +561,9 @@
                                 @endforelse
                             </ul>
 
+                            <a href="{{ route('user.notifications') }}" class="tf-button w-full text-center">Xem tất cả</a>
+                            </li>
 
-                            @if($unread->count() > 3)
-
-                            <div class="text-center mt-2">
-                                <a href="{{ route('notifications') }}" class="btn btn-outline-secondary btn-sm">
-                                    Xem tất cả
-                                </a>
-                            </div>
-                            @endif
                         </div>
                     </div>
 
