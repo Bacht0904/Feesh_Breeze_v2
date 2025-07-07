@@ -320,7 +320,7 @@ class CheckoutController extends Controller
 
                 return redirect()->route('user.checkoutsuccess', ['id' => $saved->id]);
             } catch (\Throwable $e) {
-                dd($e);
+                
                 return back()->with('error', 'Đặt hàng thất bại: ' . $e->getMessage());
             }
         }

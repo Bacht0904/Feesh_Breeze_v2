@@ -28,8 +28,6 @@ class ProductController extends Controller
 
             // Xác định trạng thái
             $newStatus = (
-                $category->status === 'inactive' ||
-                $brand->status === 'inactive' ||
                 $total_quantity === 0
             ) ? 'inactive' : 'active';
 

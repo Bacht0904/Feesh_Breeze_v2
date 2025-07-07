@@ -71,8 +71,6 @@ class CategoryController extends Controller
             $total_quantity = $product->product_details->sum('quantity');
 
             $newStatus = (
-                $category->status === 'inactive' ||
-                $product->brand->status === 'inactive' ||
                 $total_quantity === 0
             ) ? 'inactive' : 'active';
 
