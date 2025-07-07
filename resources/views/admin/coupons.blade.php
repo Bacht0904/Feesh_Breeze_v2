@@ -55,7 +55,7 @@
                                     <td>{{ $coupon->id }}</td>
                                     <td>{{ $coupon->code }}</td>
                                     <td>{{ $coupon->type }}</td>
-                                    <td>{{number_format( $coupon->value,'0',',','.' )}}</td>
+                                    <td>{{ $coupon->type === 'fixed' ? number_format( $coupon->value,'0',',','.' ) . ' VNĐ' : intval($coupon->value) . ' %' }}</td>
                                     <td>{{ $coupon->status ? 'Kích hoạt' : 'Không kích hoạt' }}</td>
                                     <td>
                                         <div class="list-icon-function">

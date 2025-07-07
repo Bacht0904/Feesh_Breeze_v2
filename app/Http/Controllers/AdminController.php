@@ -266,6 +266,7 @@ class AdminController extends Controller
             'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
             'email' => 'required|email|min:8|unique:users,email,' . $user->id,
             'phone' => ['required', 'regex:/^0[0-9]{9}$/'],
+            'address' => 'required|string|max:255',
             'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
@@ -289,7 +290,7 @@ class AdminController extends Controller
             $user->avatar = $uploadFolder . $filename;
         }
 
-        $user->update($request->only('name', 'email', 'phone', 'avatar'));
+        $user->save();
 
         return redirect()->route('admin.users')->with('status', 'Thông tin người dùng đã được cập nhật!');
     }
