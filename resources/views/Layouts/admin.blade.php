@@ -133,24 +133,11 @@
                                         </li>
                                     </ul>
                                 </li>
-
-                                <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">
+                                <li class="menu-item">
+                                    <a href="{{ route('admin.orders') }}" class="">
                                         <div class="icon"><i class="icon-file-plus"></i></div>
                                         <div class="text">Đơn hàng</div>
                                     </a>
-                                    <ul class="sub-menu">
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.orders') }}" class="">
-                                                <div class="text">Danh sách đơn hàng</div>
-                                            </a>
-                                        </li>
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.order.tracking') }}" class="">
-                                                <div class="text">Trạng thái đơn hàng</div>
-                                            </a>
-                                        </li>
-                                    </ul>
                                 </li>
                                 <li class="menu-item">
                                     <a href="{{ route('admin.sliders') }}" class="">
