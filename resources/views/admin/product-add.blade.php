@@ -43,7 +43,7 @@
                             <div class="select">
                                 <select name="category_id" required>
                                     <option disabled selected>Chọn loại sản phẩm</option>
-                                    @foreach ($categories as $category)
+                                    @foreach ($dscategories as $category)
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
@@ -58,6 +58,20 @@
                                     @foreach ($brands as $brand)
                                         <option value="{{ $brand->id }}">{{ $brand->name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                        </fieldset>
+
+                    </div>
+
+                    <div class="gap22 cols">
+                        <fieldset class="is-new">
+                            <div class="body-title mb-10">Sản phẩm mới?<span class="tf-color-1">*</span></div>
+                            <div class="select">
+                                <select name="isNew" required>
+                                    <option disabled selected>Chọn trạng thái</option>
+                                    <option value="1">Có 🔥</option>
+                                    <option value="0">Không</option>
                                 </select>
                             </div>
                         </fieldset>
@@ -118,15 +132,15 @@
         let variantIndex = 1;
         document.getElementById('add-variant').addEventListener('click', function () {
             const html = `
-                    <div class="variant-item gap22 cols mb-16">
-                        <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
-                        <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
-                        <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
-                        <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
-                        <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
-                        <button type="button" class="remove-variant tf-button small danger">Xoá</button>
-                    </div>
-                `;
+                            <div class="variant-item gap22 cols mb-16">
+                                <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
+                                <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
+                                <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
+                                <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
+                                <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
+                                <button type="button" class="remove-variant tf-button small danger">Xoá</button>
+                            </div>
+                        `;
             document.getElementById('variant-list').insertAdjacentHTML('beforeend', html);
             variantIndex++;
         });

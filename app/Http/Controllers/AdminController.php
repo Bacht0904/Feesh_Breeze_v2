@@ -270,6 +270,12 @@ class AdminController extends Controller
             'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
         ]);
 
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->phone = $request->input('phone');
+        $user->address = $request->input('address');
+
+
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
             $uploadFolder = 'uploads/users/';

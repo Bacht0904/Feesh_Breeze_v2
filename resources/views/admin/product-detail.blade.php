@@ -72,7 +72,7 @@
                                         </td>
                                         <td>{{ $detail->size }}</td>
                                         <td>{{ $detail->color }}</td>
-                                        <td>{{ $detail->price }}</td>
+                                        <td>{{ number_format( $detail->price,'0',',','.' ) . ' VNĐ' }}</td>
                                         <td>{{ $detail->quantity }}</td>
                                     </tr>
                                 @endforeach

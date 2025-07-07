@@ -44,10 +44,19 @@ class ProductController extends Controller
 
     public function add_product()
     {
-        $categories = Category::select('id', 'name')->orderBy('name')->get();
-        $brands = Brand::select('id', 'name')->orderBy('name')->get();
-        return view('admin.product-add', compact('categories', 'brands'));
+        $dscategories = Category::select('id', 'name')
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        $brands = Brand::select('id', 'name')
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        return view('admin.product-add', compact('dscategories', 'brands'));
     }
+
     public function showAddProductForm()
     {
         return view('admin.add_product'); // hoặc tên view của bạn
@@ -73,46 +82,48 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'description' => 'required|string|max:10000',
+            'isNew' => 'required|in:0,1',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.size' => 'required|string',
             'variants.*.color' => 'required|string',
             'variants.*.quantity' => 'required|integer|min:0',
             'variants.*.image' => 'required|image|mimes:jpg,jpeg,png|max:2048',
         ]);
-        $category = Category::findOrFail($request->category_id);
 
-        $product = new Product();
-        $product->name = $request->name;
-        $product->slug = $request->slug ?? Str::slug($request->name);
-
-        $product->category_id = $request->category_id;
-        $product->brand_id = $request->brand_id;
-        $product->description = $request->description;
-        $product->save();
+        // Kiểm tra trùng biến thể size + color
+        $combinationCheck = [];
+        foreach ($request->variants as $index => $variant) {
+            $key = strtolower(trim($variant['size'])) . '-' . strtolower(trim($variant['color']));
+            if (in_array($key, $combinationCheck)) {
+                return back()->withErrors([
+                    "variants.$index.size" => "Biến thể thứ " . ($index + 1) . " có kích thước + màu đã bị trùng.",
+                ])->withInput();
+            }
+            $combinationCheck[] = $key;
+        }
 
         $category = Category::findOrFail($request->category_id);
         $brand = Brand::findOrFail($request->brand_id);
 
-        $total_quantity = 0;
-        foreach ($request->variants as $variant) {
-            $total_quantity += $variant['quantity'];
-        }
+        $product = new Product();
+        $product->name = $request->name;
+        $product->slug = $request->slug ?? Str::slug($request->name);
+        $product->category_id = $request->category_id;
+        $product->brand_id = $request->brand_id;
+        $product->description = $request->description;
+        $product->isNew = $request->isNew;
 
-        if ($category->status === 'inactive' || $brand->status === 'inactive' || $total_quantity === 0)
-            $product->status = 'inactive';
-        else
-            $product->status = 'active';
+        // Xác định trạng thái sản phẩm
+        $total_quantity = collect($request->variants)->sum('quantity');
+        $product->status = $total_quantity === 0 ? 'inactive' : 'active';
 
         $product->save();
-
-
 
         $manager = new ImageManager(new Driver());
 
         foreach ($request->variants as $variant) {
             if (!isset($variant['image']) || !$variant['image']->isValid()) {
-
-                continue; // Bỏ qua nếu không có ảnh hợp lệ
+                continue;
             }
 
             $image = $variant['image'];
@@ -126,7 +137,6 @@ class ProductController extends Controller
             $filename = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
             $fullPath = $savePath . '/' . $filename;
 
-            // Resize ảnh và lưu
             $manager->read($image->getRealPath())
                 ->resize(800, 800)
                 ->save($fullPath);
@@ -140,15 +150,22 @@ class ProductController extends Controller
             ]);
         }
 
-
         return redirect()->route('admin.products')->with('success', 'Đã thêm sản phẩm thành công!');
     }
+
 
     public function edit_product($id)
     {
         $product = Product::with(['product_details'])->findOrFail($id);
-        $categories = Category::select('id', 'name')->orderBy('name')->get();
-        $brands = Brand::select('id', 'name')->orderBy('name')->get();
+        $categories = Category::select('id', 'name')
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
+
+        $brands = Brand::select('id', 'name')
+            ->where('status', 'active')
+            ->orderBy('name')
+            ->get();
 
         return view('admin.product-edit', compact('product', 'categories', 'brands'));
     }
@@ -161,6 +178,7 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'description' => 'required|string|max:1024',
+            'isNew' => 'required|in:0,1',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.size' => 'required|string',
             'variants.*.color' => 'required|string',
@@ -172,14 +190,12 @@ class ProductController extends Controller
         $category = Category::findOrFail($request->category_id);
         $product = Product::findOrFail($request->id);
 
-        $product->update([
-            'name' => $request->name,
-            'slug' => $request->slug,
-            'category_id' => $request->category_id,
-            'brand_id' => $request->brand_id,
-            'description' => $request->description,
-            'status' => $category->status,
-        ]);
+        $product->name = $request->name;
+        $product->slug = $request->slug;
+        $product->category_id = $request->category_id;
+        $product->brand_id = $request->brand_id;
+        $product->description = $request->description;
+        $product->isNew = $request->isNew;
 
         $category = Category::findOrFail($request->category_id);
         $brand = Brand::findOrFail($request->brand_id);
@@ -189,7 +205,7 @@ class ProductController extends Controller
             $total_quantity += $variant['quantity'];
         }
 
-        if ($category->status === 'inactive' || $brand->status === 'inactive' || $total_quantity === 0)
+        if ($total_quantity === 0)
             $product->status = 'inactive';
         else
             $product->status = 'active';
