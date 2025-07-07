@@ -44,6 +44,7 @@
                                     <th>Mã giảm giá</th>
                                     <th>Loại giảm giá</th>
                                     <th>Gía trị giảm</th>
+                                    <th>Số lượng</th>
                                     <th>Trạng thái</th>
                                     <th>Thao tác</th>
                                 </tr>
@@ -56,6 +57,7 @@
                                     <td>{{ $coupon->code }}</td>
                                     <td>{{ $coupon->type }}</td>
                                     <td>{{number_format( $coupon->value,'0',',','.' )}}</td>
+                                    <td>{{ $coupon->quantity }}</td>
                                     <td>{{ $coupon->status ? 'Kích hoạt' : 'Không kích hoạt' }}</td>
                                     <td>
                                         <div class="list-icon-function">

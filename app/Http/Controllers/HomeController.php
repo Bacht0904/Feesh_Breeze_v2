@@ -325,7 +325,7 @@ class HomeController extends Controller
         Auth::login($user);
 
         // Chuyển hướng kèm thông báo thành công
-        return redirect()->route('welcome')
+        return redirect()->route('home')
             ->with('success', 'Chúc mừng bạn đã đăng ký thành công!');
     }
 

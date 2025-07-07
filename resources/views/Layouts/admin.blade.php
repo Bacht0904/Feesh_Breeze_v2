@@ -401,13 +401,13 @@
     <script src="{{ asset('js/sweetalert.min.js') }}"></script>
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
-<<<<<<<<< Temporary merge branch 1
+
     <!-- jQuery (bắt buộc trước Summernote) -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <!-- Summernote JS -->
     <script src="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.js"></script>
-=========
+
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 

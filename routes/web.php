@@ -76,8 +76,9 @@ Route::middleware(['admin.staff'])->group(function () {
 
     Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
     Route::put('/admin/order/status/update', [AdminController::class, 'updateStatus'])->name('admin.order.status.update');
-    Route:: get('/admin/order/create', [AdminController::class,'order_create'])->name('admin.order.create');
+    Route:: get('/admin/order/create', [AdminController::class,'order_create'])->name('admin.order.add');
     Route:: post('/admin/order/store', [AdminController::class,'order_store'])->name('admin.order.store');
+    Route::get('/admin/products/find-by-code', [AdminController::class, 'findProductByCode'])->name('admin.products.findByCode');
 
     Route::get('/admin/order/detail/{id}', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 

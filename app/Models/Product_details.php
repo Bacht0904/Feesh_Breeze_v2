@@ -24,7 +24,7 @@ class Product_details extends Model
     public $timestamps = true;
     public function product()
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsTo(Product::class,'product_id');
     }
     // Trong model ProductDetail
     public function orderDetail()

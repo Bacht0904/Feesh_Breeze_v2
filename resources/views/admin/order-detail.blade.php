@@ -112,13 +112,13 @@
                             <tr>
                                 <td class="pname">
                                     <div class="image">
-<<<<<<<<< Temporary merge branch 1
+
 
                                         <img src="{{ asset($item->image) }}" class="image" style="width: 50px; height: 50px; object-fit: cover;">
-=========
+
                                     
                                         <img src="{{ asset($item->image) }}"  class="image" style="width: 50px; height: 50px; object-fit: cover;">
->>>>>>>>> Temporary merge branch 2
+
                                     </div>
                                     <div class="name">
                                         <a href="#" target="_blank" class="body-title-2">{{ $item->product_name }}</a>
@@ -209,40 +209,7 @@
                 </table>
             </div>
 
-<<<<<<<<< Temporary merge branch 1
-            <div class="wg-box mt-5">
-                <h5>Cập nhật trạng thái đơn hàng </h5>
-                <form action="{{ route('admin.order.status.update') }}" method="POST">
-                    @csrf
-                    @method('PUT')
-                    <input type="hidden" name="id" value="{{ $order ->id}}">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="select">
-                                <select id="status" name="status" class="form-select">
-                                    @foreach ([
-                                    'Chờ Xác Nhận',
-                                    'Đã Xác Nhận',
-                                    'Chờ Lấy Hàng',
-                                    'Đã Lấy Hàng',
-                                    'Đang Giao',
-                                    'Đã Giao',
-                                    'Giao Thành Công',
-                                    'Xác Nhận Hủy',
-                                    'Đã Hủy'
-                                    ] as $statusOption)
-                                    <option value="{{ $statusOption }}" {{ $order->status === $statusOption ? 'selected' : '' }}>
-                                        {{ $statusOption }}
-                                    </option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <button type="submit" class="btn btn-primary tf-button w208"> Thay Đổi Trạng Thái</button>
-                        </div>
-=========
+            
                 <div class="wg-box mt-5">
                         <h5>Cập nhật trạng thái đơn hàng </h5>
                         {{-- @if ($order->status != "Đã Hủy")
@@ -264,7 +231,7 @@
                                         <div class="col-md-3">
                                             <button type="submit" class="btn btn-primary tf-button w208"> Thay Đổi Trạng Thái</button>
                                         </div>
->>>>>>>>> Temporary merge branch 2
+
 
                 </div>
                 </form>
@@ -278,12 +245,12 @@
                     <input type="hidden" name="id" value="{{ $order->id }}">
                     <input type="hidden" name="status" id="statusInput">
 
-<<<<<<<<< Temporary merge branch 1
+
                 </form>
 
 
                 </table>
-=========
+
                             @switch($order->status)
                     @case('Chờ Xác Nhận')
                     <button type="button" onclick="confirmStatusChange('Đã Xác Nhận')"
@@ -352,7 +319,7 @@
 
                 </table>
 
->>>>>>>>> Temporary merge branch 2
+
             </div>
 
         </div>

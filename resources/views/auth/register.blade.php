@@ -16,7 +16,7 @@
         <div class="tab-content pt-2" id="login_register_tab_content">
             <div class="tab-pane fade show active" id="tab-item-register" role="tabpanel" aria-labelledby="register-tab">
                 <div class="register-form">
-                    <form method="POST" action="{{ route('register') }}" name="register-form" class="needs-validation" novalidate>
+                    <form method="POST" action="{{ route('register.submit') }}" name="register-form" class="needs-validation" novalidate>
                         @csrf
 
                         <div class="form-floating mb-3">

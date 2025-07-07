@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\OrderDetail;
+use App\Models\Product_details;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Notifications\OrderCancelRequested;
@@ -13,6 +15,7 @@ use Illuminate\Support\Facades\Notification;
 class OrderController extends Controller
 {
     // Danh sách đơn hàng của user
+    
     public function index()
     {
         $orders = Order::where('id_user', Auth::id())

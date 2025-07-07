@@ -54,6 +54,11 @@
                         <input class="flex-grow" type="text" placeholder="Nhập giá trị giảm" name="value" tabindex="0"
                             value="{{ $coupon->value }}" aria-required="true" required="">
                     </fieldset>
+                    <fieldset class="name">
+                        <div class="body-title">Số lượng<span class="tf-color-1">*</span></div>
+                        <input class="flex-grow" type="text" placeholder="Nhập mã số lượng" name="code" tabindex="0"
+                            value="{{ $coupon->quahtity }}" aria-required="true" required="">
+                    </fieldset>
                     <fieldset class="category">
                         <div class="body-title">Trạng thái</div>
                         <div class="select flex-grow">
