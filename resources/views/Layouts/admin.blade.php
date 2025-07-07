@@ -331,9 +331,7 @@
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
                                                 <span class="">
-                                                    <img src="{{ asset(Auth::user()->avatar) }}" width="50px"
-                                                        height="50px" style="border-radius: 50%; object-fit: cover;"
-                                                        alt="Avatar người dùng">
+                                                    <img src="{{ Auth::user()->avatar && file_exists(public_path(Auth::user()->avatar)) ? asset(Auth::user()->avatar) : asset('images/default-avatar.png') }}" alt="Avatar" class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
                                                 </span>
                                                 <span class="flex flex-column">
                                                     <span class="body-title mb-2">{{ Auth::user()->name }}</span>

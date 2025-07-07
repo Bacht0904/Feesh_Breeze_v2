@@ -86,10 +86,13 @@
                                         <td>{{ $user->phone }}</td>
                                         <td>{{ $user->address }}</td>
                                         <td>
-                                            <img src="{{ $user->avatar && file_exists(public_path($user->avatar)) 
-                                                ? asset($user->avatar) 
-                                                : asset('images/default-avatar.png') }}" 
-                                            alt="Avatar" width="60" height="60" class="rounded-circle">
+                                            <img src="{{ $user->avatar && file_exists(public_path($user->avatar))
+                                                ? asset($user->avatar)
+                                                : asset('images/default-avatar.png') }}"
+                                                alt="Avatar"
+                                                class="rounded-circle border"
+                                                style="width: 50px; height: 50px; object-fit: cover;">
+
                                         </td>
 
                                         @auth

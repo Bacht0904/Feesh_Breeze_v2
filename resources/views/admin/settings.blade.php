@@ -29,44 +29,51 @@
                                 @csrf
                                 @method('PUT')
                                 <fieldset class="name">
-                                    <div class="body-title">Tên<span class="tf-color-1">*</span>
-                                    </div>
+                                    <div class="body-title">Tên<span class="tf-color-1">*</span></div>
                                     <input class="flex-grow" type="text" placeholder="Họ tên" name="name" tabindex="0"
-                                        value="{{ $user->name }}" aria-required="true" required="">
+                                        value="{{ Auth::user()->name }}" aria-required="true" required>
                                 </fieldset>
 
                                 <fieldset class="phone">
                                     <div class="body-title">Số điện thoại<span class="tf-color-1">*</span></div>
                                     <input class="flex-grow" type="text" placeholder="Số điện thoại" name="phone"
-                                        tabindex="0" value="{{ $user->phone }}" aria-required="true" required="">
+                                        tabindex="0" value="{{ Auth::user()->phone }}" aria-required="true" required>
                                 </fieldset>
 
                                 <fieldset class="email">
                                     <div class="body-title">Email<span class="tf-color-1">*</span></div>
-                                    <input class="flex-grow" type="email" placeholder="Địa chie Email" name="email"
-                                        tabindex="0" value="{{ $user->email }}" aria-required="true" required="">
+                                    <input class="flex-grow" type="email" placeholder="Địa chỉ Email" name="email"
+                                        tabindex="0" value="{{ Auth::user()->email }}" aria-required="true" required>
                                 </fieldset>
 
-                                <fieldset class="user-avatar">
-                                    <div class="body-title mb-10">Ảnh đại diện <span class="tf-color-1">*</span></div>
+                                <fieldset class="address">
+                                    <div class="body-title">Địa chỉ<span class="tf-color-1">*</span></div>
+                                    <input class="flex-grow" type="text" placeholder="Địa chỉ" name="address" tabindex="0"
+                                        value="{{ Auth::user()->address }}" aria-required="true" required>
+                                </fieldset>
+
+                                <fieldset>
+                                    <div class="body-title">Tải hình ảnh lên <span class="tf-color-1">*</span>
+                                    </div>
                                     <div class="upload-image flex-grow">
-                                        <div class="item" id="imgpreview" style="{{ $user->avatar ? '' : 'display:none' }}">
-                                            <img src="{{ asset('uploads/avatar/' . $user->avatar) }}" class="effect8"
-                                                alt="Avatar hiện tại">
+                                        <div class="item" id="imgpreview" style="display:none">
+                                            <img src="upload-1.html" class="effect8" alt="">
                                         </div>
                                         <div id="upload-file" class="item up-load">
-                                            <label class="uploadfile" for="avatar">
+                                            <label class="uploadfile" for="myFile">
                                                 <span class="icon">
                                                     <i class="icon-upload-cloud"></i>
                                                 </span>
-                                                <span class="body-text">
-                                                    Chọn ảnh đại diện từ máy tính <span class="tf-color">hoặc kéo thả</span>
-                                                </span>
-                                                <input type="file" id="avatar" name="avatar" accept="image/*">
+                                                <span class="body-text">Drop your images here or select <span
+                                                        class="tf-color">click
+                                                        to
+                                                        browse</span></span>
+                                                <input type="file" id="myFile" name="image" accept="image/*">
                                             </label>
                                         </div>
                                     </div>
                                 </fieldset>
+
 
 
                                 <div class="row">

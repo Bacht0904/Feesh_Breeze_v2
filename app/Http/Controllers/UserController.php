@@ -198,9 +198,9 @@ class UserController extends Controller
                 unlink(public_path($user->avatar));
             }
 
-            // ✅ GÁN & LƯU
+            
             $user->avatar = $uploadFolder . $filename;
-            $user->save(); // ❗ KHÔNG được quên dòng này
+            $user->save();
         }
 
 
