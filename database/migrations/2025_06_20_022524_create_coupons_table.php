@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->enum('type', ['percent', 'fixed']);
             $table->decimal('value', 10, 2);
+            $table->integer('quantity')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
             $table->timestamps();
         });

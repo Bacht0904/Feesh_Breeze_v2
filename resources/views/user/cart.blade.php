@@ -10,7 +10,8 @@
     $hasOutOfStock = false;
     @endphp
 
-    @if (session('cart') && count(session('cart')) > 0)
+    @if ((Auth::check() && isset($items) && count($items) > 0) || (session('cart') && count(session('cart')) > 0))
+
     <form method="POST" action="{{ route('cart.update') }}">
       @csrf
       <div class="shopping-cart">
@@ -27,59 +28,88 @@
               </tr>
             </thead>
             <tbody>
-              @foreach (session('cart') as $id => $item)
+              @php $total = 0; @endphp
+
+              @if(Auth::check())
+              @foreach ($items as $item)
               @php
-              $subtotal = $item['price'] * $item['quantity'];
+              $subtotal = $item->price * $item->quantity;
               $total += $subtotal;
-
-              $detail = \App\Models\Product_details::find($item['product_detail_id'] ?? null);
-              $outOfStock = !$detail || $detail->quantity < $item['quantity'];
-                if ($outOfStock) {
-                $hasOutOfStock=true;
-                }
-
-                $product=\App\Models\Product::with('product_details')
-                ->where('name', $item['product_name'])
-                ->first();
-
+              $detail = \App\Models\Product_details::find($item->product_detail_id);
+              $outOfStock = !$detail || $detail->quantity < $item->quantity;
+                $hasOutOfStock = $outOfStock ? true : ($hasOutOfStock ?? false);
+                $product = $detail?->product;
                 @endphp
+
                 <tr>
+                  <td><img src="{{ asset($detail->image) }}" width="100" alt="{{ $product->name }}"></td>
                   <td>
-                    <div class="shopping-cart__product-item">
-                      <img loading="lazy" src="{{ asset($item['image']) }}" width="100" alt="{{ $item['product_name'] }}">
-                    </div>
+                    <h5>{{ $product->name }}</h5>
+                    @if($outOfStock)
+                    <p class="text-danger">Hết hàng hoặc không đủ số lượng (Tồn: {{ $detail?->quantity ?? 0 }})</p>
+                    @endif
+                    <select name="product_detail_ids[{{ $item->id }}]" class="form-select form-select-sm">
+                      @foreach($product->product_details as $variant)
+                      <option value="{{ $variant->id }}" @selected($variant->id == $item->product_detail_id)>
+                        {{ "Size {$variant->size} – Màu: {$variant->color}" }}
+                      </option>
+                      @endforeach
+                    </select>
                   </td>
+                  <td>{{ number_format($item->price, 0) }} đ</td>
                   <td>
-                    <div class="shopping-cart__product-item__detail">
-                      <h5>{{ $item['product_name'] }}</h5>
-               
-
-                      @if ($outOfStock)
-                      <p class="text-danger mb-1">Hết hàng hoặc không đủ số lượng (Tồn: {{ $detail?->quantity ?? 0 }})</p>
-                      @endif
-                      <select name="product_detail_ids[{{ $id }}]" class="form-select form-select-sm" required>
-                        @foreach ($product?->product_details ?? [] as $variant)
-
-                        <option value="{{ $variant->id }}"
-                          @selected($variant->id == $item['product_detail_id'])>
-                          {{ Str::limit("Size {$variant->size} – Màu: {$variant->color}", 50) }}
-                        </option>
-                        @endforeach
-                      </select>
-                    </div>
-                  </td>
-                  <td>{{ number_format($item['price'], 0) }} đ</td>
-                  <td>
-                    <input type="number" name="quantities[{{ $id }}]" value="{{ $item['quantity'] }}" min="1"
+                    <input type="number" name="quantities[{{ $item->id }}]" value="{{ $item->quantity }}" min="1"
                       class="form-control text-center w-75">
                   </td>
                   <td>{{ number_format($subtotal, 0) }} đ</td>
                   <td>
-                    <a href="{{ route('cart.remove', $id) }}" class="remove-cart text-danger">Xoá</a>
+                    <form action="{{ route('cart.remove', $item->id) }}" method="POST">
+                      @csrf @method('DELETE')
+                      <button type="submit" class="btn btn-sm btn-outline-danger">Xoá</button>
+                    </form>
                   </td>
                 </tr>
                 @endforeach
+                @else
+                @foreach (session('cart', []) as $id => $item)
+                @php
+                $subtotal = $item['price'] * $item['quantity'];
+                $total += $subtotal;
+                $detail = \App\Models\Product_details::find($item['product_detail_id']);
+                $outOfStock = !$detail || $detail->quantity < $item['quantity'];
+                  $hasOutOfStock=$outOfStock ? true : ($hasOutOfStock ?? false);
+                  $product=$detail?->product;
+                  @endphp
+
+                  <tr>
+                    <td><img src="{{ asset($item['image']) }}" width="100" alt="{{ $item['product_name'] }}"></td>
+                    <td>
+                      <h5>{{ $item['product_name'] }}</h5>
+                      @if($outOfStock)
+                      <p class="text-danger">Hết hàng hoặc không đủ số lượng (Tồn: {{ $detail?->quantity ?? 0 }})</p>
+                      @endif
+                      <select name="product_detail_ids[{{ $id }}]" class="form-select form-select-sm">
+                        @foreach($product?->product_details ?? [] as $variant)
+                        <option value="{{ $variant->id }}" @selected($variant->id == $item['product_detail_id'])>
+                          {{ "Size {$variant->size} – Màu: {$variant->color}" }}
+                        </option>
+                        @endforeach
+                      </select>
+                    </td>
+                    <td>{{ number_format($item['price'], 0) }} đ</td>
+                    <td>
+                      <input type="number" name="quantities[{{ $id }}]" value="{{ $item['quantity'] }}" min="1"
+                        class="form-control text-center w-75">
+                    </td>
+                    <td>{{ number_format($subtotal, 0) }} đ</td>
+                    <td>
+                      <a href="{{ route('cart.remove', $id) }}" class="remove-cart text-danger">Xoá</a>
+                    </td>
+                  </tr>
+                  @endforeach
+                  @endif
             </tbody>
+
           </table>
 
           <div class="cart-table-footer text-end mt-3">
