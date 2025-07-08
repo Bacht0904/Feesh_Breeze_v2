@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Contact;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -82,7 +83,6 @@ class AdminController extends Controller
         $totalDeliveredAmount = $dashboardDatas[0]->totalDeliveredAmount ?? 0;
 
         $contactCount = Contact::count();
-        $pendingComments = Comment::where('is_approved', false)->count();
 
         return view('admin.index', compact(
             'orders',
@@ -97,7 +97,6 @@ class AdminController extends Controller
             'totalDeliveredAmount',
             'contactCount',
             'user',
-            'pendingComments'
         ));
     }
 
@@ -306,23 +305,15 @@ class AdminController extends Controller
 
     public function comments()
     {
-        $comments = Comment::with(['product', 'user'])->latest()->paginate(15);
-        return view('admin.comments', compact('comments'));
+        $reviews = Review::with(['product', 'user'])->latest()->paginate(15);
+        return view('admin.comments', compact('reviews'));
     }
 
-    public function comment_toggle($id)
-    {
-        $comment = Comment::findOrFail($id);
-        $comment->is_approved = !$comment->is_approved;
-        $comment->save();
-
-        return back()->with('status', 'Cập nhật trạng thái bình luận thành công!');
-    }
 
     public function delete_comment($id)
     {
-        $comment = Comment::findOrFail($id);
-        $comment->delete();
+        $review = Review::findOrFail($id);
+        $review->delete();
 
         return back()->with('status', 'Đã xóa bình luận!');
     }

@@ -386,7 +386,6 @@
                                                         <i class="icon-message-square"></i>
                                                     </div>
                                                     <div class="body-title-2">Bình luận</div>
-                                                    <div class="number">{{ $pendingComments }}</div>
                                                 </a>
                                             </li>
 
