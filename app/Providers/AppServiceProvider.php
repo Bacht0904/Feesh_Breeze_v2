@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Pagination\Paginator;
 use App\Models\Category;
 use App\Models\Comment;
+use Illuminate\Auth\Events\Login;
+use App\Listeners\SyncCartSessionToDb;
+use Illuminate\Support\Facades\Auth;
+
+use App\Models\CartItem;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -22,6 +27,13 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
+
+    protected $listen = [
+        Login::class => [
+            SyncCartSessionToDb::class,
+        ],
+    ];
+
     /**
      * Bootstrap any application services.
      */
@@ -31,8 +43,16 @@ class AppServiceProvider extends ServiceProvider
 
         View::composer('*', function ($view) {
             // Giỏ hàng
-            $cart = session('cart', []);
-            $cartItemCount = collect($cart)->sum('quantity');
+
+
+            if (Auth::check()) {
+                $cartItemCount = CartItem::where('user_id', Auth::id())->sum('quantity');
+            } else {
+                $cart = session('cart', []);
+                $cartItemCount = collect($cart)->sum('quantity');
+            }
+
+
 
             // Số lượng liên hệ
             $contactCount = Contact::count();

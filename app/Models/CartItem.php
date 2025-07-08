@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
 use App\Models\productdetail;
 
-class Cart extends Model
+class CartItem extends Model
 {
     protected $fillable = [
         'user_id',

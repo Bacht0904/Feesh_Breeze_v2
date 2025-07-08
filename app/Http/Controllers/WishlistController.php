@@ -33,29 +33,30 @@ class WishlistController extends Controller
             'product_detail_id' => 'required|exists:product_details,id',
         ]);
 
+        $detailId = $request->product_detail_id;
         $wishlist = session()->get('wishlist', []);
-        $key      = $request->product_detail_id;
 
-        if (!isset($wishlist[$key])) {
-            $wishlist[$key] = [
-                'product_detail_id' => $key,
-                'quantity'          => 1,
-            ];
-            session()->put('wishlist', $wishlist);
-
-            // Nếu AJAX, trả JSON
-            if ($request->ajax()) {
-                return response()->json(['message' => 'Đã thêm vào danh sách yêu thích!']);
-            }
-
-            return back()->with('success', 'Đã thêm vào danh sách yêu thích!');
+        // Kiểm tra sản phẩm đã tồn tại trong wishlist chưa
+        if (array_key_exists($detailId, $wishlist)) {
+            $message = 'Sản phẩm đã có trong danh sách yêu thích.';
+            return $request->ajax()
+                ? response()->json(['message' => $message], 409)
+                : back()->with('info', $message);
         }
 
-        if ($request->ajax()) {
-            return response()->json(['message' => 'Sản phẩm đã có trong wishlist'], 409);
-        }
-        return back()->with('info', 'Sản phẩm đã có trong danh sách yêu thích.');
+        // Thêm sản phẩm vào wishlist
+        $wishlist[$detailId] = [
+            'product_detail_id' => $detailId,
+            'quantity'          => 1,
+        ];
+        session()->put('wishlist', $wishlist);
+
+        $message = 'Đã thêm vào danh sách yêu thích!';
+        return $request->ajax()
+            ? response()->json(['message' => $message])
+            : back()->with('success', $message);
     }
+
 
     public function moveToCart(Request $request)
     {
@@ -90,7 +91,7 @@ class WishlistController extends Controller
         session()->put('cart', $cart);
 
         // Xóa khỏi wishlist nếu tồn tại
-     
+
         // Xóa khỏi wishlist theo ID gốc đã lưu
         $originalId = $request->input('original_product_detail_id');
         $wishlist = session()->get('wishlist', []);
