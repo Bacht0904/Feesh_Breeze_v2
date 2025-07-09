@@ -57,9 +57,6 @@ class AppServiceProvider extends ServiceProvider
             // Số lượng liên hệ
             $contactCount = Contact::count();
 
-            // Số lượng bình luận chưa duyệt
-            $pendingComments = Comment::where('is_approved', false)->count();
-
             // Danh sách loại sản phẩm
             $categories = Category::all();
 
@@ -67,7 +64,6 @@ class AppServiceProvider extends ServiceProvider
             $view->with([
                 'cartItemCount' => $cartItemCount,
                 'contactCount' => $contactCount,
-                'pendingComments' => $pendingComments,
                 'categories' => $categories,
             ]);
         });
