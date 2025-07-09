@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\Product_details as ProductDetail;
+use App\Models\Product_details;
 
 class Wishlist extends Model
 {
@@ -14,8 +14,8 @@ class Wishlist extends Model
     {
         return $this->belongsTo(User::class);
     }
-    public function detail()
+    public function productdetail()
     {
-        return $this->belongsTo(ProductDetail::class, 'product_detail_id');
+        return $this->belongsTo(Product_details::class, 'product_detail_id');
     }
 }
