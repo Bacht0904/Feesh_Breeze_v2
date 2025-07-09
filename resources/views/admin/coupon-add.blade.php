@@ -57,7 +57,7 @@
                     </fieldset>
                     <fieldset class="name">
                         <div class="body-title">Số lượng mã<span class="tf-color-1">*</span></div>
-                        <input class="flex-grow" type="text" placeholder="Nhập số lượng" name="value" tabindex="0"
+                        <input class="flex-grow" type="text" placeholder="Nhập số lượng" name="quantity" tabindex="0"
                             value="" aria-required="true" required="">
                     </fieldset>
                     <!-- <fieldset class="category">

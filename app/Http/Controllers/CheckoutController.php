@@ -51,12 +51,24 @@ class CheckoutController extends Controller
     {
         $code = $request->input('coupon_code');
 
-        $coupon = Coupon::where('code', $code)
-            ->where('status', 'active')
-            ->first();
+        // $coupon = Coupon::where('code', $code)
+        //     ->where('status', 'active')
+        //     ->first();
+            $coupon = Coupon::where('code', $code)
+                ->where('quantity', '>',0)
+                ->first();
+
 
         if (!$coupon) {
-            return back()->with('voucher_message', 'Mã giảm giá không hợp lệ hoặc đã hết hạn.');
+            return back()->with('voucher_message', 'Mã giảm giá không hợp lệ hoặc đã hết lượt sử dụng.');
+        }
+        // Tạo đơn sẽ trừ số lượng mã
+        $coupon->decrement('quantity');
+        // Nếu số lượng = 0 thì chuyển trạng thái thành inactive
+        if ($coupon->quantity <= 0)
+        {
+            $coupon->status = 'inactive';
+            $coupon->save();
         }
 
         $cart = session('cart', []);
@@ -149,7 +161,7 @@ class CheckoutController extends Controller
                     'address'         => $request->address,
                     'email'           => $request->email ?? null,
                     'note'            => $request->note,
-                    'coupon_code'     => $request->coupon_code,
+                    'coupon_code'     => $request->coupon_code ->code?? null,
                     'coupon_discount' => $totals['discount'],
                     'shipping_fee'    => $totals['shipping'],
                     'total'           => $totals['total'],
