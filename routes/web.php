@@ -76,12 +76,15 @@ Route::middleware(['admin.staff'])->group(function () {
 
     Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
     Route::put('/admin/order/status/update', [AdminController::class, 'updateStatus'])->name('admin.order.status.update');
-
+    Route:: get('/admin/order/create', [AdminController::class,'order_create'])->name('admin.order.add');
+    Route:: post('/admin/order/store', [AdminController::class,'order_store'])->name('admin.order.store');
+    Route::get('/admin/products/find-by-code', [AdminController::class, 'findProductByCode'])->name('admin.products.findByCode');
 
     Route::get('/admin/order/detail/{id}', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 
     Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
-
+   // Route::put('/admin/order/update-status', [AdminController::class,'update_order_status'])->name('admin.order.status.update');
+    
     Route::get('/admin/products', [ProductController::class, 'products'])->name('admin.products');
     Route::post('/admin/product/store', [ProductController::class, 'product_store'])->name('admin.product.store');
     Route::get('/admin/product/add', [ProductController::class, 'add_product'])->name('admin.product.add');
@@ -211,6 +214,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/account-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/account-orders/{id}', [OrderController::class, 'show'])->name('orders.details');
 });
+ Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 Route::middleware(['auth'])->group(function () {
     Route::get('/account', [UserController::class, 'index'])->name('account');
     Route::post('/account/update', [UserController::class, 'update'])->name('account.update');

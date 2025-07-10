@@ -11,5 +11,6 @@ class Coupon extends Model
         "type",
         "value",
         "status",
+        "quantity"
     ];
 }

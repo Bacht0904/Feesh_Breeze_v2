@@ -25,11 +25,13 @@ class CouponController extends Controller
             'code' => 'required|string|unique:coupons,code',
             'type' => 'required|in:percent,fixed',
             'value' => 'required|numeric|min:0',
+            'quantity'=> 'required|integer|min:1',
         ]);
         $coupon = new Coupon();
         $coupon->code = $request->code;
         $coupon->type = $request->type;
         $coupon->value = $request->value;
+        $coupon->quantity = $request->quantity;
         $coupon->save();
 
         return redirect()->route('admin.coupons')->with('status', 'Coupon đã được thêm thành công!');
@@ -49,6 +51,7 @@ class CouponController extends Controller
             'type' => 'required|in:percent,fixed',
             'value' => 'required|numeric|min:0',
             'status' => 'required|in:active,inactive',
+            'quantity' => 'required',
         ]);
 
         $coupon = Coupon::find($id);

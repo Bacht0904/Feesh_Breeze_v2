@@ -6,12 +6,15 @@ use App\Models\Order;
 use App\Models\Contact;
 use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
 use App\Models\OrderDetail;
+use App\Models\Product_details;
+use App\Models\Product;
 use App\Notifications\OrderStatusUpdated;
 use App\Notifications\OrderDeliveredNotification;
 use App\Models\Comment;
@@ -128,7 +131,114 @@ class AdminController extends Controller
 
 
 
+    public function order_create() 
+    {
+        $product= Product::with('product_details')->get();
+        //dd($product);
+        return view('admin.order-add');
+    }
+    public function findProductByCode(Request $request)
+    {
+         $product = Product_details::with('product')
+        ->where('id', $request->code)
+        ->first();
+        if(!$product) {
+            return response()->json(['status'=>false,'message'=>'Không tìm thấy sản phẩm']);
 
+        }
+        return response()->json([
+            'status'=>true,
+            'data'=>$product
+        ]);
+        // $query = $request->get('query');
+
+        // $productDetail = Product_details::with('product')
+        //     ->where('id', $query) // hoặc where('sku', $query) nếu có mã riêng
+        //     ->orWhereHas('product', function($q) use ($query) {
+        //         $q->where('name', 'like', "%$query%");
+        //     })
+        //     ->first();
+
+        // if (!$productDetail) {
+        //     return response()->json(['error' => 'Không tìm thấy sản phẩm'], 404);
+        // }
+
+        // return response()->json([
+        //     'id' => $productDetail->id,
+        //     'product_name' => $productDetail->product->name,
+        //     'size' => $productDetail->size,
+        //     'color' => $productDetail->color,
+        //     'price' => $productDetail->price,
+        //     'quantity' => $productDetail->quantity,
+        //     'image' => asset('uploads/products/' . $productDetail->image),
+        // ]);
+    }
+    public function order_store(Request $request) 
+    {
+        
+        $request->validate([
+            'name'=>'required|string|max:255',
+            'phone'=>'required',
+            'address'=>'required',
+            'items'=>'required|array|min:1',
+            'items.*.product_detail_id'=>'required|exists:product_details,id',
+            'items.*.quantity'=>'required|integer|min:1',
+        ]);
+
+        DB::transaction(function()use($request) {
+
+            $subtotal =0;
+            foreach($request ->items as $item) 
+            {
+                $productDetail = Product_details::findOrFail($item['product_detail_id']);
+                $subtotal += $productDetail->price * $item['quantity'];
+            }
+            $discount = 0;
+            $total=$subtotal+$discount;
+
+            $order=Order::create([
+                'name'=> $request->name,
+                'phone'=> $request->phone,
+                'id_payment'      => 'PMT' . now()->timestamp,
+                'id_shipping'     => 'SHIP' . now()->timestamp,
+                'suptotal'        => $subtotal,
+                'payment_method'  => 'Tiền Mặt',
+                'payment_status'  => 'Đã Thanh Toán',
+                'address'=> $request->address,
+                'order_date'=> Carbon::now(),
+                'status'=> $request->status,
+                'total' => $total,
+                'id_user' =>3,
+
+            ]);
+            foreach($request->items as $item) {
+                $productDetail =Product_details::find($item['product_detail_id']);
+                if($productDetail ->quantity <$item['quantity']) {
+                    throw new \Exception('Sản Phẩm {$productDetail->product->name} không đủ hàng');
+
+                }
+                
+                // Trừ tồn kho
+                $productDetail->quantity-= $item['quantity'];
+                $productDetail->save();
+
+                // Thêm chi tiết đơn hàng
+                OrderDetail::create([
+                    'order_id' =>$order->id,
+                    'product_detail_id'=>$productDetail->id,
+                    'product_name'=>$productDetail->product->name,
+                    'size'=>$productDetail->size,
+                    'color'=>$productDetail->color,
+                    'price'=>$productDetail->price,
+                    'quantity'=>$item['quantity'],
+                    'image' => $productDetail->image,
+
+                ]);
+            }
+        });
+        return redirect()->route('admin.orders')->with('status','Tạo đơn hàng thành công');
+
+    }
     public function orders()
     {
         $orders = Order::orderBy('created_at', 'desc')->paginate(12);

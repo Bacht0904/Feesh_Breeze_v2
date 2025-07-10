@@ -32,6 +32,8 @@
                             </div>
                         </form>
                     </div>
+                    <a class="tf-button style-1 w208" href="{{ route('admin.order.add') }}"><i class="icon-plus"></i>Thêm
+                        mới</a>
                 </div>
                 <div class="wg-table table-all-user">
                     <div class="table-responsive">

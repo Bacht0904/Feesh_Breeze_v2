@@ -363,7 +363,7 @@
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('images/logo/logo.png') }}" class="logo__image" , style="max-height: 60px ; with:auto ">
+                        <img src="{{ asset('images/logo/logo.png') }}" class="logo__image" , style="max-height:80px ; with:auto ">
 
                     </a>
                 </div>
@@ -697,7 +697,9 @@
         }
     </style>
 
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
     <!-- Toastr JS -->
 
 

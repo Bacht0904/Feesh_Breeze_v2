@@ -20,16 +20,16 @@
     <link rel="apple-touch-icon-precomposed" href="{{ asset('images/favicon.ico') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/sweetalert.min.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('css/custom.css') }}">
-
+<<<<<<<<< Temporary merge branch 1
+    <!-- Summernote CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.css" rel="stylesheet">
+=========
     <!-- Toastr CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
 
     <!-- SweetAlert2 -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-    <!-- Summernote CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.css" rel="stylesheet">
-
+>>>>>>>>> Temporary merge branch 2
     @stack('styles')
     <style>
         #toast-container>.toast {
@@ -431,6 +431,12 @@
     <script src="{{ asset('js/apexcharts/apexcharts.js') }}"></script>
     <script src="{{ asset('js/main.js') }}"></script>
 
+    <!-- jQuery (bắt buộc trước Summernote) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Summernote JS -->
+    <script src="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.js"></script>
+
     <!-- Toastr JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
@@ -462,13 +468,7 @@
             })
         }
     </script>
-
-    <!-- jQuery (bắt buộc trước Summernote) -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!-- Summernote JS -->
-    <script src="https://cdn.jsdelivr.net/npm/summernote/dist/summernote.min.js"></script>
-
+>>>>>>>>> Temporary merge branch 2
 
     @stack('scripts')
 </body>
