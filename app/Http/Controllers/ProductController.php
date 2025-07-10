@@ -102,7 +102,6 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'description' => 'required|string|max:10000',
-            'isNew' => 'required|in:0,1',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.size' => 'required|string',
             'variants.*.color' => 'required|string',
@@ -131,7 +130,8 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->brand_id = $request->brand_id;
         $product->description = $request->description;
-        $product->isNew = $request->isNew;
+        $product->is_new = 1;
+        
 
         // Xác định trạng thái sản phẩm
         $total_quantity = collect($request->variants)->sum('quantity');
@@ -198,7 +198,6 @@ class ProductController extends Controller
             'category_id' => 'required|exists:categories,id',
             'brand_id' => 'required|exists:brands,id',
             'description' => 'required|string|max:1024',
-            'isNew' => 'required|in:0,1',
             'variants.*.price' => 'required|numeric|min:0',
             'variants.*.size' => 'required|string',
             'variants.*.color' => 'required|string',
@@ -215,7 +214,6 @@ class ProductController extends Controller
         $product->category_id = $request->category_id;
         $product->brand_id = $request->brand_id;
         $product->description = $request->description;
-        $product->isNew = $request->isNew;
 
         $category = Category::findOrFail($request->category_id);
         $brand = Brand::findOrFail($request->brand_id);

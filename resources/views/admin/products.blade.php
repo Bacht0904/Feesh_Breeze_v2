@@ -70,7 +70,13 @@
                                         <span
                                             title="{{ $product->description }}">{{ Str::limit($product->description, 100) }}</span>
                                     </td>
-                                    <td>{{ $product->isNew ? 'Có 🔥' : 'Không' }}</td>
+                                    <td>
+                                        @if ($product->is_new)
+                                            <span class="badge bg-success">Mới 🔥</span>
+                                        @else
+                                            <span class="badge bg-secondary">Không</span>
+                                        @endif
+                                    </td>
 
                                     <td>
                                         @if($product->product_details->count() && $product->product_details->first()->image)
