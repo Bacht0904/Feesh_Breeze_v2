@@ -91,13 +91,16 @@
                   </td>
 
                   <td>
-                    <a href="#" class="text-danger" onclick="event.preventDefault(); document.getElementById('remove-form-{{ $item->id }}').submit();">Xoá</a>
-                    <form id="remove-form-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}" method="POST" style="display: none;">
-                      @csrf
 
+
+                    <form action="{{ route('cart.remove', $id) }}" method="POST" id="remove-form-{{ $id }}">
+                      @csrf
+                      @method('DELETE')
+                      <button type="submit" class="text-danger">Xoá</button>
                     </form>
 
                   </td>
+
                 </tr>
                 @endforeach
                 @else
@@ -147,14 +150,15 @@
                     </td>
 
                     <td>
-                      <a href="#" class="text-danger" onclick="event.preventDefault(); document.getElementById('remove-form-{{ $id }}').submit();">Xoá</a>
-                      <form id="remove-form-{{ $id }}" action="{{ route('cart.remove', $id) }}" method="POST">
 
+                      <form action="{{ route('cart.remove', $id) }}" method="POST" id="remove-form-{{ $id }}">
                         @csrf
-
+                        @method('DELETE')
+                        <button type="submit" class="text-danger">Xoá</button>
                       </form>
 
                     </td>
+
                   </tr>
                   @endforeach
                   @endif

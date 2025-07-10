@@ -289,7 +289,9 @@
         $firstDetail = $product->lowestPricedDetail;
         $productUrl = route('products.show', $product->slug);
         @endphp
-
+        @if($products->isEmpty())
+        <p>Không tìm thấy sản phẩm nào phù hợp.</p>
+        @endif
         @if($firstDetail && $firstDetail->quantity > 0)
         <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
@@ -473,7 +475,7 @@
       .done(res => {
         showToast('success', res.message || 'Đã thêm vào yêu thích!');
         btn.toggleClass('active');
-         updateHeaderCounts();
+        updateHeaderCounts();
       })
       .fail(err => {
         const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
