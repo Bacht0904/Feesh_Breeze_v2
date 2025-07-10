@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
-use App\Models\productdetail;
+use App\Models\Product_details;
 
 class CartItem extends Model
 {
@@ -20,8 +20,10 @@ class CartItem extends Model
         return $this->belongsTo(User::class);
     }
 
+    // app/Models/CartItem.php
+
     public function productdetail()
     {
-        return $this->belongsTo(Product_details::class);
+        return $this->belongsTo(Product_details::class, 'product_detail_id');
     }
 }

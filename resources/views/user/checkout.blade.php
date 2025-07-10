@@ -9,22 +9,6 @@
     <div class="alert alert-success">{{ session('success') }}</div>
     @endif
 
-    {{-- Tiến trình thanh toán --}}
-    <!-- <div class="checkout-steps d-flex mb-5">
-      @foreach ([
-      ['text' => 'Giỏ Hàng', 'sub' => 'Sản phẩm'],
-      ['text' => 'Thanh toán', 'sub' => 'Thông tin'],
-      ['text' => 'Xác nhận', 'sub' => 'Gửi đơn']
-      ] as $index => $step)
-      <div class="checkout-steps__item {{ $index <= 1 ? 'active' : '' }}">
-        <span class="checkout-steps__item-number">0{{ $index + 1 }}</span>
-        <span class="checkout-steps__item-title">
-          <span>{{ $step['text'] }}</span><em>{{ $step['sub'] }}</em>
-        </span>
-      </div>
-      @endforeach
-    </div> -->
-
     <div class="row">
       {{-- Form khách hàng --}}
       <div class="col-md-7">

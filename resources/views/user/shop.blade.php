@@ -452,7 +452,10 @@
       }
     }).done(res => {
       showToast('success', res.message || 'Đã thêm vào giỏ hàng!');
-      // Bạn có thể cập nhật giao diện giỏ hàng tại đây nếu muốn
+
+      // ✅ Gọi hàm cập nhật số lượng giỏ hàng + wishlist
+      updateHeaderCounts();
+
     }).fail(err => {
       const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
       showToast('danger', msg);
@@ -470,6 +473,7 @@
       .done(res => {
         showToast('success', res.message || 'Đã thêm vào yêu thích!');
         btn.toggleClass('active');
+         updateHeaderCounts();
       })
       .fail(err => {
         const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';

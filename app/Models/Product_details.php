@@ -32,6 +32,4 @@ class Product_details extends Model
         return $this->hasMany(OrderDetail::class, 'product_detail_id');
     }
 
-    // app/Models/OrderDetail.php
-
 }

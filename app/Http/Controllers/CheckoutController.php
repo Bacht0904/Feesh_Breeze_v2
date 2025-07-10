@@ -10,8 +10,12 @@ use App\Models\OrderDetail;
 use App\Models\Coupon;
 use Illuminate\Support\Facades\Notification;
 use App\Notifications\OrderPlaced;
+use App\Models\CartItem;
+use App\Models\Product_details;
 use App\Models\User;
-// Đổi tên model cho chuẩn (không _)
+use Illuminate\Support\Collection;
+
+
 
 class CheckoutController extends Controller
 {
@@ -27,120 +31,175 @@ class CheckoutController extends Controller
 
     public function show()
     {
-        $cart = session('cart', []);
-        $empty = empty($cart);
-        $availableCoupons = Coupon::where('status', 'active')
+        if (Auth::check()) {
+            // 1. Lấy cart từ database, với quan hệ productdetail → product
+            $cartItems = CartItem::with('productdetail.product')
+                ->where('user_id', Auth::id())
+                ->get();
 
-            ->get();
+            $empty = $cartItems->isEmpty();
 
-        $address = Auth::user()->address ?? '';
-        $totals = $this->calculateTotals($cart, $address);
-        if ($empty) {
-            return view('user.checkout', array_merge(
-                compact('cart', 'empty', 'availableCoupons'),
-                $totals
-            ));
+            // 2. Chuyển thành mảng giống session
+            $cart = $cartItems->map(fn($item) => [
+                'product_name' => optional(optional($item->productdetail)->product)->name
+                    ?? 'Sản phẩm đã xoá',
+                'size'         => $item->productdetail->size ?? '-',
+                'price'        => $item->productdetail->price ?? 0,
+                'image'        => $item->productdetail->image ?? 'img/default.png',
+                'quantity'     => $item->quantity,
+            ])->toArray();
+        } else {
+            $cart  = session('cart', []);
+            $empty = empty($cart);
         }
 
-        return view('user.checkout', array_merge(compact('cart', 'empty', 'availableCoupons'), $totals));
+        // 3. Coupon, address và tính tổng
+        $availableCoupons = Coupon::where('status', 'active')->get();
+        $address          = Auth::user()->address ?? '';
+        $totals           = $this->calculateTotals($cart, $address);
+
+        // 4. Đưa hết về view
+        return view('user.checkout', array_merge(
+            compact('cart', 'empty', 'availableCoupons'),
+            $totals
+        ));
     }
+
 
 
 
     public function applyCoupon(Request $request)
     {
-        $code = $request->input('coupon_code');
+        $code   = $request->input('coupon_code');
+        $coupon = Coupon::where('code', $code)
+            ->where('status', 'active')
+            ->where('quantity', '>', 0)
+            ->first();
 
-        // $coupon = Coupon::where('code', $code)
-        //     ->where('status', 'active')
-        //     ->first();
-            $coupon = Coupon::where('code', $code)
-                ->where('quantity', '>',0)
-                ->first();
-
-
-        if (!$coupon) {
-            return back()->with('voucher_message', 'Mã giảm giá không hợp lệ hoặc đã hết lượt sử dụng.');
+        if (! $coupon) {
+            return back()->with(
+                'voucher_message',
+                'Mã giảm giá không hợp lệ hoặc đã hết lượt sử dụng.'
+            );
         }
-        // Tạo đơn sẽ trừ số lượng mã
+
+        // Giảm lượt dùng
         $coupon->decrement('quantity');
-        // Nếu số lượng = 0 thì chuyển trạng thái thành inactive
-        if ($coupon->quantity <= 0)
-        {
+        if ($coupon->quantity <= 0) {
             $coupon->status = 'inactive';
             $coupon->save();
         }
 
-        $cart = session('cart', []);
-        $total = 0;
-        foreach ($cart as $item) {
-            $total += $item['price'] * $item['quantity'];
-        }
+        // Tính tổng từ session hoặc (nếu bạn muốn) từ DB
+        $cart  = session('cart', []);
+        $total = collect($cart)->sum(fn($i) => ($i['price'] ?? 0) * ($i['quantity'] ?? 0));
 
-        $discount = 0;
+        // Tính discount
         if ($coupon->type === 'percent') {
             $discount = $total * ($coupon->value / 100);
-        } elseif ($coupon->type === 'fixed') {
+        } else { // fixed
             $discount = $coupon->value;
         }
-
-        $discount = min($discount, $total); // không giảm vượt quá tổng
+        $discount = min($discount, $total);
 
         session(['coupon' => [
-            'code' => $coupon->code,
+            'code'     => $coupon->code,
             'discount' => $discount,
         ]]);
 
-        return back()->with('voucher_message', "Áp dụng mã {$coupon->code} thành công! Giảm " . number_format($discount, 0) . ' đ');
+        return back()->with(
+            'voucher_message',
+            "Áp dụng mã {$coupon->code} thành công! Giảm " . number_format($discount) . ' đ'
+        );
     }
+
 
     public function process(Request $request)
     {
-        $cart = session('cart', []);
+        // 1. Validate input
+        $data = $request->validate([
+            'name'           => 'required|string|max:255',
+            'phone'          => 'required|string|max:20',
+            'address'        => 'required|string|max:500',
+            'payment_method' => 'required|in:cod,momo',
+            'note'           => 'nullable|string|max:1000',
+            'coupon_code'    => 'nullable|string|exists:coupons,code',
+        ]);
 
-        if (empty($cart)) {
+        // 2. Build full cart array giống như show()
+        if (Auth::check()) {
+            $cartItems = CartItem::with('productdetail.product')
+                ->where('user_id', Auth::id())
+                ->get();
+
+            $items = $cartItems->map(function ($item) {
+                $d = $item->productdetail;
+                return [
+                    'product_detail_id' => $item->product_detail_id,
+                    'product_name'      => optional(optional($d)->product)->name ?? 'Sản phẩm đã xoá',
+                    'size'              => $d->size    ?? '-',
+                    'color'             => $d->color   ?? null,
+                    'price'             => $d->price   ?? 0,
+                    'image'             => $d->image   ?? 'img/default.png',
+                    'quantity'          => $item->quantity,
+                ];
+            })->toArray();
+        } else {
+            $items = session('cart', []);
+        }
+
+        if (empty($items)) {
             return back()->with('error', 'Giỏ hàng của bạn đang trống!');
         }
 
-        $method = $request->payment_method;
+        // 3. Tính totals
+        $totals = $this->calculateTotals($items, $data['address']);
 
-        $totals = $this->calculateTotals($cart, $request->address);
-
-
-        return match ($method) {
-            'momo' => $this->handleMomo($request, $cart, $totals),
-            'cod' => $this->handleCashOnDelivery($request, $cart, $totals),
+        // 4. Chuyển đến handler tương ứng
+        return match ($data['payment_method']) {
+            'cod'  => $this->handleCashOnDelivery($request, $items, $totals),
+            'momo' => $this->handleMomo($request, $items, $totals),
             default => back()->with('error', 'Phương thức thanh toán không hợp lệ!'),
         };
     }
-
-    protected function calculateTotals(array $cart, ?string $address = null): array
+    protected function calculateTotals(array|Collection $cart, ?string $address = null): array
     {
-        $subtotal = collect($cart)->sum(fn($item) => $item['price'] * $item['quantity']);
+        // 🔢 Tính tổng tiền hàng
+        $subtotal = collect($cart)->sum(function ($item) {
+            if (is_array($item)) {
+                return ($item['price'] ?? 0) * ($item['quantity'] ?? 0);
+            }
 
-        // 🚚 Mặc định phí giao hàng
+            if (is_object($item)) {
+                $price = optional($item->productDetail)->price ?? 0;
+                $quantity = $item->quantity ?? 0;
+                return $price * $quantity;
+            }
+
+            return 0;
+        });
+
+        // 🚚 Phí giao hàng mặc định
         $shipping = 30000;
-
-        // ⛳ Xử lý miễn phí nếu địa chỉ ở TP HCM
         if ($address) {
-            $normalized = strtolower($address);
+            $normalized = mb_strtolower($address);
             if (str_contains($normalized, 'hồ chí minh') || str_contains($normalized, 'tp.hcm') || str_contains($normalized, 'hcm')) {
                 $shipping = 0;
             }
         }
 
+        // 🎟 Áp dụng mã giảm giá
         $discount = 0;
         $couponData = session('coupon');
-        if ($couponData) {
+        if (is_array($couponData) && isset($couponData['discount'])) {
             $discount = min($couponData['discount'], $subtotal);
         }
 
+        // 🧾 Tổng cộng
         $total = max($subtotal + $shipping - $discount, 0);
 
         return compact('subtotal', 'shipping', 'discount', 'total');
     }
-
-
 
 
     protected function handleCashOnDelivery(Request $request, array $cart, array $totals)
@@ -161,7 +220,7 @@ class CheckoutController extends Controller
                     'address'         => $request->address,
                     'email'           => $request->email ?? null,
                     'note'            => $request->note,
-                    'coupon_code'     => $request->coupon_code ->code?? null,
+                    'coupon_code'     => $request->coupon_code->code ?? null,
                     'coupon_discount' => $totals['discount'],
                     'shipping_fee'    => $totals['shipping'],
                     'total'           => $totals['total'],
@@ -183,6 +242,12 @@ class CheckoutController extends Controller
 
                 // 3. Xoá giỏ hàng
                 session()->forget('cart');
+                if (Auth::check()) {
+                    CartItem::where('user_id', Auth::id())->delete();
+                }
+
+                // XÓA luôn coupon & order_data (nếu trả về từ MOMO)
+                session()->forget(['coupon', 'order_data']);
 
                 return $order; // ✅ Trả đối tượng Order ra ngoài
             });
@@ -278,11 +343,32 @@ class CheckoutController extends Controller
     public function handleMomoCallback(Request $request)
     {
 
-        $order = session('order_data');
+        $orderData = session('order_data', []);
+        $rawCart   = $orderData['cart'] ?? session('cart', []);
 
-        if (!$order) {
-            return redirect()->route('user.checkout')->with('error', 'Giao dịch đã bị hủy hoặc thất bại.');
-        }
+        // Map ra đủ thông tin
+        $cart = collect($rawCart)->map(function ($item) {
+            $detail = Product_details::find($item['product_detail_id']);
+            return [
+                'product_name' => optional($detail->product)->name ?? 'Sản phẩm đã xoá',
+                'size'         => $detail->size               ?? '-',
+                'price'        => $detail->price              ?? 0,
+                'image'        => $detail->image              ?? 'img/default.png',
+                'quantity'     => $item['quantity']           ?? 0,
+            ];
+        })->toArray();
+
+        $empty            = empty($cart);
+        $availableCoupons = Coupon::where('status', 'active')->get();
+        $address          = $orderData['customer']['address']
+            ?? Auth::user()->address
+            ?? '';
+        $totals           = $this->calculateTotals($cart, $address);
+
+        return view('user.checkout', array_merge(
+            compact('cart', 'empty', 'availableCoupons', 'address'),
+            $totals
+        ))->with('error', 'Xác thực không thành công hoặc bị hủy.');
 
         // Kiểm tra mã phản hồi từ MoMo
         if ($request->resultCode == 0) {
@@ -322,7 +408,15 @@ class CheckoutController extends Controller
                         ]);
                     }
 
-                    session()->forget(['cart', 'order_data']);
+                    session()->forget('cart');
+
+                    // 2. XÓA cart DB (user đã login)
+                    if (Auth::check()) {
+                        CartItem::where('user_id', Auth::id())->delete();
+                    }
+
+                    // 3. XÓA coupon & order_data
+                    session()->forget(['coupon', 'order_data']);
                     return $saved;
                 });
                 $recipients = User::whereIn('role', ['admin', 'staff'])->get();
@@ -332,7 +426,7 @@ class CheckoutController extends Controller
 
                 return redirect()->route('user.checkoutsuccess', ['id' => $saved->id]);
             } catch (\Throwable $e) {
-                
+
                 return back()->with('error', 'Đặt hàng thất bại: ' . $e->getMessage());
             }
         }

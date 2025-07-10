@@ -101,7 +101,7 @@
 
 
 
-          {{-- Số lượng --}}
+
           {{-- Số lượng --}}
           <div class="mb-3">
             <label class="form-label">Số lượng</label>
@@ -214,58 +214,74 @@
 @push('scripts')
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    const swiperInstance = new Swiper('.swiper-product-detail', {
+      loop: true,
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      }
+    });
+
     const colorRadios = document.querySelectorAll('input[name="color"]');
     const sizeLabels = document.querySelectorAll('.size-option');
-    const btnSubmit = document.querySelector('button[type="submit"]');
+    const btnSubmit = document.getElementById('add-to-cart-btn');
     const slides = document.querySelectorAll('.swiper-slide');
-    const swiperInstance = document.querySelector('.swiper-product-detail')?.swiper;
 
     function updateByColor(selectedColor) {
-      let any = false;
+      let hasSize = false;
+      let firstSelected = false;
 
       sizeLabels.forEach(lbl => {
         const color = lbl.dataset.color;
         const qty = parseInt(lbl.dataset.qty, 10);
-        const match = color === selectedColor && qty > 0;
+        const isMatch = color === selectedColor && qty > 0;
+        const input = lbl.querySelector('input');
 
-        // show/hide size
-        lbl.style.display = match ? 'inline-block' : 'none';
+        lbl.style.display = isMatch ? 'inline-block' : 'none';
+        input.disabled = !isMatch;
+        lbl.classList.toggle('opacity-100', isMatch);
+        lbl.classList.toggle('opacity-50', !isMatch);
 
-        // opacity + disable input
-        lbl.classList.toggle('opacity-100', match);
-        lbl.classList.toggle('opacity-50', !match);
-        lbl.querySelector('input').disabled = !match;
-
-        if (match) any = true;
+        if (isMatch && !firstSelected) {
+          input.checked = true;
+          firstSelected = true;
+          hasSize = true;
+        }
       });
 
-      // button
-      btnSubmit.disabled = !any;
-      btnSubmit.innerText = any ?
-        '🛒 Thêm vào giỏ hàng' :
-        '⛔ Không có size phù hợp';
-
-      // Swiper slide tương ứng
-      if (swiperInstance) {
-        let found = false;
-        slides.forEach((slide, idx) => {
-          if ((slide.dataset.color || '').trim().toLowerCase() === selectedColor) {
-            swiperInstance.slideTo(idx);
-            found = true;
-          }
-        });
-        if (!found) swiperInstance.slideTo(0);
-      }
+      btnSubmit.disabled = !hasSize;
+      btnSubmit.innerText = hasSize ? '🛒 Thêm vào giỏ hàng' : '⛔ Không có size phù hợp';
     }
 
-    // gán event
+    // Chọn màu
     colorRadios.forEach(radio =>
       radio.addEventListener('change', () => {
-        updateByColor(radio.value.trim().toLowerCase());
+        const selectedColor = radio.value.trim().toLowerCase();
+        updateByColor(selectedColor);
+
+        // Sync ảnh theo màu
+        slides.forEach((slide, idx) => {
+          const slideColor = slide.dataset.color?.trim().toLowerCase();
+          if (slideColor === selectedColor) {
+            swiperInstance.slideToLoop(idx);
+          }
+        });
       })
     );
 
-    // khởi tạo lần đầu
+    // Khi đổi slide → đồng bộ lại màu
+    swiperInstance.on('slideChange', () => {
+      const activeSlide = swiperInstance.slides[swiperInstance.activeIndex];
+      const currentColor = activeSlide?.dataset.color?.trim().toLowerCase();
+
+      if (currentColor) {
+        const radio = [...colorRadios].find(r => r.value.trim().toLowerCase() === currentColor);
+        if (radio) radio.checked = true;
+        updateByColor(currentColor);
+      }
+    });
+
+    // Khởi tạo ban đầu
     const first = document.querySelector('input[name="color"]:checked');
     if (first) updateByColor(first.value.trim().toLowerCase());
   });

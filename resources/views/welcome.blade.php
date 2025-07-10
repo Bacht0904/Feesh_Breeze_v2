@@ -148,14 +148,25 @@
                                                 alt="{{ $product->name }}"
                                                 class="card-img-top img-cover">
                                         </a>
+                                        @php
+                                        $isInWishlist = false;
+                                        if (Auth::check()) {
+                                        $isInWishlist = Auth::user()->wishlist()->where('product_detail_id', $detail->id)->exists();
+                                        } else {
+                                        $wishlist = session('wishlist', []);
+                                        $isInWishlist = collect($wishlist)->contains('product_detail_id', $detail->id);
+                                        }
+                                        @endphp
+
                                         <button type="button"
-                                            class="btn btn-sm btn-outline-danger position-absolute top-0 end-0 js-add-wishlist"
+                                            class="btn btn-sm position-absolute top-0 end-0 js-add-wishlist {{ $isInWishlist ? 'btn-danger active' : 'btn-outline-danger' }}"
                                             data-id="{{ $detail->id }}"
                                             title="Thêm vào yêu thích">
                                             <svg width="16" height="16">
                                                 <use href="#icon_heart" />
                                             </svg>
                                         </button>
+
 
 
                                         @if ($detail)
@@ -294,11 +305,15 @@
             }
         }).done(res => {
             showToast('success', res.message || 'Đã thêm vào giỏ hàng!');
-            // Bạn có thể cập nhật giao diện giỏ hàng tại đây nếu muốn
+
+            // ✅ Gọi hàm cập nhật số lượng giỏ hàng + wishlist
+            updateHeaderCounts();
+
         }).fail(err => {
             const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
             showToast('danger', msg);
         });
+
     });
     document.addEventListener('DOMContentLoaded', function() {
         new Swiper('.js-featured-swiper', {
@@ -355,11 +370,13 @@
             .done(res => {
                 showToast('success', res.message || 'Đã thêm vào yêu thích!');
                 btn.toggleClass('active');
+                updateHeaderCounts();
             })
             .fail(err => {
                 const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
                 showToast('danger', msg);
             });
+
     });
 
     // Hiển thị toast

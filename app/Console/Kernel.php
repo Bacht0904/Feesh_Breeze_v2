@@ -10,7 +10,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Lệnh tự động chạy mỗi ngày lúc 01:00 sáng
-        $schedule->command('products:update-isnew')->dailyAt('01:00');
+        $schedule->command('products:update-isnew')->dailyAt('08:13');
     }
 
     protected function commands()

@@ -9,7 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-     use Notifiable;
+    use Notifiable;
 
     protected $fillable = [
         'name',
@@ -43,5 +43,8 @@ class User extends Authenticatable
     {
         return $this->role === 'user';
     }
-
+    public function wishlist()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
 }

@@ -122,9 +122,6 @@ class CartController extends Controller
 
         return back()->with('success', 'Đã xoá sản phẩm khỏi giỏ hàng.');
     }
-
-
-    // 👉 Cập nhật số lượng
     public function update(Request $request)
     {
         $validated = $request->validate([
@@ -135,53 +132,58 @@ class CartController extends Controller
         $newCart = [];
         $outOfStockItems = [];
 
-        foreach ($validated['quantities'] as $key => $qty) {
-            $qty = max(1, (int) $qty);
-            $detailId = $request->input("product_detail_ids.$key");
+        foreach ($validated['quantities'] as $key => $requestedQty) {
+            $requestedQty = max(1, (int) $requestedQty);
+            $detailId = $validated['product_detail_ids'][$key] ?? null;
 
             if (!$detailId) continue;
 
             $detail = Product_details::with('product')->find($detailId);
+            if (!$detail) continue;
 
-            if (!$detail || $detail->quantity < $qty) {
-                $outOfStockItems[] = $detail?->product->name ?? "Sản phẩm ID: $detailId";
-                continue;
+            $availableQty = (int) $detail->quantity;
+
+            // Nếu số lượng yêu cầu vượt tồn kho
+            if ($requestedQty > $availableQty) {
+                $outOfStockItems[] = "{$detail->product->name} (tối đa: $availableQty)";
+
+                if ($availableQty < 1) continue; // Hết sạch thì bỏ qua
+                $requestedQty = $availableQty; // Gán về số lượng tối đa còn lại
             }
 
-            $size  = $detail->size ?? 'default';
+            $size = $detail->size ?? 'default';
             $color = $detail->color ?? 'default';
-            $newKey = "{$detail->id}-{$size}-{$color}";
+            $keyName = "{$detail->id}-{$size}-{$color}";
 
-            if (isset($newCart[$newKey])) {
-                $newCart[$newKey]['quantity'] += $qty;
-            } else {
-                $newCart[$newKey] = [
-                    'product_id'         => $detail->product_id,
-                    'product_detail_id'  => $detail->id,
-                    'product_name'       => $detail->product->name,
-                    'size'               => $size,
-                    'color'              => $color,
-                    'price'              => $detail->price,
-                    'quantity'           => $qty,
-                    'image'              => $detail->image,
-                ];
+            $newCart[$keyName] = [
+                'product_id'         => $detail->product_id,
+                'product_detail_id'  => $detail->id,
+                'product_name'       => $detail->product->name,
+                'size'               => $size,
+                'color'              => $color,
+                'price'              => $detail->price,
+                'quantity'           => $requestedQty,
+                'image'              => $detail->image,
+            ];
+        }
+
+        // Nếu có sản phẩm hợp lệ → cập nhật giỏ
+        if (count($newCart)) {
+            session()->put('cart', $newCart);
+
+            if (count($outOfStockItems)) {
+                return redirect()->route('cart')->with(
+                    'warning',
+                    'Một vài sản phẩm đã được tự động giảm số lượng để khớp với số lượng còn lại: ' . implode(', ', $outOfStockItems)
+                );
             }
+
+            return redirect()->route('cart')->with('success', '🛒 Giỏ hàng đã được cập nhật!');
         }
 
-        session()->put('cart', $newCart);
-
-        if (count($outOfStockItems)) {
-            return redirect()->route('cart')->with('warning', 'Một số sản phẩm không đủ hàng: ' . implode(', ', $outOfStockItems));
-        }
-
-        return redirect()->route('cart')->with('success', '🛒 Giỏ hàng đã được cập nhật!');
+        // Không có sản phẩm hợp lệ
+        return redirect()->route('cart')->with('warning', 'Không thể cập nhật. Tất cả sản phẩm trong giỏ đều hết hàng.');
     }
-
-
-
-
-
-
 
     // 👉 Xóa sạch giỏ hàng
     public function clear()

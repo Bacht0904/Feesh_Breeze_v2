@@ -4,6 +4,20 @@
 <main class="pt-90">
   <section class="shop-checkout container">
     <h2 class="page-title mb-4">Giỏ hàng của bạn</h2>
+    @if(session('warning'))
+    <div class="alert alert-warning alert-dismissible fade show" role="alert" id="alert-warning">
+      {{ session('warning') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
+    @if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show" role="alert" id="alert-success">
+      {{ session('success') }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    @endif
+
 
     @php
     $total = 0;
@@ -60,7 +74,7 @@
                     @if($outOfStock)
                     <span class="text-danger fw-bold">Hết hàng</span>
                     @else
-                    {{ number_format($item->price, 0) }} đ
+                    {{ number_format($item['price'], 0) }} đ
                     @endif
                   </td>
 
@@ -80,7 +94,7 @@
                     <a href="#" class="text-danger" onclick="event.preventDefault(); document.getElementById('remove-form-{{ $item->id }}').submit();">Xoá</a>
                     <form id="remove-form-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}" method="POST" style="display: none;">
                       @csrf
-                      @method('DELETE')
+
                     </form>
 
                   </td>
@@ -116,7 +130,7 @@
                       @if($outOfStock)
                       <span class="text-danger fw-bold">Hết hàng</span>
                       @else
-                      {{ number_format($item->price, 0) }} đ
+                      {{ number_format($item['price'], 0) }} đ
                       @endif
                     </td>
 
@@ -133,10 +147,11 @@
                     </td>
 
                     <td>
-                      <a href="#" class="text-danger" onclick="event.preventDefault(); document.getElementById('remove-form-{{ $item->id }}').submit();">Xoá</a>
-                      <form id="remove-form-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}" method="POST" style="display: none;">
+                      <a href="#" class="text-danger" onclick="event.preventDefault(); document.getElementById('remove-form-{{ $id }}').submit();">Xoá</a>
+                      <form id="remove-form-{{ $id }}" action="{{ route('cart.remove', $id) }}" method="POST">
+
                         @csrf
-                        @method('DELETE')
+
                       </form>
 
                     </td>
@@ -178,3 +193,20 @@
   </section>
 </main>
 @endsection
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const alertWarning = document.getElementById('alert-warning');
+    const alertSuccess = document.getElementById('alert-success');
+
+    [alertWarning, alertSuccess].forEach(alert => {
+      if (alert) {
+        setTimeout(() => {
+          alert.classList.remove('show');
+          alert.classList.add('fade');
+        }, 4000); // 4s tự động đóng
+      }
+    });
+  });
+</script>
+@endpush

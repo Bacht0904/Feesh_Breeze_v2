@@ -25,7 +25,9 @@ use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
 use Illuminate\Http\Request;
+use App\Models\Wishlist;
 
+use App\Models\CartItem;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\NotificationController;
 
@@ -76,15 +78,15 @@ Route::middleware(['admin.staff'])->group(function () {
 
     Route::get('/admin/orders', [AdminController::class, 'orders'])->name('admin.orders');
     Route::put('/admin/order/status/update', [AdminController::class, 'updateStatus'])->name('admin.order.status.update');
-    Route:: get('/admin/order/create', [AdminController::class,'order_create'])->name('admin.order.add');
-    Route:: post('/admin/order/store', [AdminController::class,'order_store'])->name('admin.order.store');
+    Route::get('/admin/order/create', [AdminController::class, 'order_create'])->name('admin.order.add');
+    Route::post('/admin/order/store', [AdminController::class, 'order_store'])->name('admin.order.store');
     Route::get('/admin/products/find-by-code', [AdminController::class, 'findProductByCode'])->name('admin.products.findByCode');
 
     Route::get('/admin/order/detail/{id}', [AdminController::class, 'order_detail'])->name('admin.order.detail');
 
     Route::get('/admin/order/tracking', [AdminController::class, 'order_tracking'])->name('admin.order.tracking');
-   // Route::put('/admin/order/update-status', [AdminController::class,'update_order_status'])->name('admin.order.status.update');
-    
+    // Route::put('/admin/order/update-status', [AdminController::class,'update_order_status'])->name('admin.order.status.update');
+
     Route::get('/admin/products', [ProductController::class, 'products'])->name('admin.products');
     Route::post('/admin/product/store', [ProductController::class, 'product_store'])->name('admin.product.store');
     Route::get('/admin/product/add', [ProductController::class, 'add_product'])->name('admin.product.add');
@@ -214,7 +216,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/account-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::get('/account-orders/{id}', [OrderController::class, 'show'])->name('orders.details');
 });
- Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
+Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 Route::middleware(['auth'])->group(function () {
     Route::get('/account', [UserController::class, 'index'])->name('account');
     Route::post('/account/update', [UserController::class, 'update'])->name('account.update');
@@ -246,6 +248,21 @@ Route::get('/products/{product}/reviews', [ReviewController::class, 'index'])->n
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
 Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
 
+Route::get('/api/cart-wishlist-counts', function () {
+    if (Auth::check()) {
+        return response()->json([
+            'cartItemCount' => CartItem::where('user_id', Auth::id())->sum('quantity'),
+            'wishlistCount' => Wishlist::where('user_id', Auth::id())->count()
+        ]);
+    } else {
+        $cart = session('cart', []);
+        $wishlist = session('wishlist', []);
+        return response()->json([
+            'cartItemCount' => collect($cart)->sum('quantity'),
+            'wishlistCount' => collect($wishlist)->sum('quantity')
+        ]);
+    }
+});
 
 
 

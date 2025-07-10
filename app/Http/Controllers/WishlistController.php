@@ -98,84 +98,89 @@ class WishlistController extends Controller
     public function moveToCart(Request $request)
     {
         $request->validate([
-            'product_detail_id' => 'required|exists:product_details,id',
+            // Đây là ID của bản ghi wishlist ban đầu
+            'original_product_detail_id' => 'required|integer|exists:wishlists,product_detail_id',
+            // Đây là ID variant mới bạn chọn để cho vào cart
+            'product_detail_id'          => 'required|integer|exists:product_details,id',
         ]);
 
-        $detailId = $request->product_detail_id;
-        $quantity = $request->input('quantity', 1); // 👈 mặc định là 1
+        $origId = $request->input('original_product_detail_id');
+        $newId  = $request->input('product_detail_id');
+        $qty    = $request->input('quantity', 1);
 
-        $detail = Product_details::with('product')->find($detailId);
-        if (!$detail) {
-            return back()->with('error', 'Không tìm thấy sản phẩm chi tiết.');
-        }
+        // Lấy thông tin chi tiết mới (product variant)
+        $detail = Product_details::with('product')->findOrFail($newId);
 
         if (Auth::check()) {
+            // — DB-based cart
             $userId = Auth::id();
 
-            // Thêm vào giỏ DB
-            $existing = CartItem::where('user_id', $userId)
-                ->where('product_detail_id', $detailId)
-                ->first();
+            // a) Thêm hoặc cập nhật CartItem
+            $cartItem = CartItem::firstOrNew([
+                'user_id'           => $userId,
+                'product_detail_id' => $newId,
+            ]);
+            $cartItem->quantity = $cartItem->exists
+                ? $cartItem->quantity + $qty
+                : $qty;
+            $cartItem->price    = $detail->price;
+            $cartItem->save();
 
-            if ($existing) {
-                $existing->quantity += $quantity;
-                $existing->save();
-            } else {
-                CartItem::create([
-                    'user_id'           => $userId,
-                    'product_detail_id' => $detailId,
-                    'quantity'          => $quantity,
-                    'price'             => $detail->price,
-                ]);
-            }
-
-            dd(
-                Wishlist::where('user_id', $userId)
-                    ->where('product_detail_id', $detailId)
-                    ->first()
-            );
-        }
-
-        // Nếu chưa đăng nhập → dùng session
-        $cart = session('cart', []);
-        $key  = $detailId;
-
-        if (isset($cart[$key])) {
-            $cart[$key]['quantity'] += $quantity;
+            // b) Xóa khỏi bảng wishlist
+            Wishlist::where('user_id', $userId)
+                ->where('product_detail_id', $origId)
+                ->delete();
         } else {
-            $cart[$key] = [
-                'product_detail_id' => $detail->id,
-                'product_name'      => $detail->product->name,
-                'size'              => $detail->size,
-                'color'             => $detail->color,
-                'price'             => $detail->price,
-                'quantity'          => $quantity,
-                'image'             => $detail->image,
-            ];
+            // — Session-based cart
+            $cart     = session('cart', []);
+            $wishlist = session('wishlist', []);
+
+            // a) Thêm/cập nhật cart
+            if (isset($cart[$newId])) {
+                $cart[$newId]['quantity'] += $qty;
+            } else {
+                $cart[$newId] = [
+                    'product_detail_id' => $detail->id,
+                    'product_name'      => $detail->product->name,
+                    'size'              => $detail->size,
+                    'color'             => $detail->color,
+                    'price'             => $detail->price,
+                    'quantity'          => $qty,
+                    'image'             => $detail->image,
+                ];
+            }
+            session(['cart' => $cart]);
+
+            // b) Xóa khỏi session wishlist
+            if (isset($wishlist[$origId])) {
+                unset($wishlist[$origId]);
+                session(['wishlist' => $wishlist]);
+            }
         }
 
-        session()->put('cart', $cart);
-
-        // Xoá khỏi wishlist session nếu tồn tại
-        $wishlist = session('wishlist', []);
-        unset($wishlist[$detailId]);
-        session()->put('wishlist', $wishlist);
-
-        return back()->with('success', 'Đã thêm vào giỏ hàng!');
+        return back()->with('success', 'Đã chuyển sang giỏ và xóa khỏi yêu thích.');
     }
 
-
-
-
-    public function remove($id)
+    /**
+     * Xóa 1 sản phẩm khỏi wishlist
+     */
+    public function remove($detailId)
     {
-        $wishlist = session()->get('wishlist', []);
-        if (isset($wishlist[$id])) {
-            unset($wishlist[$id]);
-            session()->put('wishlist', $wishlist);
-            return back()->with('success', 'Đã xóa sản phẩm khỏi danh sách yêu thích.');
+        if (Auth::check()) {
+            // DB-based
+            Wishlist::where('user_id', Auth::id())
+                ->where('product_detail_id', $detailId)
+                ->delete();
+        } else {
+            // Session-based
+            $wishlist = session('wishlist', []);
+            if (isset($wishlist[$detailId])) {
+                unset($wishlist[$detailId]);
+                session(['wishlist' => $wishlist]);
+            }
         }
-        return back()->with('error', 'Sản phẩm không có trong danh sách yêu thích.');
+
+        return back()->with('success', 'Đã xóa sản phẩm khỏi danh sách yêu thích.');
     }
     public function clear()
     {

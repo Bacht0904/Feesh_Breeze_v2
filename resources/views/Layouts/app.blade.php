@@ -320,16 +320,7 @@
                         <button class="btn-icon btn-close-lg search-popup__reset" type="reset"></button>
                     </div>
 
-                    <div class="search-popup__results mt-3">
-                        {{-- Gợi ý liên kết nhanh --}}
-                        <div class="sub-menu search-suggestion" id="quick-links">
-                            <h6 class="sub-menu__title fs-base">Liên kết nhanh</h6>
-                            <ul class="sub-menu__list list-unstyled" id="quick-links-list"></ul>
-                        </div>
 
-                        {{-- Kết quả sản phẩm gợi ý tìm kiếm --}}
-                        <div class="search-result row row-cols-2 row-cols-md-4 row-cols-xl-5 mt-3" id="search-suggestions"></div>
-                    </div>
                 </form>
             </div>
 
@@ -499,10 +490,16 @@
 
 
 
-                    <a href="{{ route('wishlist') }} " class="header-tools__item">
-                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <a href="{{ route('wishlist') }} " class="header-tools__item position-relative">
+                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_heart" />
                         </svg>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger"
+                            style="transform: translate(-60%, -40%);">
+                            {{ $wishlistCount }}
+                        </span>
+
+
                     </a>
 
                     <a href="{{ route('cart') }} " class="header-tools__item header-tools__cart"
@@ -621,9 +618,33 @@
 
 
 
+    <script>
+        function updateHeaderCounts() {
+            fetch('/api/cart-wishlist-counts')
+                .then(response => response.json())
+                .then(data => {
+                    const cartBadge = document.querySelector('.header-tools__cart .badge');
+                    const wishlistBadge = document.querySelector('.header-tools__item .badge');
+
+                    if (cartBadge) {
+                        cartBadge.textContent = data.cartItemCount;
+                        cartBadge.style.display = data.cartItemCount > 0 ? 'inline-block' : 'none';
+                    }
+
+                    if (wishlistBadge) {
+                        wishlistBadge.textContent = data.wishlistCount;
+                        wishlistBadge.style.display = data.wishlistCount > 0 ? 'inline-block' : 'none';
+                    }
+                });
+        }
+
+        // Gọi mỗi khi thêm sản phẩm hoặc wishlist, hoặc định kỳ
+        document.addEventListener('DOMContentLoaded', updateHeaderCounts);
+    </script>
 
 
     <script src="https://unpkg.com/feather-icons"></script>
+
     <script>
         feather.replace()
         document.addEventListener('DOMContentLoaded', function() {
