@@ -3,7 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Pest\Support\Str;
+use Illuminate\Support\Str;
+//use Pest\Support\Str;
 
 class Brand extends Model
 {

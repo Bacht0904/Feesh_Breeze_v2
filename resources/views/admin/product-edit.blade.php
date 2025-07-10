@@ -72,7 +72,7 @@
 
                     </div>
 
-                    <div class="gap22 cols">
+                    <!-- <div class="gap22 cols">
                         <fieldset class="is-new">
                             <div class="body-title mb-10">Sản phẩm mới?<span class="tf-color-1">*</span></div>
                             <div class="select">
@@ -83,7 +83,7 @@
                                 </select>
                             </div>
                         </fieldset>
-                    </div>
+                    </div> -->
 
                 </div>
 
