@@ -76,8 +76,6 @@ class BrandController extends Controller
             $total_quantity = $product->product_details->sum('quantity');
 
             $newStatus = (
-                $product->category->status === 'inactive' ||
-                $brand->status === 'inactive' ||
                 $total_quantity === 0
             ) ? 'inactive' : 'active';
 

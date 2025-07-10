@@ -27,13 +27,9 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Product_details::class, 'product_detail_id');
     }
-    public function reviews()
-    {
-        return $this->hasMany(Review::class)->where('status', 1);
-    }
+
     public function review()
     {
-        return $this->hasOne(Review::class, 'product_detail_id', 'product_detail_id')
-            ->where('user_id', Auth::id());
+        return $this->hasOne(Review::class, 'order_detail_id', 'id');
     }
 }

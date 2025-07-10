@@ -5,11 +5,25 @@ namespace App\Http\Controllers;
 use App\Models\ProductDetail;
 use Illuminate\Http\Request;
 use App\Models\Product_details;
+use Auth;
+use App\Models\Wishlist;
+use App\Models\CartItem;
 
 class WishlistController extends Controller
 {
     public function index()
     {
+
+        if (Auth::check()) {
+            $items = Wishlist::with('productdetail.product')
+                ->where('user_id', Auth::id())
+                ->get()
+                ->map(function ($item) {
+                    $item->productdetail->wishlist_quantity = $item->quantity;
+                    return $item->productdetail;
+                });
+            return view('user.wishlist', compact('items'));
+        }
         $session = session()->get('wishlist', []);
         // $session là mảng [ detail_id => ['product_detail_id'=>…, 'quantity'=>…], … ]
 
@@ -33,28 +47,52 @@ class WishlistController extends Controller
             'product_detail_id' => 'required|exists:product_details,id',
         ]);
 
-        $wishlist = session()->get('wishlist', []);
-        $key      = $request->product_detail_id;
+        $detailId = $request->product_detail_id;
+        $message = 'Đã thêm vào danh sách yêu thích!';
 
-        if (!isset($wishlist[$key])) {
-            $wishlist[$key] = [
-                'product_detail_id' => $key,
-                'quantity'          => 1,
-            ];
-            session()->put('wishlist', $wishlist);
+        if (Auth::check()) {
+            $exists = Wishlist::where('user_id', Auth::id())
+                ->where('product_detail_id', $detailId)
+                ->exists();
 
-            // Nếu AJAX, trả JSON
-            if ($request->ajax()) {
-                return response()->json(['message' => 'Đã thêm vào danh sách yêu thích!']);
+            if ($exists) {
+                $message = 'Sản phẩm đã có trong danh sách yêu thích.';
+                return $request->ajax()
+                    ? response()->json(['message' => $message], 409)
+                    : back()->with('info', $message);
             }
 
-            return back()->with('success', 'Đã thêm vào danh sách yêu thích!');
+            Wishlist::create([
+                'user_id'           => Auth::id(),
+                'product_detail_id' => $detailId,
+                'quantity'          => 1,
+            ]);
+
+            return $request->ajax()
+                ? response()->json(['message' => $message])
+                : back()->with('success', $message);
         }
 
-        if ($request->ajax()) {
-            return response()->json(['message' => 'Sản phẩm đã có trong wishlist'], 409);
+        // Nếu chưa đăng nhập → lưu vào session
+        $wishlist = session('wishlist', []);
+
+        if (array_key_exists($detailId, $wishlist)) {
+            $message = 'Sản phẩm đã có trong danh sách yêu thích.';
+            return $request->ajax()
+                ? response()->json(['message' => $message], 409)
+                : back()->with('info', $message);
         }
-        return back()->with('info', 'Sản phẩm đã có trong danh sách yêu thích.');
+
+        $wishlist[$detailId] = [
+            'product_detail_id' => $detailId,
+            'quantity'          => 1,
+        ];
+
+        session()->put('wishlist', $wishlist);
+
+        return $request->ajax()
+            ? response()->json(['message' => $message])
+            : back()->with('success', $message);
     }
 
     public function moveToCart(Request $request)
@@ -63,18 +101,47 @@ class WishlistController extends Controller
             'product_detail_id' => 'required|exists:product_details,id',
         ]);
 
-        $detail = Product_details::with('product')->find($request->product_detail_id);
+        $detailId = $request->product_detail_id;
+        $quantity = $request->input('quantity', 1); // 👈 mặc định là 1
 
+        $detail = Product_details::with('product')->find($detailId);
         if (!$detail) {
             return back()->with('error', 'Không tìm thấy sản phẩm chi tiết.');
         }
 
-        // Thêm vào giỏ
-        $cart = session()->get('cart', []);
-        $key = $detail->id;
+        if (Auth::check()) {
+            $userId = Auth::id();
+
+            // Thêm vào giỏ DB
+            $existing = CartItem::where('user_id', $userId)
+                ->where('product_detail_id', $detailId)
+                ->first();
+
+            if ($existing) {
+                $existing->quantity += $quantity;
+                $existing->save();
+            } else {
+                CartItem::create([
+                    'user_id'           => $userId,
+                    'product_detail_id' => $detailId,
+                    'quantity'          => $quantity,
+                    'price'             => $detail->price,
+                ]);
+            }
+
+            dd(
+                Wishlist::where('user_id', $userId)
+                    ->where('product_detail_id', $detailId)
+                    ->first()
+            );
+        }
+
+        // Nếu chưa đăng nhập → dùng session
+        $cart = session('cart', []);
+        $key  = $detailId;
 
         if (isset($cart[$key])) {
-            $cart[$key]['quantity'] += 1;
+            $cart[$key]['quantity'] += $quantity;
         } else {
             $cart[$key] = [
                 'product_detail_id' => $detail->id,
@@ -82,24 +149,22 @@ class WishlistController extends Controller
                 'size'              => $detail->size,
                 'color'             => $detail->color,
                 'price'             => $detail->price,
-                'quantity'          => 1,
+                'quantity'          => $quantity,
                 'image'             => $detail->image,
             ];
         }
 
         session()->put('cart', $cart);
 
-        // Xóa khỏi wishlist nếu tồn tại
-     
-        // Xóa khỏi wishlist theo ID gốc đã lưu
-        $originalId = $request->input('original_product_detail_id');
-        $wishlist = session()->get('wishlist', []);
-        unset($wishlist[$originalId]);
+        // Xoá khỏi wishlist session nếu tồn tại
+        $wishlist = session('wishlist', []);
+        unset($wishlist[$detailId]);
         session()->put('wishlist', $wishlist);
 
-
-        return back()->with('success', 'Đã thêm vào giỏ hàng.');
+        return back()->with('success', 'Đã thêm vào giỏ hàng!');
     }
+
+
 
 
     public function remove($id)

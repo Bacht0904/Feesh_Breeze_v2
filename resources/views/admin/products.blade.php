@@ -45,6 +45,7 @@
                                 <th>Loại sản phẩm</th>
                                 <th>Thương hiệu</th>
                                 <th>Mô tả</th>
+                                <th>Sản phẩm mới</th>
                                 <th>Hình ảnh</th>
                                 <th>Trạng thái</th>
                                 <th>Thao tác</th>
@@ -69,6 +70,7 @@
                                         <span
                                             title="{{ $product->description }}">{{ Str::limit($product->description, 100) }}</span>
                                     </td>
+                                    <td>{{ $product->isNew ? 'Có 🔥' : 'Không' }}</td>
 
                                     <td>
                                         @if($product->product_details->count() && $product->product_details->first()->image)

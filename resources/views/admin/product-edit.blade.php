@@ -72,6 +72,19 @@
 
                     </div>
 
+                    <div class="gap22 cols">
+                        <fieldset class="is-new">
+                            <div class="body-title mb-10">Sản phẩm mới?<span class="tf-color-1">*</span></div>
+                            <div class="select">
+                                <select name="isNew" required>
+                                    <option disabled {{ !isset($product) ? 'selected' : '' }}>Chọn trạng thái</option>
+                                    <option value="1" {{ isset($product) && $product->isNew == 1 ? 'selected' : '' }}>Có 🔥</option>
+                                    <option value="0" {{ isset($product) && $product->isNew == 0 ? 'selected' : '' }}>Không</option>
+                                </select>
+                            </div>
+                        </fieldset>
+                    </div>
+
                 </div>
 
                 <div class="wg-box">

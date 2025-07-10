@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class OrderPlaced extends Notification implements ShouldQueue
+class OrderPlaced extends Notification
 {
     use Queueable;
 
@@ -37,21 +37,27 @@ class OrderPlaced extends Notification implements ShouldQueue
     public function toDatabase($notifiable)
     {
         return [
-            'message' => 'Bạn đã đặt hàng thành công!',
-            'order_id' => $this->order->id,
+            'title'     => 'Đơn hàng mới từ khách hàng',
+            'message'   => 'Khách hàng vừa đặt đơn hàng #' . $this->order->id,
+            'order_id'  => $this->order->id,
+            'user_name' => $this->order->name,
+            'total'     => $this->order->total,
+            'created_at' => now(),
         ];
     }
 
     /**
-     * Định dạng thông báo gửi qua email.
+     * Nội dung gửi qua email cho admin.
      */
     public function toMail($notifiable)
     {
         return (new MailMessage)
-            ->greeting('Xin chào!')
-            ->line('Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được ghi nhận thành công.')
-            ->line('Mã đơn hàng: ' . $this->order->id)
-            ->action('Xem đơn hàng', url('/orders/' . $this->order->id))
-            ->line('Cảm ơn bạn đã tin tưởng sử dụng dịch vụ của chúng tôi!');
+            ->subject('🔔 Đơn hàng mới #' . $this->order->id)
+            ->greeting('Xin chào Admin,')
+            ->line('Bạn có đơn hàng mới từ khách hàng: ' . $this->order->name)
+            ->line('Số điện thoại: ' . $this->order->phone)
+            ->line('Tổng tiền: ' . number_format($this->order->total, 0, ',', '.') . ' VNĐ')
+            ->action('Xem chi tiết đơn hàng', url('/admin/orders/' . $this->order->id))
+            ->line('Hệ thống Fresh Breeze thân mến.');
     }
 }

@@ -188,8 +188,14 @@ class CheckoutController extends Controller
             });
             $recipients = User::whereIn('role', ['admin', 'staff'])->get();
             if ($recipients->isNotEmpty()) {
+
                 Notification::send($recipients, new OrderPlaced($order));
             }
+            $recipients->each(function ($user) {
+                logger('🔔 Notifying user: ' . $user->name . ' | ' . $user->email);
+            });
+
+
 
             // 4. Redirect đến trang cảm ơn
             return redirect()->route('user.checkoutsuccess', ['id' => $order->id]);
@@ -321,12 +327,12 @@ class CheckoutController extends Controller
                 });
                 $recipients = User::whereIn('role', ['admin', 'staff'])->get();
                 if ($recipients->isNotEmpty()) {
-                    Notification::send($recipients, new OrderPlaced($order));
+                    Notification::send($recipients, new OrderPlaced($saved));
                 }
 
                 return redirect()->route('user.checkoutsuccess', ['id' => $saved->id]);
             } catch (\Throwable $e) {
-                dd($e);
+                
                 return back()->with('error', 'Đặt hàng thất bại: ' . $e->getMessage());
             }
         }

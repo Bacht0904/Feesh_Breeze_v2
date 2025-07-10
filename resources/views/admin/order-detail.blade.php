@@ -69,17 +69,11 @@
                             @elseif($order->status == 'Đã Xác Nhận')
                             <span class="badge bg-success">Đã Xác Nhận</span>
                             @elseif($order->status == 'Đang Giao')
-<<<<<<<<< Temporary merge branch 1
+
                             <span class="badge bg-success">Đang Giao</span>
                             @elseif($order->status == 'Đã Nhận')
                             <span class="badge bg-success">Đã Nhận</span>
-=========
-                                <span class="badge bg-success">Đang Giao</span>
-                            @elseif($order->status == 'Đã Giao')
-                                <span class="badge bg-success">Đã Giao</span>
-                            @elseif($order->status == 'Giao Thành Công')
-                                <span class="badge bg-success">Giao Thành Công</span>
->>>>>>>>> Temporary merge branch 2
+
                             @else
                             <span class="badge bg-danger">Đã Hủy</span>
                             @endif --}}
@@ -264,7 +258,7 @@
                     @break
 
                     @case('Đã Xác Nhận')
-                    <button type="button" onclick="confirmStatusChange('Chờ Lấy Hàng')"
+                    <button type="button" onclick="confirmStatusChange('Đang Giao')"
                         class="btn btn-primary btn-lg w-100 mb-2 shadow fw-bold">
                         🚚 Bắt Đầu Giao
                     </button>
@@ -274,21 +268,16 @@
                     </button>
                     @break
 
-                    @case('Chờ Lấy Hàng')
-                    <button type="button" onclick="confirmStatusChange('Đang Giao')"
-                        class="btn btn-warning btn-lg w-100 mb-2 shadow fw-bold">
-                        📦 Xác Nhận Đã Lấy Hàng
-                    </button>
-                    <button type="button" onclick="confirmStatusChange('Đã Hủy')"
-                        class="btn btn-danger btn-lg w-100 shadow fw-bold">
-                        ❌ Hủy Đơn
-                    </button>
+
+
                     @break
+
 
                                 @case('Đang Giao')
                     <button type="button" onclick="confirmStatusChange('Đã Giao')"
+
                         class="btn btn-info btn-lg w-100 shadow fw-bold">
-                        📬 Xác Nhận Đã Giao
+                        📬 Đang Giao
                     </button>
                     @break
 

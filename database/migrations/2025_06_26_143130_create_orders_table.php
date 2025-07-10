@@ -29,7 +29,7 @@ return new class extends Migration
             $table->decimal('coupon_discount',10,2)->default(0);
             $table->decimal('shipping_fee',10,2)->default(0);
             $table->decimal('total',10,2)->default(0);
-            $table->enum('status', ['Chờ Xác Nhận','Đã Xác Nhận','Chờ Lấy Hàng','Đã Lấy Hàng','Đang Giao','Đã Giao','Giao Thành Công','Xác Nhận Hủy','Đã Hủy'])->default('Chờ Xác Nhận');       
+            $table->enum('status', ['Chờ Xác Nhận','Đã Xác Nhận','Chờ Lấy Hàng','Đang Giao','Đã Giao','Giao Thành Công','Xác Nhận Hủy','Đã Hủy','Yêu Cầu Trả Hàng','Xác Nhận Trả Hàng'])->default('Chờ Xác Nhận');
             $table->timestamps();
         });
     }

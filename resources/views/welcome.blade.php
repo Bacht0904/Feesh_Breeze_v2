@@ -3,24 +3,18 @@
 <main>
 
     @if(session('success') || session('error'))
-    <div class="alert alert-dismissible fade show d-flex align-items-center gap-2 px-4 py-3
-              {{ session('success') ? 'alert-success' : 'alert-danger' }}"
-        role="alert" id="flash-alert">
-
-        {{-- Biểu tượng --}}
-        <span class="fs-4">
-            {!! session('success') ? '✅' : '❌' !!}
-        </span>
-
-        {{-- Nội dung --}}
-        <div class="flex-grow-1">
-            {{ session('success') ?? session('error') }}
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
+        <div class="toast align-items-center text-white {{ session('success') ? 'bg-success' : 'bg-danger' }} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    {{ session('success') ?? session('error') }}
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Đóng"></button>
+            </div>
         </div>
-
-        {{-- Nút đóng --}}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng"></button>
     </div>
     @endif
+
     <section class="swiper-container js-swiper-slider slideshow swiper-number-pagination"
         data-settings='{
            "autoplay": { "delay": 5000 },
@@ -446,5 +440,25 @@
             bsAlert.close();
         }
     }, 3000);
+</script>
+@endpush
+@push('styles')
+<style>
+    .toast-container {
+        max-width: 360px;
+    }
+</style>
+@endpush
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var toastEl = document.querySelector('.toast');
+        if (toastEl) {
+            var toast = new bootstrap.Toast(toastEl, {
+                delay: 4000
+            });
+            toast.show();
+        }
+    });
 </script>
 @endpush

@@ -24,7 +24,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\VNPayController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\OrderController;
-
+use Illuminate\Http\Request;
 
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\NotificationController;
@@ -128,6 +128,10 @@ Route::middleware(['admin.staff'])->group(function () {
     Route::put('/admin/coupon/update/{id}', [CouponController::class, 'update_coupon',])->name('admin.coupon.update');
     Route::delete('/admin/coupon/{id}/delete', [CouponController::class, 'delete_coupon'])->name('admin.coupon.delete');
 
+    Route::get('/comments', [AdminController::class, 'comments'])->name('admin.comments');
+    Route::put('/comments/{id}/toggle', [AdminController::class, 'comment_toggle'])->name('admin.comment.toggle');
+    Route::delete('/comments/{id}', [AdminController::class, 'delete_comment'])->name('admin.review.delete');
+
     Route::put('/admin/setting/{id}', [AdminController::class, 'setting'])->name('admin.setting');
     Route::get('/admin/settings', [AdminController::class, 'settings'])->name('admin.settings');
 
@@ -219,7 +223,7 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/profile/avatar', [UserController::class, 'updateAvatar'])->name('profile.avatar');
     Route::put('/profile/password', [UserController::class, 'updatePassword'])->name('profile.password');
     Route::get('/profile', [UserController::class, 'Profile'])->name('profile');
-   
+
     Route::post('/profile/update', [UserController::class, 'update'])->name('profile.update');
     Route::post('/profile/change-password', [UserController::class, 'changePassword'])->name('profile.change.password');
     Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout');
@@ -232,6 +236,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/review/{id}', [ReviewController::class, 'update'])->name('review.update');
     Route::delete('/review/{id}', [ReviewController::class, 'destroy'])->name('review.destroy');
+
+    Route::get('/notifications', [NotificationController::class, 'indexUser'])->name('user.notifications');
 });
 
 // web.php
@@ -243,6 +249,9 @@ Route::post('/orders/{id}/cancel', [OrderController::class, 'cancel'])->name('or
 
 
 
+
+
+Route::post('/register', [HomeController::class, 'register'])->name('register.submit');
 
 
 

@@ -58,8 +58,9 @@
                 <div class="section-menu-left">
                     <div class="box-logo">
                         <a href="{{route('admin.index')}}" id="site-logo-inner">
-                            <img class="" id="logo_header" alt="" src="images/logo/logo.png"
-                                data-light="images/logo/logo.png" data-dark="images/logo/logo.png" style="max-height: 60px ; with:auto ">
+                            <img class="" id="logo_header_mobile" alt="" src={{ asset('images/logo/logo.png') }}
+                                data-light={{ asset('images/logo/logo.png') }} data-dark={{ asset('images/logo/logo.png') }}
+                                data-width="154px" data-height="52px" data-retina={{ asset('images/logo/logo.png') }}>
                         </a>
                         <div class="button-show-hide">
                             <i class="icon-menu-left"></i>
@@ -133,24 +134,11 @@
                                         </li>
                                     </ul>
                                 </li>
-
-                                <li class="menu-item has-children">
-                                    <a href="javascript:void(0);" class="menu-item-button">
+                                <li class="menu-item">
+                                    <a href="{{ route('admin.orders') }}" class="">
                                         <div class="icon"><i class="icon-file-plus"></i></div>
                                         <div class="text">Đơn hàng</div>
                                     </a>
-                                    <ul class="sub-menu">
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.orders') }}" class="">
-                                                <div class="text">Danh sách đơn hàng</div>
-                                            </a>
-                                        </li>
-                                        <li class="sub-menu-item">
-                                            <a href="{{ route('admin.order.tracking') }}" class="">
-                                                <div class="text">Trạng thái đơn hàng</div>
-                                            </a>
-                                        </li>
-                                    </ul>
                                 </li>
                                 <li class="menu-item">
                                     <a href="{{ route('admin.sliders') }}" class="">
@@ -206,9 +194,9 @@
                         <div class="wrap">
                             <div class="header-left">
                                 <a href="{{ route('admin.index') }}">
-                                    <img class="" id="logo_header_mobile" alt="" src="images/logo/logo.png"
-                                        data-light="images/logo/logo.png" data-dark="images/logo/logo.png"
-                                        data-width="154px" data-height="52px" data-retina="images/logo/logo.png">
+                                    <img class="" id="logo_header_mobile" alt="" src={{ asset('images/logo/logo.png') }}
+                                        data-light={{ asset('images/logo/logo.png') }} data-dark={{ asset('images/logo/logo.png') }}
+                                        data-width="154px" data-height="52px" data-retina={{ asset('images/logo/logo.png') }}>
                                 </a>
                                 <div class="button-show-hide">
                                     <i class="icon-menu-left"></i>
@@ -280,7 +268,7 @@
                                                 <i class="icon-bell"></i>
                                             </span>
                                         </button>
-                                        <ul class="dropdown-menu dropdown-menu-end has-content"
+                                        <!-- <ul class="dropdown-menu dropdown-menu-end has-content"
                                             aria-labelledby="dropdownMenuButton2">
                                             <li>
                                                 <h6>Thông báo</h6>
@@ -317,7 +305,41 @@
                                             <li>
                                                 <a href="{{ route('notifications') }}" class="tf-button w-full">Xem tất cả</a>
                                             </li>
+                                        </ul> -->
+                                        <ul class="dropdown-menu dropdown-menu-end has-content" aria-labelledby="dropdownMenuButton2">
+                                            <li>
+                                                <h6>Thông báo</h6>
+                                            </li>
+
+                                            @forelse(auth()->user()->unreadNotifications as $notification)
+                                            @php
+                                            $orderId = $notification->data['order_id'] ?? null;
+                                            $message = $notification->data['message'] ?? 'Thông báo mới';
+                                            @endphp
+
+                                            <li>
+                                                <a href="{{ $orderId ? route('admin.order.detail', $orderId) : '#' }}"
+                                                    class="dropdown-item d-flex align-items-start gap-2 small text-wrap">
+                                                    <i class="icon-noti-{{ $loop->iteration }}"></i>
+
+                                                    <div class="flex-grow-1">
+                                                        <div class="fw-semibold text-dark">{{ $message }}</div>
+                                                        <div class="text-muted">
+                                                            Đơn hàng #{{ $orderId ?? '---' }}<br>
+                                                            <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                                        </div>
+                                                    </div>
+                                                </a>
+                                            </li>
+                                            @empty
+                                            <li><span class="dropdown-item text-muted">Không có thông báo mới</span></li>
+                                            @endforelse
+
+                                            <li>
+                                                <a href="{{ route('notifications') }}" class="tf-button w-full text-center">Xem tất cả</a>
+                                            </li>
                                         </ul>
+
                                     </div>
                                 </div>
 
@@ -331,9 +353,7 @@
                                             id="dropdownMenuButton3" data-bs-toggle="dropdown" aria-expanded="false">
                                             <span class="header-user wg-user">
                                                 <span class="">
-                                                    <img src="{{ asset(Auth::user()->avatar) }}" width="50px"
-                                                        height="50px" style="border-radius: 50%; object-fit: cover;"
-                                                        alt="Avatar người dùng">
+                                                    <img src="{{ Auth::user()->avatar && file_exists(public_path(Auth::user()->avatar)) ? asset(Auth::user()->avatar) : asset('images/default-avatar.png') }}" alt="Avatar" class="rounded-circle border" style="width: 50px; height: 50px; object-fit: cover;">
                                                 </span>
                                                 <span class="flex flex-column">
                                                     <span class="body-title mb-2">{{ Auth::user()->name }}</span>
@@ -360,6 +380,15 @@
                                                     <div class="number">{{ $contactCount }}</div>
                                                 </a>
                                             </li>
+                                            <li>
+                                                <a href="{{ route('admin.comments') }}" class="user-item">
+                                                    <div class="icon">
+                                                        <i class="icon-message-square"></i>
+                                                    </div>
+                                                    <div class="body-title-2">Bình luận</div>
+                                                </a>
+                                            </li>
+
                                             <li>
                                                 <form id="logout-form" action="{{ route('logout') }}" method="POST"
                                                     style="display: none;">

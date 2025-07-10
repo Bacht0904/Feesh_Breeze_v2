@@ -36,14 +36,18 @@ class OrderController extends Controller
     {
         $order = Order::where('id', $id)
             ->where('id_user', Auth::id())
-            ->with(['details.productDetail.product', 'details.review']) // 👈 THÊM chỗ này
-            ->firstOrFail();
+            ->with([
+                'details.productDetail.product',
+                'details.review'    // gọi đến OrderDetail::review()
+            ])->firstOrFail();
+        $order = Order::with('details.review')->findOrFail($id);
 
-
-
-        $canReview = $order->status === 'Chờ Xác Nhận';
+        $canReview = $order->status === 'Đã Giao';
         return view('user.orderdetail', compact('order', 'canReview'));
     }
+
+
+
     public function cancel(Request $request, $id)
     {
         $order = Order::findOrFail($id);

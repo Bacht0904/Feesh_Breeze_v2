@@ -56,6 +56,7 @@
                                     <td>{{ $coupon->id }}</td>
                                     <td>{{ $coupon->code }}</td>
                                     <td>{{ $coupon->type }}</td>
+
                                     <td>{{number_format( $coupon->value,'0',',','.' )}}</td>
                                     <td>{{ $coupon->quantity }}</td>
                                     <td>
@@ -65,6 +66,7 @@
                                              <span class="badge bg-secondary">Không kích hoạt</span>
                                             @endif
                                     </td>
+
                                     <td>
                                         <div class="list-icon-function">
                                             <a href="{{ route('admin.coupon.edit', $coupon->id) }}">

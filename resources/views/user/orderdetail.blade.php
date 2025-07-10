@@ -215,7 +215,7 @@
                 <div class="wg-box wg-table table-all-user">
                     <h5 class="mb-3">Sản phẩm trong đơn</h5>
                     <div class="table-responsive">
-                        <table class="table table-striped table-bordered">
+                        <table class="table table-striped table-bordered align-middle">
                             <thead>
                                 <tr>
                                     <th>Sản phẩm</th>
@@ -228,8 +228,9 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($order->details as $item)
+                                @foreach($order->details as $item)
                                 @php
+
                                 $productDetail = $item->productDetail;
                                 $product = $productDetail->product ?? null;
                                 @endphp
@@ -239,10 +240,12 @@
                                             <img src="{{ asset($item->image) }}" class="image" style="width: 50px; height: 50px; object-fit: cover;">
 
                                             <a href="{{ route('products.show', ['slug' => $product->slug]) }}">
+
                                                 {{ $product->name }}
                                             </a>
                                         </div>
                                     </td>
+
                                     <td class="text-center">{{ number_format($item->price, 0, ',', '.') }}₫</td>
                                     <td class="text-center">{{ $item->quantity }}</td>
                                     <td class="text-center">
@@ -259,9 +262,11 @@
                                             “{{ $item->review->comment }}”
                                         </div>
 
+
                                         @else
                                         <span class="badge bg-warning">Chưa đánh giá</span>
                                         @endif
+                                    </td>
 
                                     </td>
                                     <td class="text-center">{{ $item->size ?? '--' }}{{ $item->color ? ', '.$item->color : '' }}</td>
@@ -278,7 +283,10 @@
                                                 onclick="editReview(
                                                      {{ $product->id }},'{{ $product->name }}',{{ $productDetail->id ?? 'null' }}, {{ $item->review->rating }},`{{ $item->review->comment }}`,{{ $item->review->id }})">
                                                 <i class="fa fa-pen-to-square me-1"></i> Sửa
+
                                             </button>
+                                        </form>
+
 
 
                                             <form action="{{ route('review.destroy', $item->review->id) }}" method="POST"
@@ -290,6 +298,7 @@
                                                 </button>
                                             </form>
                                         </div>
+
                                         @endif
 
                                     </td>
@@ -313,7 +322,9 @@
                         <div class="card-body">
                             <form id="review-form" method="POST" action="{{ route('review.store') }}">
                                 @csrf
+
                                 {{-- JavaScript sẽ chèn @method("PUT") và thay đổi action nếu là edit --}}
+
                                 <input type="hidden" name="product_id" id="review-product-id">
                                 <input type="hidden" name="product_detail_id" id="review-product-detail-id">
 
@@ -347,8 +358,6 @@
 
                     </div>
                 </div>
-
-
 
                 {{-- Địa chỉ giao hàng --}}
                 <div class="wg-box mt-5">
@@ -467,25 +476,32 @@
 <script>
     let currentFormContext = null;
 
+
     function toggleReviewForm({
         mode,
+        orderId,
         productId,
         productName,
+
         productDetailId = null,
+
         rating = null,
         comment = '',
         reviewId = null
     }) {
         const form = document.getElementById("review-form");
         const section = document.getElementById("review-section");
-        const currentKey = `${mode}-${reviewId ?? productId}`;
+        const key = `${mode}-${reviewId || 'new'}-o${orderId}-d${orderDetailId}`;
+
 
         // Nếu click lần 2 vào cùng đối tượng → ẩn form
         if (currentFormContext === currentKey) {
+
             section.classList.add("d-none");
             currentFormContext = null;
             return;
         }
+
 
         // Cập nhật nội dung
         currentFormContext = currentKey;
@@ -497,11 +513,14 @@
         document.getElementById("review-comment").value = comment ?? '';
 
         // Đặt lại hoặc chọn rating
+
         form.querySelectorAll("input[name='rating']").forEach(input => {
             input.checked = parseInt(input.value) === parseInt(rating);
         });
 
+
         // Cập nhật action + method
+
         form.action = mode === 'edit' ?
             `/review/${reviewId}` :
             `{{ route('review.store') }}`;
@@ -517,6 +536,7 @@
             form.appendChild(methodInput);
         }
     }
+
 
     // Shortcut hàm gọi
     function showReviewForm(productId, productName, productDetailId) {
@@ -539,6 +559,8 @@
             reviewId
         });
     }
+
 </script>
+
 
 @endpush

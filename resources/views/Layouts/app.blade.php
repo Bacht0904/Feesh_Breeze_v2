@@ -501,6 +501,14 @@
                             <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
                         </a>
                     </div>
+
+                    @else
+                    @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
+                    <div class="header-tools__item">
+                        <a href="{{ route('admin.index') }}" class="header-tools__link">
+                            <span class="d-block text-uppercase fw-medium">Quản Lý</span>
+                        </a>
+                    </div>
                     @else
                     <div class="header-tools__item">
                         <a href="{{ route('profile') }}" class="header-tools__link">
@@ -511,6 +519,7 @@
                             <span class="d-block text-uppercase fw-medium"></span>
                         </a>
                     </div>
+                    @endif
                     @endguest
                     @php
                     $unread = auth()->check() ? auth()->user()->unreadNotifications : collect();
@@ -531,31 +540,30 @@
 
                             <ul class="list-unstyled mb-0">
                                 @forelse($unread->take(3) as $notification)
+                                @php $orderId = $notification->data['order_id'] ?? null; @endphp
                                 <li class="mb-3 pb-3 border-bottom">
-                                    <div class="d-flex gap-2 align-items-start">
-                                        <i class="icon-noti-{{ $loop->iteration }}"></i>
-                                        <div>
-                                            <div class="fw-medium">{{ $notification->data['message'] ?? 'Thông báo mới' }}</div>
-                                            <div class="text-muted small">
-                                                Đơn hàng #{{ $notification->data['order_id'] ?? '---' }}<br>
-                                                <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                    <a href="{{ $orderId ? route('orders.details', $orderId) : '#' }}"
+                                        class="text-decoration-none text-dark d-block">
+                                        <div class="d-flex gap-2 align-items-start">
+                                            <i class="icon-noti-{{ $loop->iteration }}"></i>
+                                            <div>
+                                                <div class="fw-medium">{{ $notification->data['message'] ?? 'Thông báo mới' }}</div>
+                                                <div class="text-muted small">
+                                                    Đơn hàng #{{ $orderId ?? '---' }}<br>
+                                                    <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
+                                    </a>
                                 </li>
                                 @empty
                                 <li><span class="text-muted">Không có thông báo mới</span></li>
                                 @endforelse
                             </ul>
 
-                            @if($unread->count() > 3)
+                            <a href="{{ route('user.notifications') }}" class="tf-button w-full text-center">Xem tất cả</a>
+                            </li>
 
-                            <div class="text-center mt-2">
-                                <a href="{{ route('notifications') }}" class="btn btn-outline-secondary btn-sm">
-                                    Xem tất cả
-                                </a>
-                            </div>
-                            @endif
                         </div>
                     </div>
 
@@ -579,13 +587,7 @@
                         </span>
                         @endif
                     </a>
-                    @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
-                    <div class="header-tools__item">
-                        <a href="{{ route('admin.index') }}" class="header-tools__link">
-                            <span class="d-block text-uppercase fw-medium">Quản Lý</span>
-                        </a>
-                    </div>
-                    @elseif(Auth::check())
+                    @if(Auth::check())
                     <form method="post" action="{{route('logout')}}" id="logout-form">
                         @csrf
                         <a href="{{route('logout')}}" class=""
@@ -610,9 +612,9 @@
                     <a href="{{ route('home') }}" class="d-inline-block mb-3">
                         <img src="{{ asset('images/logo/logo.png') }}" alt="Logo" style="max-height: 60px;">
                     </a>
-                    <p class="small text-muted">
-                        Chúng tôi hiểu rằng một đôi giày tốt không chỉ mang lại sự thoải mái mà còn là biểu tượng của phong cách và cá tính.
-                    </p>
+                    <p class="footer-address">65 Huỳnh Thúc Kháng, P.Bến Nghé, Q.1, Tp.HCM</p>
+                    <p class="m-0"><strong class="fw-medium">caothang@caothang.com</strong></p>
+                    <p><strong class="fw-medium">028 38 212 868 - 028 38 212 360</strong></p>
                     <ul class="d-flex gap-2 list-unstyled mt-3">
                         @foreach (['facebook', 'twitter', 'instagram', 'youtube'] as $social)
                         <li>

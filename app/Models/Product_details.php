@@ -29,7 +29,9 @@ class Product_details extends Model
     // Trong model ProductDetail
     public function orderDetail()
     {
-        return $this->hasMany(OrderDetail::class,'product_detail_id');
+        return $this->hasMany(OrderDetail::class, 'product_detail_id');
     }
+
+    // app/Models/OrderDetail.php
 
 }

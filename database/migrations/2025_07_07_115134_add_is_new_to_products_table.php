@@ -10,16 +10,15 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::table('brands', function (Blueprint $table) {
-            $table->enum('status', ['active', 'inactive'])->default('active');
+        Schema::table('products', function (Blueprint $table) {
+            $table->boolean('isNew')->default(false);
         });
     }
 
     public function down()
     {
-        Schema::table('brands', function (Blueprint $table) {
-            $table->dropColumn('status');
+        Schema::table('products', function (Blueprint $table) {
+            $table->dropColumn('isNew');
         });
     }
-
 };

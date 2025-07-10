@@ -27,8 +27,9 @@
                 </ul>
             </div>
             <div class="wg-box">
-                <form class="form-new-product form-style-1" method="POST" action="{{ route('admin.coupon.update',$coupon->id) }}">
-                     @csrf
+                <form class="form-new-product form-style-1" method="POST"
+                    action="{{ route('admin.coupon.update', $coupon->id) }}">
+                    @csrf
                     @method('PUT')
                     <fieldset class="name">
                         <div class="body-title">Mã giảm giá<span class="tf-color-1">*</span></div>
@@ -41,8 +42,8 @@
                         <div class="select flex-grow">
                             <select class="" name="type">
                                 <option value="">Chọn loại giảm giá</option>
-                                <option value="fixed">Số tiền(fixed)</option>
-                                <option value="percent">Phần trăm(percent)</option>
+                                <option value="fixed" {{ $coupon->type === 'fixed' ? 'selected' : '' }}>Số tiền (fixed)</option>
+                                <option value="percent" {{ $coupon->type === 'percent' ? 'selected' : '' }}>Phần trăm (percent)</option>
                             </select>
                         </div>
                     </fieldset>
@@ -64,8 +65,9 @@
                         <div class="select flex-grow">
                             <select class="" name="status">
                                 <option value="">Chọn trạng thái</option>
-                                <option value="active">Kích hoạt</option>
-                                <option value="inactive">Ngưng kích hoạt</option>
+                                <option value="active" {{ $coupon->status === 'active' ? 'selected' : '' }}>Hoạt động</option>
+                                <option value="inactive" {{ $coupon->status === 'inactive' ? 'selected' : '' }}>Không hoạt
+                                    động</option>
                             </select>
                         </div>
                     </fieldset>

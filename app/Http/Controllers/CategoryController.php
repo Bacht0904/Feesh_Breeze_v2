@@ -11,7 +11,7 @@ class CategoryController extends Controller
 {
     public function categories()
     {
-        $categories = Category::orderBy('id', 'asc')->paginate(10);
+        $categories = Category::orderBy('id')->paginate(10);
         return view('admin.categories', compact('categories'));
     }
 
@@ -71,8 +71,6 @@ class CategoryController extends Controller
             $total_quantity = $product->product_details->sum('quantity');
 
             $newStatus = (
-                $category->status === 'inactive' ||
-                $product->brand->status === 'inactive' ||
                 $total_quantity === 0
             ) ? 'inactive' : 'active';
 

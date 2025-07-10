@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Contact;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use App\Models\Product_details;
 use App\Models\Product;
 use App\Notifications\OrderStatusUpdated;
 use App\Notifications\OrderDeliveredNotification;
+use App\Models\Comment;
 
 
 
@@ -97,7 +99,7 @@ class AdminController extends Controller
             'totalConfirmedAmount',
             'totalDeliveredAmount',
             'contactCount',
-            'user'
+            'user',
         ));
     }
 
@@ -376,8 +378,15 @@ class AdminController extends Controller
             'name' => ['required', 'string', 'max:255', 'regex:/^[\p{L}\s]+$/u'],
             'email' => 'required|email|min:8|unique:users,email,' . $user->id,
             'phone' => ['required', 'regex:/^0[0-9]{9}$/'],
+            'address' => 'required|string|max:255',
             'avatar' => 'sometimes|image|mimes:jpg,jpeg,png|max:2048',
         ]);
+
+        $user->name = $request->input('name');
+        $user->email = $request->input('email');
+        $user->phone = $request->input('phone');
+        $user->address = $request->input('address');
+
 
         if ($request->hasFile('avatar')) {
             $avatar = $request->file('avatar');
@@ -399,8 +408,24 @@ class AdminController extends Controller
             $user->avatar = $uploadFolder . $filename;
         }
 
-        $user->update($request->only('name', 'email', 'phone', 'avatar'));
+        $user->save();
 
         return redirect()->route('admin.users')->with('status', 'Thông tin người dùng đã được cập nhật!');
     }
+
+    public function comments()
+    {
+        $reviews = Review::with(['product', 'user'])->latest()->paginate(15);
+        return view('admin.comments', compact('reviews'));
+    }
+
+
+    public function delete_comment($id)
+    {
+        $review = Review::findOrFail($id);
+        $review->delete();
+
+        return back()->with('status', 'Đã xóa bình luận!');
+    }
+
 }

@@ -1,23 +1,18 @@
 @extends('layouts.app')
 
 @section('content')
+
 <main class="pt-90">
   <section class="product-single container">
-    <div class="row">
-      {{-- Phần ảnh slide --}}
+    <div class="row align-items-start">
+
+      {{-- Ảnh sản phẩm chính --}}
       <div class="col-lg-7">
         <div class="swiper swiper-product-detail">
           <div class="swiper-wrapper">
             @foreach ($product->product_details as $detail)
             <div class="swiper-slide text-center">
-              <img src="{{ asset($detail->image) }}" class="img-fluid rounded mb-3" alt="{{ $product->name }} - {{ $detail->size }}" style="max-width: 500px; height: auto;">
-
-              <div>
-                <p><strong>Size:</strong> {{ $detail->size }}</p>
-                <p><strong>Giá:</strong> {{ number_format($detail->price, 0) }} VNĐ</p>
-                <p><strong>Màu:</strong> {{ $detail->color }}</p>
-                <p><strong>Số lượng:</strong> {{ $detail->quantity ?? 'N/A' }}</p>
-              </div>
+              <img src="{{ asset($detail->image) }}" class="img-fluid rounded mb-3" alt="{{ $product->name }} - {{ $detail->size }}" style="max-width: 400px; height: auto;">
             </div>
             @endforeach
           </div>
@@ -25,17 +20,10 @@
           <div class="swiper-button-prev"></div>
         </div>
       </div>
-
-      {{-- Thông tin tổng quát sản phẩm --}}
+      {{-- Chi tiết bên phải --}}
       <div class="col-lg-5">
-        <h1 class="product-title" style="max-width: 100%; white-space: nowrap; text-overflow: ellipsis;">
-          {{-- Hiển thị tên sản phẩm --}}
-          {{ $product->name }}
-        </h1>
-        <p><strong>Danh mục:</strong> {{ $product->category->name ?? 'Chưa phân loại' }}</p>
-        <p><strong>Trạng thái:</strong> {{ $product->status ? 'Còn hàng' : 'Hết hàng' }}</p>
-        <p><strong>Ngày tạo:</strong> {{ $product->created_at->format('d/m/Y H:i') }}</p>
-        <p><strong>Mô tả:</strong> {{ $product->description }}</p>
+        <h2 class="fw-bold mb-3">{{ $product->name }}</h2>
+        <p class="text-muted mb-1">{{ $product->category->name ?? 'Chưa phân loại' }}</p>
         <p><strong>Đánh giá:</strong>
           @if ($product->reviews->count() > 0)
           <span class="text-rating-custom fw-bold">
@@ -43,7 +31,7 @@
             <i class="fa fa-star"></i>
           </span>
 
-         <a href="{{ route('product.reviews', $product->id) }}" class="review-count">
+          <a href="{{ route('product.reviews', $product->id) }}" class="review-count">
             ({{ $product->reviews->count() }} đánh giá)
           </a>
           @else
@@ -51,34 +39,84 @@
           @endif
 
         </p>
-        {{-- Thêm vào giỏ --}}
-        <form method="POST" action="{{ route('cart.addDetail') }}">
+        <p class="fw-bold fs-4 text-danger">{{ number_format($product->product_details->first()->price, 0) }} VNĐ</p>
+        <form action="{{ route('cart.addDetail') }}" method="POST">
           @csrf
 
-          {{-- Lựa chọn biến thể sản phẩm --}}
+
+          {{-- Chọn màu --}}
           <div class="mb-3">
-            <label for="product_detail_id" class="form-label">Chọn size</label>
-            <select name="product_detail_id" id="product_detail_id" class="form-select" required>
-              @foreach ($product->product_details as $detail)
-              <option value="{{ $detail->id }}">
-                Size {{ $detail->size }} — {{ number_format($detail->price, 0) }} VNĐ — Màu: {{ $detail->color }}
-              </option>
+            <label class="form-label">Chọn màu</label>
+            <div class="d-flex flex-wrap gap-2">
+              @foreach ($colors as $idx => $c)
+              <label class="color-swatch" title="{{ $c['label'] }}">
+                <input
+                  type="radio"
+                  name="color"
+                  value="{{ $c['name'] }}"
+                  class="d-none"
+                  {{ $idx === 0 ? 'checked' : '' }}>
+                <span class="swatch-circle" style="background-color: {{ $c['code'] }};"></span>
+              </label>
               @endforeach
-            </select>
+            </div>
           </div>
+
+          {{-- Chọn size --}}
+          <div class="mb-3">
+            <label class="form-label">Chọn size</label>
+            <div class="d-flex flex-wrap gap-2" id="size-container">
+              @foreach ($product->product_details as $detail)
+              @php
+              $norm = mb_strtolower(trim(preg_replace('/\s+/', ' ', $detail->color)));
+              $qty = $detail->quantity; // cột quantity trong DB
+              $size = strtoupper($detail->size);
+              @endphp
+
+              <label
+                class="size-option"
+                data-color="{{ $norm }}"
+                data-qty="{{ $qty }}"
+                style="display: none;">
+                <input
+                  type="radio"
+                  name="product_detail_id"
+                  value="{{ $detail->id }}"
+                  class="btn-check d-none"
+                  {{ $qty == 0 ? 'disabled' : '' }}>
+                <span class="btn btn-outline-secondary btn-sm">
+                  {{ $size }}
+                  <small class="text-muted">({{ $qty }})</small>
+                </span>
+              </label>
+              @endforeach
+            </div>
+          </div>
+
+
 
           {{-- Số lượng --}}
           <div class="mb-3">
-            <label for="quantity" class="form-label">Số lượng</label>
+            <label class="form-label">Số lượng</label>
             <input type="number" name="quantity" value="1" min="1" class="form-control w-50" required>
           </div>
 
-          <button type="submit" class="btn btn-primary">Thêm vào giỏ hàng</button>
+          <button type="submit" class="btn btn-primary btn-lg w-100">🛒 Thêm vào giỏ hàng</button>
         </form>
+
+        {{-- Mô tả sản phẩm --}}
+        <a href="javascript:void(0)" id="toggle-description" class="text-decoration-underline d-inline-block mb-3">
+          🔽 Xem mô tả
+        </a>
+
+        <div id="product-description" class="collapse">
+          <hr class="mt-4">
+          <h5 class="fw-bold">Mô tả</h5>
+          <p>{{ $product->description }}</p>
+        </div>
 
       </div>
     </div>
-
 
   </section>
 </main>
@@ -86,9 +124,44 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css">
+<style>
+  .color-swatch {
+    display: inline-block;
+    cursor: pointer;
+  }
+
+  .swatch-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 2px solid #ccc;
+    display: inline-block;
+    transition: all 0.2s;
+  }
+
+  .color-swatch input:checked+.swatch-circle {
+    border: 2px solid #000;
+    box-shadow: 0 0 0 2px #fff inset;
+  }
+
+  .size-option {
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .size-option[style*="display: none"] {
+    visibility: hidden;
+    height: 0;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+  }
+</style>
 @endpush
 
 @push('scripts')
+
+
 <script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
 <script>
   new Swiper('.swiper-product-detail', {
@@ -119,70 +192,71 @@
 </script>
 @endif
 @endpush
-@push('styles')
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const colorRadios = document.querySelectorAll('input[name="color"]');
+    const sizeLabels = document.querySelectorAll('.size-option');
+    const btnSubmit = document.querySelector('button[type="submit"]');
+
+    function updateSizes(selectedColor) {
+      let any = false;
+
+      sizeLabels.forEach(lbl => {
+        const color = lbl.dataset.color;
+        const qty = parseInt(lbl.dataset.qty, 10);
+
+        if (color === selectedColor && qty > 0) {
+          lbl.style.display = 'inline-block';
+          any = true;
+        } else {
+          lbl.style.display = 'none';
+        }
+      });
+
+      btnSubmit.disabled = !any;
+      btnSubmit.innerText = any ?
+        '🛒 Thêm vào giỏ hàng' :
+        '⛔ Không có size phù hợp';
+    }
+
+    colorRadios.forEach(radio =>
+      radio.addEventListener('change', () => {
+        const col = radio.value.trim().toLowerCase();
+        updateSizes(col);
+      })
+    );
+
+    // Trigger lần đầu (màu mặc định)
+    const first = document.querySelector('input[name="color"]:checked');
+    if (first) {
+      updateSizes(first.value.trim().toLowerCase());
+    }
+  });
+</script>
+
+@endpush
+
+@push('style')
 <style>
-  .text-rating-custom {
-    color: #ff9900;
-    /* Cam rực rỡ hoặc chọn tông màu bạn thích */
-    font-weight: bold;
-    font-size: 1.1rem;
-  }
-
-
-
-  .review-count {
-    color: #6c757d;
-    /* xám nhẹ */
-    margin-left: 5px;
-  }
-
-  .product-title {
-    font-size: 1.75rem;
-    font-weight: bold;
-    margin-bottom: 1rem;
-  }
-
-  .swiper-product-detail img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  .swiper-button-next,
-  .swiper-button-prev {
-    color: #000;
-  }
-
-  .swiper-button-next:hover,
-  .swiper-button-prev:hover {
-    color: #007bff;
-  }
-
-  .form-select,
-  .form-control {
-    width: 100%;
-  }
-
-  .form-select {
-    max-width: 300px;
-  }
-
-
-
-  .form-check-label {
-    cursor: pointer;
+  .color-option input:checked+.color-circle {
+    box-shadow: 0 0 0 3px #000;
+    border: 2px solid #fff;
   }
 </style>
 @endpush
+@push('scripts')
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const toggleBtn = document.getElementById('toggle-description');
+    const description = document.getElementById('product-description');
 
-{{-- Chú ý: Đảm bảo rằng bạn đã định nghĩa route 'cart.addDetail' trong routes/web.php --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã truyền biến $product từ controller đến view này --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt Swiper.js để sử dụng tính năng slide ảnh --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt SweetAlert2 để hiển thị thông báo thành công khi thêm vào giỏ hàng --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã định nghĩa route 'cart.addDetail' trong routes/web.php --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã truyền biến $product từ controller đến view này --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt Swiper.js để sử dụng tính năng slide ảnh --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt SweetAlert2 để hiển thị thông báo thành công khi thêm vào giỏ hàng --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã định nghĩa route 'cart.addDetail' trong routes/web.php --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã truyền biến $product từ controller đến view này --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt Swiper.js để sử dụng tính năng slide ảnh --}}
-{{-- Chú ý: Đảm bảo rằng bạn đã cài đặt SweetAlert2 để hiển thị thông báo thành công khi thêm vào giỏ hàng --}}
+    toggleBtn.addEventListener('click', function() {
+      const isOpen = description.classList.contains('show');
+
+      description.classList.toggle('show');
+      toggleBtn.innerHTML = isOpen ? '🔽 Xem mô tả' : '🔼 Thu gọn';
+    });
+  });
+</script>
+@endpush
