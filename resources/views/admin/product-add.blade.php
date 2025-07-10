@@ -65,17 +65,17 @@
                     </div>
 
                     <!-- <div class="gap22 cols">
-                        <fieldset class="is-new">
-                            <div class="body-title mb-10">Sản phẩm mới?<span class="tf-color-1">*</span></div>
-                            <div class="select">
-                                <select name="isNew" required>
-                                    <option disabled selected>Chọn trạng thái</option>
-                                    <option value="1">Có 🔥</option>
-                                    <option value="0">Không</option>
-                                </select>
-                            </div>
-                        </fieldset>
-                    </div> -->
+                            <fieldset class="is-new">
+                                <div class="body-title mb-10">Sản phẩm mới?<span class="tf-color-1">*</span></div>
+                                <div class="select">
+                                    <select name="isNew" required>
+                                        <option disabled selected>Chọn trạng thái</option>
+                                        <option value="1">Có 🔥</option>
+                                        <option value="0">Không</option>
+                                    </select>
+                                </div>
+                            </fieldset>
+                        </div> -->
 
                 </div>
 
@@ -97,10 +97,10 @@
                                 <input type="text" name="variants[0][color]" placeholder="Màu sắc" required>
                             </fieldset>
                             <fieldset class="name">
-                                <input type="number" name="variants[0][quantity]" placeholder="Số lượng" required>
+                                <input type="number" name="variants[0][quantity]" placeholder="Số lượng" required min="0">
                             </fieldset>
                             <fieldset class="name">
-                                <input type="number" name="variants[0][price]" placeholder="Giá bán" required>
+                                <input type="number" name="variants[0][price]" placeholder="Giá bán" required min="0">
                             </fieldset>
                             <fieldset class="name">
                                 <input type="file" name="variants[0][image]" accept="image/*" required>
@@ -132,15 +132,15 @@
         let variantIndex = 1;
         document.getElementById('add-variant').addEventListener('click', function () {
             const html = `
-                            <div class="variant-item gap22 cols mb-16">
-                                <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
-                                <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
-                                <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
-                                <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
-                                <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
-                                <button type="button" class="remove-variant tf-button small danger">Xoá</button>
-                            </div>
-                        `;
+                                <div class="variant-item gap22 cols mb-16">
+                                    <fieldset class="name"><input type="text" name="variants[${variantIndex}][size]" placeholder="Size" required></fieldset>
+                                    <fieldset class="name"><input type="text" name="variants[${variantIndex}][color]" placeholder="Màu sắc" required></fieldset>
+                                    <fieldset class="name"><input type="number" name="variants[${variantIndex}][quantity]" placeholder="Số lượng" required></fieldset>
+                                    <fieldset class="name"><input type="number" name="variants[${variantIndex}][price]" placeholder="Giá bán" required></fieldset>
+                                    <fieldset class="name"><input type="file" name="variants[${variantIndex}][image]" accept="image/*" required></fieldset>
+                                    <button type="button" class="remove-variant tf-button small danger">Xoá</button>
+                                </div>
+                            `;
             document.getElementById('variant-list').insertAdjacentHTML('beforeend', html);
             variantIndex++;
         });
