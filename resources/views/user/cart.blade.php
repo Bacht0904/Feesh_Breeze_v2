@@ -56,17 +56,33 @@
                       @endforeach
                     </select>
                   </td>
-                  <td>{{ number_format($item->price, 0) }} đ</td>
+                  <td>
+                    @if($outOfStock)
+                    <span class="text-danger fw-bold">Hết hàng</span>
+                    @else
+                    {{ number_format($item->price, 0) }} đ
+                    @endif
+                  </td>
+
                   <td>
                     <input type="number" name="quantities[{{ $item->id }}]" value="{{ $item->quantity }}" min="1"
                       class="form-control text-center w-75">
                   </td>
-                  <td>{{ number_format($subtotal, 0) }} đ</td>
                   <td>
-                    <form action="{{ route('cart.remove', $item->id) }}" method="POST">
-                      @csrf @method('DELETE')
-                      <button type="submit" class="btn btn-sm btn-outline-danger">Xoá</button>
+                    @if($outOfStock)
+                    <span class="text-danger">–</span>
+                    @else
+                    {{ number_format($subtotal, 0) }} đ
+                    @endif
+                  </td>
+
+                  <td>
+                    <a href="#" class="text-danger" onclick="event.preventDefault(); document.getElementById('remove-form-{{ $item->id }}').submit();">Xoá</a>
+                    <form id="remove-form-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}" method="POST" style="display: none;">
+                      @csrf
+                      @method('DELETE')
                     </form>
+
                   </td>
                 </tr>
                 @endforeach
@@ -96,14 +112,33 @@
                         @endforeach
                       </select>
                     </td>
-                    <td>{{ number_format($item['price'], 0) }} đ</td>
+                    <td>
+                      @if($outOfStock)
+                      <span class="text-danger fw-bold">Hết hàng</span>
+                      @else
+                      {{ number_format($item->price, 0) }} đ
+                      @endif
+                    </td>
+
                     <td>
                       <input type="number" name="quantities[{{ $id }}]" value="{{ $item['quantity'] }}" min="1"
                         class="form-control text-center w-75">
                     </td>
-                    <td>{{ number_format($subtotal, 0) }} đ</td>
                     <td>
-                      <a href="{{ route('cart.remove', $id) }}" class="remove-cart text-danger">Xoá</a>
+                      @if($outOfStock)
+                      <span class="text-danger">–</span>
+                      @else
+                      {{ number_format($subtotal, 0) }} đ
+                      @endif
+                    </td>
+
+                    <td>
+                      <a href="#" class="text-danger" onclick="event.preventDefault(); document.getElementById('remove-form-{{ $item->id }}').submit();">Xoá</a>
+                      <form id="remove-form-{{ $item->id }}" action="{{ route('cart.remove', $item->id) }}" method="POST" style="display: none;">
+                        @csrf
+                        @method('DELETE')
+                      </form>
+
                     </td>
                   </tr>
                   @endforeach
