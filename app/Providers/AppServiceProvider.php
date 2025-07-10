@@ -12,6 +12,7 @@ use App\Models\Comment;
 use Illuminate\Auth\Events\Login;
 use App\Listeners\SyncCartSessionToDb;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Wishlist;
 
 use App\Models\CartItem;
 
@@ -44,27 +45,28 @@ class AppServiceProvider extends ServiceProvider
         View::composer('*', function ($view) {
             // Giỏ hàng
 
-
             if (Auth::check()) {
                 $cartItemCount = CartItem::where('user_id', Auth::id())->sum('quantity');
+                $wishlistCount = Wishlist::where('user_id', Auth::id())->count();
             } else {
                 $cart = session('cart', []);
                 $cartItemCount = collect($cart)->sum('quantity');
+
+                // Đếm wishlist trong session
+                $wishlistSession = session('wishlist', []);
+                $wishlistCount = collect($wishlistSession)->sum('quantity');
             }
-
-
-
             // Số lượng liên hệ
             $contactCount = Contact::count();
 
             // Danh sách loại sản phẩm
             $categories = Category::all();
-
             // Gắn vào view
             $view->with([
                 'cartItemCount' => $cartItemCount,
-                'contactCount' => $contactCount,
-                'categories' => $categories,
+                'wishlistCount' => $wishlistCount,
+                'contactCount'  => $contactCount,
+                'categories'    => $categories,
             ]);
         });
     }

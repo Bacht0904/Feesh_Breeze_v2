@@ -82,7 +82,8 @@
         </div>
     </section>
     <div class="container mw-1620 bg-white border-radius-10">
-        @if($hotDeals)
+
+        @if(count($hotDeals))
         <section class="hot-deals container">
             <h2 class="section-title text-center mb-3 pb-xl-3 mb-xl-4">BÁN CHẠY</h2>
             <div class="row">
@@ -158,7 +159,7 @@
 
 
                                         @if ($detail)
-                                        <form action="{{ route('cart.addDetail') }}" method="POST">
+                                        <form class="js-add-to-cart" method="POST">
                                             @csrf
                                             <input type="hidden" name="product_detail_id" value="{{ $detail->id }}">
                                             <input type="hidden" name="quantity" value="1">
@@ -199,8 +200,9 @@
                 </div>
             </div>
         </section>
-        @endif
         <div class="mb-3 mb-xl-5 pt-1 pb-4"></div>
+        @endif
+        @if(count($products))
         <section class="container py-5">
             <h2 class="text-center fw-bold mb-4">Sản phẩm nổi bật</h2>
 
@@ -233,7 +235,7 @@
 
 
                             @if ($detail)
-                            <form action="{{ route('cart.addDetail') }}" method="POST">
+                            <form class="js-add-to-cart" method="POST">
                                 @csrf
                                 <input type="hidden" name="product_detail_id" value="{{ $detail->id }}">
                                 <input type="hidden" name="quantity" value="1">
@@ -270,12 +272,34 @@
                 </div>
             </div>
         </section>
+        @endif
     </div>
 </main>
 @endsection
 @push('scripts')
 <script src="https://unpkg.com/swiper@8/swiper-bundle.min.js"></script>
 <script>
+    $(document).on('submit', 'form.js-add-to-cart', function(e) {
+        e.preventDefault(); // Ngăn reload trang
+
+        const form = $(this);
+        const data = form.serialize(); // Lấy data POST
+
+        $.ajax({
+            url: "{{ route('cart.addDetail') }}",
+            method: "POST",
+            data: data,
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        }).done(res => {
+            showToast('success', res.message || 'Đã thêm vào giỏ hàng!');
+            // Bạn có thể cập nhật giao diện giỏ hàng tại đây nếu muốn
+        }).fail(err => {
+            const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
+            showToast('danger', msg);
+        });
+    });
     document.addEventListener('DOMContentLoaded', function() {
         new Swiper('.js-featured-swiper', {
             slidesPerView: 5,

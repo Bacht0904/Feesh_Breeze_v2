@@ -11,10 +11,16 @@
         <div class="swiper swiper-product-detail">
           <div class="swiper-wrapper">
             @foreach ($product->product_details as $detail)
-            <div class="swiper-slide text-center">
-              <img src="{{ asset($detail->image) }}" class="img-fluid rounded mb-3" alt="{{ $product->name }} - {{ $detail->size }}" style="max-width: 400px; height: auto;">
+            @php
+            $normColor = mb_strtolower(trim(preg_replace('/\s+/', ' ', $detail->color)));
+            @endphp
+            <div class="swiper-slide text-center" data-color="{{ $normColor }}">
+              <img src="{{ asset($detail->image) }}" class="img-fluid rounded mb-3"
+                alt="{{ $product->name }} - {{ $detail->size }}"
+                style="max-width: 400px; height: auto;">
             </div>
             @endforeach
+
           </div>
           <div class="swiper-button-next"></div>
           <div class="swiper-button-prev"></div>
@@ -77,7 +83,7 @@
                 class="size-option"
                 data-color="{{ $norm }}"
                 data-qty="{{ $qty }}"
-                style="display: none;">
+                style="display: none">
                 <input
                   type="radio"
                   name="product_detail_id"
@@ -96,12 +102,25 @@
 
 
           {{-- Số lượng --}}
+          {{-- Số lượng --}}
           <div class="mb-3">
             <label class="form-label">Số lượng</label>
-            <input type="number" name="quantity" value="1" min="1" class="form-control w-50" required>
+            <input id="quantity-input"
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              class="form-control w-50"
+              required>
           </div>
 
-          <button type="submit" class="btn btn-primary btn-lg w-100">🛒 Thêm vào giỏ hàng</button>
+          <button type="submit"
+            id="add-to-cart-btn"
+            class="btn btn-primary btn-lg w-100"
+            disabled>
+            🛒 Thêm vào giỏ hàng
+          </button>
+
         </form>
 
         {{-- Mô tả sản phẩm --}}
@@ -194,54 +213,81 @@
 @endpush
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', function() {
+  document.addEventListener('DOMContentLoaded', () => {
     const colorRadios = document.querySelectorAll('input[name="color"]');
     const sizeLabels = document.querySelectorAll('.size-option');
     const btnSubmit = document.querySelector('button[type="submit"]');
+    const slides = document.querySelectorAll('.swiper-slide');
+    const swiperInstance = document.querySelector('.swiper-product-detail')?.swiper;
 
-    function updateSizes(selectedColor) {
+    function updateByColor(selectedColor) {
       let any = false;
 
       sizeLabels.forEach(lbl => {
         const color = lbl.dataset.color;
         const qty = parseInt(lbl.dataset.qty, 10);
+        const match = color === selectedColor && qty > 0;
 
-        if (color === selectedColor && qty > 0) {
-          lbl.style.display = 'inline-block';
-          any = true;
-        } else {
-          lbl.style.display = 'none';
-        }
+        // show/hide size
+        lbl.style.display = match ? 'inline-block' : 'none';
+
+        // opacity + disable input
+        lbl.classList.toggle('opacity-100', match);
+        lbl.classList.toggle('opacity-50', !match);
+        lbl.querySelector('input').disabled = !match;
+
+        if (match) any = true;
       });
 
+      // button
       btnSubmit.disabled = !any;
       btnSubmit.innerText = any ?
         '🛒 Thêm vào giỏ hàng' :
         '⛔ Không có size phù hợp';
+
+      // Swiper slide tương ứng
+      if (swiperInstance) {
+        let found = false;
+        slides.forEach((slide, idx) => {
+          if ((slide.dataset.color || '').trim().toLowerCase() === selectedColor) {
+            swiperInstance.slideTo(idx);
+            found = true;
+          }
+        });
+        if (!found) swiperInstance.slideTo(0);
+      }
     }
 
+    // gán event
     colorRadios.forEach(radio =>
       radio.addEventListener('change', () => {
-        const col = radio.value.trim().toLowerCase();
-        updateSizes(col);
+        updateByColor(radio.value.trim().toLowerCase());
       })
     );
 
-    // Trigger lần đầu (màu mặc định)
+    // khởi tạo lần đầu
     const first = document.querySelector('input[name="color"]:checked');
-    if (first) {
-      updateSizes(first.value.trim().toLowerCase());
-    }
+    if (first) updateByColor(first.value.trim().toLowerCase());
   });
 </script>
 
 @endpush
+
 
 @push('style')
 <style>
   .color-option input:checked+.color-circle {
     box-shadow: 0 0 0 3px #000;
     border: 2px solid #fff;
+  }
+
+  .size-option.opacity-50 {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .size-option.opacity-100 {
+    opacity: 1;
   }
 </style>
 @endpush

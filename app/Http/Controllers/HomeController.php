@@ -37,38 +37,45 @@ class HomeController extends Controller
                 $banner->cta_text = 'MUA NGAY';
                 return $banner;
             });
-        $start = Carbon::now()->startOfMonth();
-        $end = Carbon::now()->endOfMonth();
+        $startOfMonth = Carbon::now()->startOfMonth();
+        $endOfMonth = Carbon::now()->endOfMonth();
 
-        // Top 8 sản phẩm bán chạy nhất tháng (từ order_details)
-        $topSellingIds = DB::table('order_details')
-            ->select('product_detail_id', DB::raw('SUM(quantity) as total_sold'))
-            ->whereBetween('created_at', [$start, $end])
+        $topByOrderCount = DB::table('order_details')
+            ->select('product_detail_id', DB::raw('COUNT(DISTINCT order_id) as order_count'))
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->groupBy('product_detail_id')
-            ->orderByDesc('total_sold')
+            ->orderByDesc('order_count')
             ->limit(8)
             ->pluck('product_detail_id');
 
         $hotDeals = \App\Models\Product_details::with('product')
-            ->whereIn('id', $topSellingIds)
+            ->whereIn('id', $topByOrderCount)
             ->get();
 
         // Lấy các wishlist ID từ session
         $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
 
         // Danh sách sản phẩm có tồn kho
-        $products = \App\Models\Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
-            ->with([
-                'product_details' => fn($q) => $q->where('quantity', '>', 0),
-                'reviews'
-            ])
+        // $products = \App\Models\Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+        //     ->with([
+        //         'product_details' => fn($q) => $q->where('quantity', '>', 0),
+        //         'reviews'
+        //     ])
+        //     ->get();
+        // $featuredProducts = \App\Models\Product::where('is_new', 1) // chỉ lấy sản phẩm mới
+        //     ->with(['product_details' => fn($q) => $q->where('quantity', '>', 0), 'reviews'])
+        //     ->latest()
+        //     ->take(8)
+        //     ->get();
+        $products = \App\Models\Product::where('is_new', 1)
+            ->whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
+            ->with(['product_details' => fn($q) => $q->where('quantity', '>', 0), 'reviews'])
+            ->latest()
+            ->take(10)
             ->get();
 
+
         // Sản phẩm nổi bật (mới nhất)
-        $featuredProducts = \App\Models\Product::with(['product_details', 'reviews'])
-            ->latest()
-            ->take(8)
-            ->get();
 
         // Danh mục
         $categories = \App\Models\Category::all();
@@ -76,7 +83,6 @@ class HomeController extends Controller
         return view('welcome', compact(
             'categories',
             'products',
-            'featuredProducts',
             'wishlistIds',
             'hotDeals',
             'banners'
@@ -85,9 +91,10 @@ class HomeController extends Controller
 
     public function about()
     {
-         $categories = \App\Models\Category::all();
-        return view('user.about',compact(
-            'categories',));
+        $categories = \App\Models\Category::all();
+        return view('user.about', compact(
+            'categories',
+        ));
     }
 
 
@@ -316,14 +323,14 @@ class HomeController extends Controller
 
         // Tạo người dùng mới
 
-         $user = User::create([
-        'name'     => $request->name,
-        'email'    => $request->email,
-        'password' => bcrypt($request->password),
-        'role'     => 'user', // mặc định
-        'status'   => 'active', // hoặc 'pending' nếu cần kích hoạt
-        'avatar'   => 'default-avatar.png', // fallback ảnh mặc định
-    ]);
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'password' => bcrypt($request->password),
+            'role'     => 'user', // mặc định
+            'status'   => 'active', // hoặc 'pending' nếu cần kích hoạt
+            'avatar'   => 'default-avatar.png', // fallback ảnh mặc định
+        ]);
 
         // Đăng nhập tự động
         Auth::login($user);

@@ -124,7 +124,7 @@
               <!-- Thanh trượt giá (từ 10.000 đến 1.000.000 VNĐ) -->
               <input class="price-range-slider" type="text" name="price_range"
                 data-slider-min="10000" data-slider-max="1000000"
-                data-slider-step="10000" data-slider-value="[100000,500000]"
+                data-slider-step="10000" data-slider-value="[10000,500000]"
                 data-currency="₫" />
 
               <div class="price-range__info d-flex align-items-center mt-2">
@@ -312,7 +312,7 @@
               </div>
 
               {{-- Nút Thêm vào giỏ --}}
-              <form action="{{ route('cart.addDetail') }}" method="POST">
+              <form class="js-add-to-cart" method="POST">
                 @csrf
                 <input type="hidden" name="product_detail_id" value="{{ $firstDetail->id }}">
                 <input type="hidden" name="quantity" value="1">
@@ -436,6 +436,27 @@
     headers: {
       'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
+  });
+  $(document).on('submit', 'form.js-add-to-cart', function(e) {
+    e.preventDefault(); // Ngăn reload trang
+
+    const form = $(this);
+    const data = form.serialize(); // Lấy data POST
+
+    $.ajax({
+      url: "{{ route('cart.addDetail') }}",
+      method: "POST",
+      data: data,
+      headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+      }
+    }).done(res => {
+      showToast('success', res.message || 'Đã thêm vào giỏ hàng!');
+      // Bạn có thể cập nhật giao diện giỏ hàng tại đây nếu muốn
+    }).fail(err => {
+      const msg = err.responseJSON?.message || 'Lỗi. Vui lòng thử lại.';
+      showToast('danger', msg);
+    });
   });
 
   // Xử lý click nút yêu thích
