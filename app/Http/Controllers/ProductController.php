@@ -83,9 +83,9 @@ class ProductController extends Controller
                 }
 
                 return [
-                    'name'  => $normalized,           // dùng cho value
+                    'name' => $normalized,           // dùng cho value
                     'label' => ucfirst($normalized),  // hiển thị tooltip, có hoa đầu
-                    'code'  => $code,
+                    'code' => $code,
                 ];
             })
             ->values(); // reset index
@@ -131,7 +131,7 @@ class ProductController extends Controller
         $product->brand_id = $request->brand_id;
         $product->description = $request->description;
         $product->is_new = 1;
-        
+
 
         // Xác định trạng thái sản phẩm
         $total_quantity = collect($request->variants)->sum('quantity');
@@ -266,23 +266,20 @@ class ProductController extends Controller
             if (isset($existingDetails[$key])) {
                 $old = $existingDetails[$key];
 
-                $isSamePrice = $old->price == $variant['price'];
-                $isSameQuantity = $old->quantity == $variant['quantity'];
-                $isSameImage = !$imagePath || $old->image == $imagePath;
+                $hasChanges =
+                    $old->price != $variant['price'] ||
+                    $old->quantity != $variant['quantity'] ||
+                    ($imagePath && $old->image != $imagePath);
 
-                if ($isSamePrice && $isSameQuantity && $isSameImage) {
-                    continue;
+                if ($hasChanges) {
+                    $old->price = $variant['price'];
+                    $old->quantity = $variant['quantity'];
+                    if ($imagePath) {
+                        $old->image = $imagePath;
+                    }
+                    $old->save(); // ✅ cập nhật
                 }
-                Product_details::create([
-                    'product_id' => $product->id,
-                    'size' => $variant['size'],
-                    'color' => $variant['color'],
-                    'price' => $variant['price'],
-                    'quantity' => $variant['quantity'],
-                    'image' => $imagePath ?? $old->image,
-                ]);
             } else {
-                // Biến thể chưa tồn tại → thêm mới
                 Product_details::create([
                     'product_id' => $product->id,
                     'size' => $variant['size'],

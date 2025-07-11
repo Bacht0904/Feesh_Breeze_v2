@@ -339,6 +339,10 @@ class AdminController extends Controller
 
                 $order->status = $newStatus;
                 $order->updated_at = now();
+               
+                if($order->status === 'Đã Giao'){
+                    $order->payment_status = 'Đã thanh toán';
+                }
                 $order->save();
             });
 
