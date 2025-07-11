@@ -1,7 +1,6 @@
 @extends('layouts.app')
 @section('content')
 <main>
-
     @if(session('success') || session('error'))
     <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1080">
         <div class="toast align-items-center text-white {{ session('success') ? 'bg-success' : 'bg-danger' }} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">

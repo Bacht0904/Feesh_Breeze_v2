@@ -2,6 +2,7 @@
 
 @section('content')
 <main class="pt-90 pb-5 bg-review">
+  <div class="mb-4 pb-4"></div>
   <section class="container">
     <h2 class="review-title text-center mb-5">
       Đánh giá cho: <span class="text-primary">{{ $product->name }}</span>

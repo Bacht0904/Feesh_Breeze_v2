@@ -2,6 +2,7 @@
 
 @section('content')
 <main class="pt-90">
+  <div class="mb-4 pb-4"></div>
   <section class="shop-main container d-flex pt-4 pt-xl-5">
     <div class="shop-sidebar side-sticky bg-body" id="shopFilter">
       <div class="aside-header d-flex d-lg-none align-items-center">

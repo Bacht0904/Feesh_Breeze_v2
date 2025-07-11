@@ -2,6 +2,7 @@
 
 @section('content')
 <main class="pt-90">
+  <div class="mb-4 pb-4"></div>
   <section class="shop-checkout container">
     <h2 class="page-title mb-4">Danh sách yêu thích</h2>
 
@@ -97,12 +98,12 @@
 @endsection
 @push('scripts')
 <script>
-    setTimeout(() => {
-        const alert = document.getElementById('success-alert');
-        if (alert) {
-            const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
-            bsAlert.close(); // kích hoạt fade và tự tắt
-        }
-    }, 3000); // 3 giây
+  setTimeout(() => {
+    const alert = document.getElementById('success-alert');
+    if (alert) {
+      const bsAlert = bootstrap.Alert.getOrCreateInstance(alert);
+      bsAlert.close(); // kích hoạt fade và tự tắt
+    }
+  }, 3000); // 3 giây
 </script>
 @endpush
