@@ -24,7 +24,11 @@
     $hasOutOfStock = false;
     @endphp
 
-    @if ((Auth::check() && isset($items) && count($items) > 0) || (session('cart') && count(session('cart')) > 0))
+    @if (
+    (Auth::check() && isset($items) && count($items) > 0) ||
+    (!Auth::check() && session('cart') && count(session('cart')) > 0)
+    )
+
 
     <form method="POST" action="{{ route('cart.update') }}">
       @csrf
@@ -92,7 +96,7 @@
 
                   <td>
 
-                   <a href="{{ route('cart.remove',$item->id) }}" class="remove-cart text-danger">Xoá</a>
+                    <a href="{{ route('cart.remove',$item->id) }}" class="remove-cart text-danger">Xoá</a>
 
                   </td>
 
