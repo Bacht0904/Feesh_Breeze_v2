@@ -45,7 +45,7 @@ class HomeController extends Controller
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->groupBy('product_detail_id')
             ->orderByDesc('order_count')
-            ->limit(8)
+            ->limit(10)
             ->pluck('product_detail_id');
 
         $hotDeals = \App\Models\Product_details::with('product')
