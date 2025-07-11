@@ -23,8 +23,6 @@
     <link rel="stylesheet" href="{{ asset('assets/css/style.css')}}" type="text/css" />
     <link rel="stylesheet" href="{{ asset('assets/css/custom.css')}}" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-
-
         integrity="sha512-SfTiTlX6kk+qitfevl/7LibUOeJWlt9rbyDn92a1DqWOw9vWG2MFoays0sgObmWazO5BQPiFucnnEAjpAB+/Sw=="
         crossorigin="anonymous" referrerpolicy="no-referrer">
     @stack('styles')
@@ -303,13 +301,9 @@
                     <p class="text-uppercase text-secondary fw-medium mb-4">Bạn đang tìm gì?</p>
 
                     <div class="position-relative">
-                        <input type="text"
-                            name="search"
-                            value="{{ request('search') }}"
-                            id="search-input"
+                        <input type="text" name="search" value="{{ request('search') }}" id="search-input"
                             placeholder="Tìm sản phẩm..."
-                            class="search-field__input search-popup__input w-100 fw-medium"
-                            autocomplete="off">
+                            class="search-field__input search-popup__input w-100 fw-medium" autocomplete="off">
 
                         <button class="btn-icon search-popup__submit" type="submit">
                             <svg class="d-block" width="20" height="20">
@@ -354,7 +348,8 @@
             <div class="header-desk header-desk_type_1">
                 <div class="logo">
                     <a href="{{ route('home') }}">
-                        <img src="{{ asset('images/logo/logo.png') }}" class="logo__image" , style="max-height:80px ; with:auto ">
+                        <img src="{{ asset('images/logo/logo.png') }}" class="logo__image" ,
+                            style="max-height:80px ; with:auto ">
 
                     </a>
                 </div>
@@ -389,14 +384,12 @@
                         </div>
 
                         <div class="search-popup js-hidden-content">
-                            <form action="{{ route('shop') }}" method="GET" class="search-field container" id="search-form">
+                            <form action="{{ route('shop') }}" method="GET" class="search-field container"
+                                id="search-form">
                                 <p class="text-uppercase text-secondary fw-medium mb-4">Bạn đang tìm gì?</p>
 
                                 <div class="position-relative">
-                                    <input type="text"
-                                        name="search"
-                                        value="{{ request('search') }}"
-                                        id="search-input"
+                                    <input type="text" name="search" value="{{ request('search') }}" id="search-input"
                                         placeholder="Tìm sản phẩm..."
                                         class="search-field__input search-popup__input w-100 fw-medium"
                                         autocomplete="off">
@@ -416,82 +409,95 @@
                     </div>
 
                     @guest
-                    <div class="header-tools__item">
-                        <a href="{{ route('login') }}" class="header-tools__link">
+                        <div class="header-tools__item">
+                            <a href="{{ route('login') }}" class="header-tools__link">
 
-                            <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
-                        </a>
-                    </div>
+                                <span class="d-block text-uppercase fw-medium">Đăng Nhập</span>
+                            </a>
+                        </div>
 
                     @else
-                    @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
-                    <div class="header-tools__item">
-                        <a href="{{ route('admin.index') }}" class="header-tools__link">
-                            <span class="d-block text-uppercase fw-medium">Quản Lý</span>
-                        </a>
-                    </div>
-                    @else
-                    <div class="header-tools__item">
-                        <a href="{{ route('profile') }}" class="header-tools__link">
-                            <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <use href="#icon_user" />
-                            </svg>
-                            <span class="d-block text-uppercase fw-medium"></span>
-                        </a>
-                    </div>
-                    @endif
+                        @if (Auth::check() && in_array(Auth::user()->role, ['admin', 'staff']))
+                            <div class="header-tools__item">
+                                <a href="{{ route('admin.index') }}" class="header-tools__link">
+                                    <span class="d-block text-uppercase fw-medium">Quản Lý</span>
+                                </a>
+                            </div>
+                        @else
+                            <div class="header-tools__item">
+                                <a href="{{ route('profile') }}" class="header-tools__link">
+                                    <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <use href="#icon_user" />
+                                    </svg>
+                                    <span class="d-block text-uppercase fw-medium"></span>
+                                </a>
+                            </div>
+                        @endif
                     @endguest
                     @php
-                    $unread = auth()->check() ? auth()->user()->unreadNotifications : collect();
+                        $unread = auth()->check() ? auth()->user()->unreadNotifications : collect();
                     @endphp
+
                     <div class="header-tools__item hover-container">
                         <div class="js-hover__open position-relative">
                             <a class="js-notification-popup search-field__actor" href="#">
                                 <i data-feather="bell"></i>
                             </a>
                             @if($unread->count())
-                            <span class="position-absolute top-0 start-100 translate-middle-y badge rounded-circle bg-danger">
-                                {{ $unread->count() }}
-                            </span>
+                                <span
+                                    class="position-absolute top-0 start-100 translate-middle-y badge rounded-circle bg-danger">
+                                    {{ $unread->count() }}
+                                </span>
                             @endif
                         </div>
-                        <div class="notification-popup js-hidden-content">
+
+                        <div class="notification-popup js-hidden-content shadow rounded p-3 bg-white">
                             <p class="text-uppercase text-secondary fw-semibold mb-3">🔔 Thông báo</p>
 
                             <ul class="list-unstyled mb-0">
                                 @forelse($unread->take(3) as $notification)
-                                @php $orderId = $notification->data['order_id'] ?? null; @endphp
-                                <li class="mb-3 pb-3 border-bottom">
-                                    <a href="{{ $orderId ? route('orders.details', $orderId) : '#' }}"
-                                        class="text-decoration-none text-dark d-block">
-                                        <div class="d-flex gap-2 align-items-start">
-                                            <i class="icon-noti-{{ $loop->iteration }}"></i>
-                                            <div>
-                                                <div class="fw-medium">{{ $notification->data['message'] ?? 'Thông báo mới' }}</div>
-                                                <div class="text-muted small">
-                                                    Đơn hàng #{{ $orderId ?? '---' }}<br>
-                                                    <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                    @php
+                                        $orderId = $notification->data['order_id'] ?? null;
+                                        $isUnread = is_null($notification->read_at);
+                                    @endphp
+                                    <li
+                                        class="mb-3 pb-3 border-bottom {{ $isUnread ? 'bg-orange-100' : 'bg-light' }} rounded px-2">
+                                        <a href="{{ $orderId ? route('orders.details', $orderId) : '#' }}"
+                                            class="text-decoration-none d-block {{ $isUnread ? 'fw-semibold text-dark' : 'text-muted' }}">
+                                            <div class="d-flex gap-2 align-items-start">
+                                                <i class="icon-noti-{{ $loop->iteration }}"></i>
+                                                <div>
+                                                    <div class="d-flex align-items-center gap-1">
+                                                        <span>{{ $notification->data['message'] ?? 'Thông báo mới' }}</span>
+                                                        @if($isUnread)
+                                                            <span class="badge bg-danger text-white ms-2 text-xs">Mới</span>
+                                                        @endif
+                                                    </div>
+                                                    <div class="text-muted small">
+                                                        Đơn hàng #{{ $orderId ?? '---' }}<br>
+                                                        <small>{{ $notification->created_at->diffForHumans() }}</small>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </a>
-                                </li>
+                                        </a>
+                                    </li>
                                 @empty
-                                <li><span class="text-muted">Không có thông báo mới</span></li>
+                                    <li><span class="text-muted">Không có thông báo mới</span></li>
                                 @endforelse
                             </ul>
 
-                            <a href="{{ route('user.notifications') }}" class="tf-button w-full text-center">Xem tất cả</a>
-                            </li>
-
+                            <a href="{{ route('user.notifications') }}" class="tf-button w-full text-center mt-2">Xem
+                                tất cả</a>
                         </div>
                     </div>
 
 
 
+
                     <a href="{{ route('wishlist') }} " class="header-tools__item position-relative">
-                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="d-block" width="20" height="20" viewBox="0 0 20 20" fill="none"
+                            xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_heart" />
                         </svg>
                         <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger"
@@ -508,21 +514,21 @@
                             xmlns="http://www.w3.org/2000/svg">
                             <use href="#icon_cart" />
                         </svg>
-                        @if($cartItemCount !=0)
-                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">
-                            {{ $cartItemCount ?? 0 }}
-                        </span>
+                        @if($cartItemCount != 0)
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-danger">
+                                {{ $cartItemCount ?? 0 }}
+                            </span>
                         @endif
                     </a>
                     @if(Auth::check())
-                    <form method="post" action="{{route('logout')}}" id="logout-form">
-                        @csrf
-                        <a href="{{route('logout')}}" class=""
-                            onclick="event.preventDefault();document.getElementById('logout-form').submit();">
-                            <div class="icon"><i class="icon-settings"></i></div>
-                            <div class="text">ĐĂNG XUẤT</div>
-                        </a>
-                    </form>
+                        <form method="post" action="{{route('logout')}}" id="logout-form">
+                            @csrf
+                            <a href="{{route('logout')}}" class=""
+                                onclick="event.preventDefault();document.getElementById('logout-form').submit();">
+                                <div class="icon"><i class="icon-settings"></i></div>
+                                <div class="text">ĐĂNG XUẤT</div>
+                            </a>
+                        </form>
                     @endif
                 </div>
             </div>
@@ -544,13 +550,13 @@
                     <p><strong class="fw-medium">028 38 212 868 - 028 38 212 360</strong></p>
                     <ul class="d-flex gap-2 list-unstyled mt-3">
                         @foreach (['facebook', 'twitter', 'instagram', 'youtube'] as $social)
-                        <li>
-                            <a href="#" class="text-muted" aria-label="{{ ucfirst($social) }}">
-                                <svg class="svg-icon svg-icon_{{ $social }}" width="18" height="18">
-                                    <use href="#icon_{{ $social }}" />
-                                </svg>
-                            </a>
-                        </li>
+                            <li>
+                                <a href="#" class="text-muted" aria-label="{{ ucfirst($social) }}">
+                                    <svg class="svg-icon svg-icon_{{ $social }}" width="18" height="18">
+                                        <use href="#icon_{{ $social }}" />
+                                    </svg>
+                                </a>
+                            </li>
                         @endforeach
                     </ul>
                 </div>
@@ -591,11 +597,11 @@
                     <h6 class="fw-semibold text-uppercase mb-3">Danh Mục</h6>
                     <ul class="list-unstyled small">
                         @foreach($categories->take(4) as $cat)
-                        <li>
-                            <a href="{{ route('shop', ['slug' => $cat->slug]) }}" class="text-muted d-block mb-2">
-                                {{ $cat->name }}
-                            </a>
-                        </li>
+                            <li>
+                                <a href="{{ route('shop', ['slug' => $cat->slug]) }}" class="text-muted d-block mb-2">
+                                    {{ $cat->name }}
+                                </a>
+                            </li>
                         @endforeach
                     </ul>
                 </div>
@@ -647,12 +653,12 @@
 
     <script>
         feather.replace()
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const trigger = document.querySelector('.js-notification-popup');
             const popup = document.querySelector('.notification-popup');
 
             if (trigger && popup) {
-                trigger.addEventListener('click', function(e) {
+                trigger.addEventListener('click', function (e) {
                     e.preventDefault();
                     popup.style.display = popup.style.display === 'block' ? 'none' : 'block';
 
@@ -660,7 +666,7 @@
                     feather.replace();
                 });
 
-                document.addEventListener('click', function(e) {
+                document.addEventListener('click', function (e) {
                     if (!popup.contains(e.target) && !trigger.contains(e.target)) {
                         popup.style.display = 'none';
                     }
@@ -670,7 +676,7 @@
     </script>
 
     <script>
-        document.getElementById('search-input').addEventListener('input', async function() {
+        document.getElementById('search-input').addEventListener('input', async function () {
             const keyword = this.value.trim();
             const container = document.getElementById('search-suggestions');
 

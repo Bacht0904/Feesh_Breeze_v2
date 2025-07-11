@@ -68,15 +68,15 @@ class CheckoutController extends Controller
 
 
 
-    public function applyCoupon(Request $request)
+      public function applyCoupon(Request $request)
     {
-        $code   = $request->input('coupon_code');
+        $code = $request->input('coupon_code');
         $coupon = Coupon::where('code', $code)
             ->where('status', 'active')
             ->where('quantity', '>', 0)
             ->first();
 
-        if (! $coupon) {
+        if (!$coupon) {
             return back()->with(
                 'voucher_message',
                 'Mã giảm giá không hợp lệ hoặc đã hết lượt sử dụng.'
@@ -90,22 +90,38 @@ class CheckoutController extends Controller
             $coupon->save();
         }
 
-        // Tính tổng từ session hoặc (nếu bạn muốn) từ DB
-        $cart  = session('cart', []);
-        $total = collect($cart)->sum(fn($i) => ($i['price'] ?? 0) * ($i['quantity'] ?? 0));
+        // 📦 Lấy giỏ hàng từ session hoặc database
+        if (Auth::check()) {
+            $cartItems = CartItem::with('productdetail')
+                ->where('user_id', Auth::id())
+                ->get();
 
-        // Tính discount
-        if ($coupon->type === 'percent') {
-            $discount = $total * ($coupon->value / 100);
-        } else { // fixed
-            $discount = $coupon->value;
+            $total = $cartItems->sum(
+                fn($item) =>
+                ($item->productdetail->price ?? 0) * ($item->quantity ?? 0)
+            );
+        } else {
+            $cart = session('cart', []);
+            $total = collect($cart)->sum(fn($i) => ($i['price'] ?? 0) * ($i['quantity'] ?? 0));
         }
-        $discount = min($discount, $total);
 
-        session(['coupon' => [
-            'code'     => $coupon->code,
-            'discount' => $discount,
-        ]]);
+        // 🔥 Tính giảm giá
+        $discount = $coupon->type === 'percent'
+            ? $total * ($coupon->value / 100)
+            : $coupon->value;
+
+        $discount = min($discount, $total); // Không được vượt quá tổng
+
+        // 💾 Lưu vào session
+        session([
+            'coupon' => [
+                'code' => $coupon->code,
+                'discount' => $discount,
+            ]
+        ]);
+
+        // 📘 (Tuỳ chọn) Lưu lịch sử áp dụng
+        
 
         return back()->with(
             'voucher_message',

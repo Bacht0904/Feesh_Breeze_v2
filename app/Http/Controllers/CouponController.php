@@ -9,6 +9,8 @@ class CouponController extends Controller
 {
     public function coupons()
     {
+        Coupon::where('quantity', 0)->update(['status' => 'inactive']);
+
         $coupons = Coupon::orderBy('id', 'asc')->paginate(10);
         return view('admin.coupons', compact('coupons'));
     }

@@ -45,28 +45,21 @@ class HomeController extends Controller
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->groupBy('product_detail_id')
             ->orderByDesc('order_count')
-            ->limit(10)
-            ->pluck('product_detail_id');
+            ->get();
 
         $hotDeals = \App\Models\Product_details::with('product')
-            ->whereIn('id', $topByOrderCount)
-            ->get();
+            ->whereIn('id', $topByOrderCount->pluck('product_detail_id'))
+            ->get()
+            ->sortByDesc(function ($item) use ($topByOrderCount) {
+                return $topByOrderCount->firstWhere('product_detail_id', $item->id)?->order_count ?? 0;
+            })
+            ->unique('product_id') // ⚡ Loại bỏ các biến thể trùng product_id
+            ->values(); // Reset key để kết quả dễ xử lý
 
         // Lấy các wishlist ID từ session
         $wishlistIds = session('wishlist') ? array_keys(session('wishlist')) : [];
 
-        // Danh sách sản phẩm có tồn kho
-        // $products = \App\Models\Product::whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
-        //     ->with([
-        //         'product_details' => fn($q) => $q->where('quantity', '>', 0),
-        //         'reviews'
-        //     ])
-        //     ->get();
-        // $featuredProducts = \App\Models\Product::where('is_new', 1) // chỉ lấy sản phẩm mới
-        //     ->with(['product_details' => fn($q) => $q->where('quantity', '>', 0), 'reviews'])
-        //     ->latest()
-        //     ->take(8)
-        //     ->get();
+
         $products = \App\Models\Product::where('is_new', 1)
             ->whereHas('product_details', fn($q) => $q->where('quantity', '>', 0))
             ->with(['product_details' => fn($q) => $q->where('quantity', '>', 0), 'reviews'])
@@ -137,22 +130,22 @@ class HomeController extends Controller
         // Bộ lọc nâng cao
         if ($request->filled('category')) {
             $productQuery->whereHas('category', fn($q) =>
-            $q->where('slug', $request->input('category')));
+                $q->where('slug', $request->input('category')));
         }
 
         if ($request->filled('brand')) {
             $productQuery->whereHas('brand', fn($q) =>
-            $q->where('slug', $request->input('brand')));
+                $q->where('slug', $request->input('brand')));
         }
 
         if ($request->filled('size')) {
             $productQuery->whereHas('product_details', fn($q) =>
-            $q->where('size', $request->input('size')));
+                $q->where('size', $request->input('size')));
         }
 
         if ($request->filled('color')) {
             $productQuery->whereHas('product_details', fn($q) =>
-            $q->whereRaw('LOWER(color) = ?', [strtolower($request->input('color'))]));
+                $q->whereRaw('LOWER(color) = ?', [strtolower($request->input('color'))]));
         }
 
         if ($request->filled('price_range')) {
@@ -169,13 +162,13 @@ class HomeController extends Controller
         match ($sort) {
             'price_asc' => $productQuery
                 ->joinSub($priceSub, 'pd', fn($join) =>
-                $join->on('products.id', '=', 'pd.product_id'))
+                    $join->on('products.id', '=', 'pd.product_id'))
                 ->orderBy('pd.min_price')
                 ->select('products.*'),
 
             'price_desc' => $productQuery
                 ->joinSub($priceSub, 'pd', fn($join) =>
-                $join->on('products.id', '=', 'pd.product_id'))
+                    $join->on('products.id', '=', 'pd.product_id'))
                 ->orderByDesc('pd.min_price')
                 ->select('products.*'),
 
@@ -183,7 +176,7 @@ class HomeController extends Controller
             'best-sellers' => $productQuery
                 ->withCount([
                     'order_details as sold_quantity' => fn($q) =>
-                    $q->select(DB::raw('SUM(order_details.quantity)'))
+                        $q->select(DB::raw('SUM(order_details.quantity)'))
                 ])
 
 
@@ -227,7 +220,7 @@ class HomeController extends Controller
             'slides'
         ));
     }
-     public function search(Request $request)
+    public function search(Request $request)
     {
         $query = $request->input('query');
         $products = Product::where('name', 'like', '%' . $query . '%')
@@ -244,16 +237,16 @@ class HomeController extends Controller
     public function quickSuggestions()
     {
         $categories = Category::select('name', 'slug')->limit(5)->get();
-        $brands     = Brand::select('name', 'slug')->limit(5)->get();
-        $products   = Product::with('lowestPricedDetail')
+        $brands = Brand::select('name', 'slug')->limit(5)->get();
+        $products = Product::with('lowestPricedDetail')
             ->latest()
             ->take(5)
             ->get();
         dd($products);
         return response()->json([
             'categories' => $categories,
-            'brands'     => $brands,
-            'products'   => $products,
+            'brands' => $brands,
+            'products' => $products,
         ]);
     }
 
@@ -307,30 +300,30 @@ class HomeController extends Controller
     {
         // Validate đầu vào với thông báo lỗi tiếng Việt
         $request->validate([
-            'name'                  => 'required|string|max:255',
-            'email'                 => 'required|email|max:255|unique:users',
-            'password'              => 'required|string|min:6|confirmed',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255|unique:users',
+            'password' => 'required|string|min:6|confirmed',
         ], [
-            'name.required'         => 'Bạn chưa nhập họ và tên',
-            'name.string'           => 'Họ và tên phải là chuỗi ký tự',
-            'name.max'              => 'Họ và tên tối đa 255 ký tự',
-            'email.required'        => 'Bạn chưa nhập email',
-            'email.email'           => 'Định dạng email không hợp lệ',
-            'email.unique'          => 'Email này đã được đăng ký',
-            'password.required'     => 'Bạn chưa nhập mật khẩu',
-            'password.min'          => 'Mật khẩu phải có tối thiểu 6 ký tự',
-            'password.confirmed'    => 'Xác nhận mật khẩu không khớp',
+            'name.required' => 'Bạn chưa nhập họ và tên',
+            'name.string' => 'Họ và tên phải là chuỗi ký tự',
+            'name.max' => 'Họ và tên tối đa 255 ký tự',
+            'email.required' => 'Bạn chưa nhập email',
+            'email.email' => 'Định dạng email không hợp lệ',
+            'email.unique' => 'Email này đã được đăng ký',
+            'password.required' => 'Bạn chưa nhập mật khẩu',
+            'password.min' => 'Mật khẩu phải có tối thiểu 6 ký tự',
+            'password.confirmed' => 'Xác nhận mật khẩu không khớp',
         ]);
 
         // Tạo người dùng mới
 
         $user = User::create([
-            'name'     => $request->name,
-            'email'    => $request->email,
+            'name' => $request->name,
+            'email' => $request->email,
             'password' => bcrypt($request->password),
-            'role'     => 'user', // mặc định
-            'status'   => 'active', // hoặc 'pending' nếu cần kích hoạt
-            'avatar'   => 'default-avatar.png', // fallback ảnh mặc định
+            'role' => 'user', // mặc định
+            'status' => 'active', // hoặc 'pending' nếu cần kích hoạt
+            'avatar' => 'default-avatar.png', // fallback ảnh mặc định
         ]);
 
         // Đăng nhập tự động

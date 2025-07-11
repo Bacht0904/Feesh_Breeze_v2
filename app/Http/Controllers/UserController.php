@@ -20,9 +20,19 @@ class UserController extends Controller
 
     public function users()
     {
-        $users = User::orderBy('id', 'asc')->paginate(10);
+        $loggedInUser = auth()->user();
+
+        if ($loggedInUser->role === 'staff') {
+            // Nếu là nhân viên, chỉ lấy danh sách người dùng (khách hàng)
+            $users = User::where('role', 'user')->orderBy('id', 'asc')->paginate(10);
+        } else {
+            // Nếu là admin hoặc role khác, lấy toàn bộ
+            $users = User::orderBy('id', 'asc')->paginate(10);
+        }
+
         return view('admin.users', compact('users'));
     }
+
 
     public function add_user()
     {
@@ -205,7 +215,7 @@ class UserController extends Controller
                 unlink(public_path($user->avatar));
             }
 
-            
+
             $user->avatar = $uploadFolder . $filename;
             $user->save();
         }
@@ -222,7 +232,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'address' => 'nullable|string',
-            'phone'=>'min:10|max:10',
+            'phone' => 'min:10|max:10',
             'current_password' => 'required',
         ]);
 
@@ -234,7 +244,7 @@ class UserController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'address' => $request->address,
-            'phone'=>$request->phone,
+            'phone' => $request->phone,
         ]);
 
         return redirect()->route('profile')->with('success', 'Cập nhật thành công!');

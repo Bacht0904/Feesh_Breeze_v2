@@ -13,7 +13,6 @@
         </div>
     </div>
     @endif
-
     <section class="swiper-container js-swiper-slider slideshow swiper-number-pagination"
         data-settings='{
            "autoplay": { "delay": 5000 },

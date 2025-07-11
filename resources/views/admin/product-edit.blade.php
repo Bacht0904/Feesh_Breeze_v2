@@ -108,12 +108,12 @@
                                         placeholder="Màu sắc" required>
                                 </fieldset>
                                 <fieldset class="name">
-                                    <input type="number" name="variants[{{ $index }}][quantity]" value="{{ $detail->quantity }}"
+                                    <input type="number" name="variants[{{ $index }}][quantity]" value="{{ $detail->quantity }} min="0"
                                         placeholder="Số lượng" required>
                                 </fieldset>
                                 <fieldset class="name">
-                                    <input type="number" name="variants[{{ $index }}][price]" value="{{ $detail->price }}"
-                                        placeholder="Giá bán" required>
+                                    <input type="number" name="variants[{{ $index }}][price]" value="{{ $detail->price }}" min="0"
+                                        placeholder="Giá bán" required> 
                                 </fieldset>
                                 <fieldset class="name">
                                     <input type="file" name="variants[{{ $index }}][image]" accept="image/*">
