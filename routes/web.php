@@ -196,9 +196,7 @@ Route::get('/cart', [CartController::class, 'cart'])->name('cart');
 Route::get('/wishlist', [HomeController::class, 'wishlist'])->name('wishlist');
 
 Route::post('/cart/add-detail', [CartController::class, 'addDetail'])->name('cart.addDetail');
-Route::delete('/cart/remove/{slug}', [CartController::class, 'remove'])->name('cart.remove');
-Route::delete('/cart/update', [CartController::class, 'update']);
-
+Route::get('/cart/remove/{slug}', [CartController::class, 'remove'])->name('cart.remove');
 
 
 Route::post('/cart/update', [CartController::class, 'update'])->name('cart.update');
