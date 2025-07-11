@@ -92,11 +92,7 @@
 
                   <td>
 
-                    <form action="{{ route('cart.remove', $item->id) }}" method="POST" id="remove-form-{{ $item->id }}">
-                      @csrf
-                      @method('DELETE')
-                      <button type="submit" class="text-danger">Xoá</button>
-                    </form>
+                   <a href="{{ route('cart.remove',$item->id) }}" class="remove-cart text-danger">Xoá</a>
 
                   </td>
 
@@ -150,11 +146,7 @@
 
                     <td>
 
-                      <form action="{{ route('cart.remove', $id) }}" method="POST" id="remove-form-{{ $id }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-danger">Xoá</button>
-                      </form>
+                      <a href="{{ route('cart.remove',$item->id) }}" class="remove-cart text-danger">Xoá</a>
 
                     </td>
 
@@ -196,20 +188,3 @@
   </section>
 </main>
 @endsection
-@push('scripts')
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const alertWarning = document.getElementById('alert-warning');
-    const alertSuccess = document.getElementById('alert-success');
-
-    [alertWarning, alertSuccess].forEach(alert => {
-      if (alert) {
-        setTimeout(() => {
-          alert.classList.remove('show');
-          alert.classList.add('fade');
-        }, 4000); // 4s tự động đóng
-      }
-    });
-  });
-</script>
-@endpush
