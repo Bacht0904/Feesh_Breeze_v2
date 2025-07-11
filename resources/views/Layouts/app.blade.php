@@ -713,6 +713,16 @@
             display: none;
         }
 
+        .header-mobile__navigation {
+            top: 0 !important;
+            height: 100vh;
+            /* Chiếm toàn bộ chiều cao màn hình */
+            z-index: 9999;
+            /* Đảm bảo hiển thị trên các phần khác */
+            border-top: 1px solid #dee2e6;
+            /* Đường viền giống gạch */
+        }
+
         .hover-container:hover .notification-popup {
             display: block;
         }

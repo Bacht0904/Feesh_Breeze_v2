@@ -155,40 +155,6 @@
 
 
       </form>
-
-      <!--
-
-      <div class="accordion" id="price-filters">
-        <div class="accordion-item mb-4">
-          <h5 class="accordion-header mb-2" id="accordion-heading-price">
-            <button class="accordion-button p-0 border-0 fs-5 text-uppercase" type="button" data-bs-toggle="collapse"
-              data-bs-target="#accordion-filter-price" aria-expanded="true" aria-controls="accordion-filter-price">
-              Giá
-              <svg class="accordion-button__icon type2" viewBox="0 0 10 6" xmlns="http://www.w3.org/2000/svg">
-                <g aria-hidden="true" stroke="none" fill-rule="evenodd">
-                  <path
-                    d="M5.35668 0.159286C5.16235 -0.053094 4.83769 -0.0530941 4.64287 0.159286L0.147611 5.05963C-0.0492049 5.27473 -0.049205 5.62357 0.147611 5.83813C0.344427 6.05323 0.664108 6.05323 0.860924 5.83813L5 1.32706L9.13858 5.83867C9.33589 6.05378 9.65507 6.05378 9.85239 5.83867C10.0492 5.62357 10.0492 5.27473 9.85239 5.06018L5.35668 0.159286Z" />
-                </g>
-              </svg>
-            </button>
-          </h5>
-          <div id="accordion-filter-price" class="accordion-collapse collapse show border-0"
-            aria-labelledby="accordion-heading-price" data-bs-parent="#price-filters">
-            <input class="price-range-slider" type="text" name="price_range" value="" data-slider-min="10"
-              data-slider-max="1000" data-slider-step="5" data-slider-value="[250,450]" data-currency="$" />
-            <div class="price-range__info d-flex align-items-center mt-2">
-              <div class="me-auto">
-                <span class="text-secondary">Min Price: </span>
-                <span class="price-range__min">$250</span>
-              </div>
-              <div>
-                <span class="text-secondary">Max Price: </span>
-                <span class="price-range__max">$450</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
 
     <div class="shop-list flex-grow-1">
@@ -283,15 +249,20 @@
           </div>
         </div>
       </div>
+      @if ($products->count() === 0)
+      <div class="empty-products text-center py-5">
+        <p class="text-muted">Rất tiếc, không tìm thấy sản phẩm nào phù hợp với yêu cầu của bạn.</p>
+        <a href="{{ route('shop') }}" class="btn btn-outline-secondary mt-3">Xem tất cả sản phẩm</a>
+      </div>
+      @else
+
       <div class="products-grid row row-cols-2 row-cols-md-3" id="products-grid">
         @foreach($products as $product)
         @php
         $firstDetail = $product->lowestPricedDetail;
         $productUrl = route('products.show', $product->slug);
         @endphp
-        @if($products->isEmpty())
-        <p>Không tìm thấy sản phẩm nào phù hợp.</p>
-        @endif
+
         @if($firstDetail && $firstDetail->quantity > 0)
         <div class="col-6 col-md-4">
           <div class="product-card mb-3 mb-md-4 mb-xxl-5">
@@ -399,6 +370,8 @@
         @endif
         @endforeach
       </div>
+
+      @endif
       {{-- Phân trang --}}
       @if ($products->hasPages())
       <nav class="shop-pages d-flex justify-content-center mt-4" aria-label="Phân trang sản phẩm">

@@ -92,8 +92,7 @@
 
                   <td>
 
-
-                    <form action="{{ route('cart.remove', $id) }}" method="POST" id="remove-form-{{ $id }}">
+                    <form action="{{ route('cart.remove', $item->id) }}" method="POST" id="remove-form-{{ $item->id }}">
                       @csrf
                       @method('DELETE')
                       <button type="submit" class="text-danger">Xoá</button>

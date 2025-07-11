@@ -227,6 +227,19 @@ class HomeController extends Controller
             'slides'
         ));
     }
+     public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $products = Product::where('name', 'like', '%' . $query . '%')
+            ->orWhereHas('product_details', function ($q) use ($query) {
+                $q->where('size', 'like', '%' . $query . '%')
+                    ->orWhere('color', 'like', '%' . $query . '%');
+            })
+            ->with(['product_details', 'reviews'])
+            ->paginate(9);
+
+        return view('user.search_results', compact('products', 'query'));
+    }
 
     public function quickSuggestions()
     {
@@ -257,19 +270,7 @@ class HomeController extends Controller
     }
 
 
-    public function search(Request $request)
-    {
-        $query = $request->input('query');
-        $products = Product::where('name', 'like', '%' . $query . '%')
-            ->orWhereHas('product_details', function ($q) use ($query) {
-                $q->where('size', 'like', '%' . $query . '%')
-                    ->orWhere('color', 'like', '%' . $query . '%');
-            })
-            ->with(['product_details', 'reviews'])
-            ->paginate(9);
 
-        return view('user.search_results', compact('products', 'query'));
-    }
     public function showLoginForm()
     {
         return view('auth.login');

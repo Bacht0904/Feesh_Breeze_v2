@@ -342,41 +342,20 @@ class CheckoutController extends Controller
     }
     public function handleMomoCallback(Request $request)
     {
-
         $orderData = session('order_data', []);
         $rawCart   = $orderData['cart'] ?? session('cart', []);
+        $empty     = empty($rawCart);
 
-        // Map ra đủ thông tin
-        $cart = collect($rawCart)->map(function ($item) {
-            $detail = Product_details::find($item['product_detail_id']);
-            return [
-                'product_name' => optional($detail->product)->name ?? 'Sản phẩm đã xoá',
-                'size'         => $detail->size               ?? '-',
-                'price'        => $detail->price              ?? 0,
-                'image'        => $detail->image              ?? 'img/default.png',
-                'quantity'     => $item['quantity']           ?? 0,
-            ];
-        })->toArray();
-
-        $empty            = empty($cart);
-        $availableCoupons = Coupon::where('status', 'active')->get();
-        $address          = $orderData['customer']['address']
-            ?? Auth::user()->address
-            ?? '';
-        $totals           = $this->calculateTotals($cart, $address);
-
-        return view('user.checkout', array_merge(
-            compact('cart', 'empty', 'availableCoupons', 'address'),
-            $totals
-        ))->with('error', 'Xác thực không thành công hoặc bị hủy.');
-
-        // Kiểm tra mã phản hồi từ MoMo
-        if ($request->resultCode == 0) {
-            // Debug thông tin trả về từ MoMo
+        // Nếu MoMo xác nhận thanh toán thành công
+        if ((int)$request->resultCode === 0 && !$empty) {
             try {
-                $saved = DB::transaction(function () use ($order) {
-                    $saved = Order::create([
-                        'id_user'         => Auth::id() ?? null,
+                $saved = DB::transaction(function () use ($orderData, $rawCart) {
+                    $order = $orderData;
+                    $cart  = $rawCart;
+
+                    // Tạo đơn hàng
+                    $orderModel = Order::create([
+                        'id_user'         => Auth::id(),
                         'id_payment'      => 'PMT' . time(),
                         'id_shipping'     => 'SHIP' . time(),
                         'order_date'      => now(),
@@ -395,44 +374,61 @@ class CheckoutController extends Controller
                         'status'          => 'Chờ Xác Nhận',
                     ]);
 
-                    foreach ($order['cart'] as $item) {
+                    foreach ($cart as $item) {
+                        $detail = Product_details::find($item['product_detail_id']);
                         OrderDetail::create([
-                            'order_id'          => $saved->id,
+                            'order_id'          => $orderModel->id,
                             'product_detail_id' => $item['product_detail_id'],
-                            'product_name'      => $item['product_name'],
-                            'size'              => $item['size'],
-                            'color'             => $item['color'],
-                            'price'             => $item['price'],
-                            'image'             => $item['image'] ?? null,
-                            'quantity'          => $item['quantity'],
+                            'product_name'      => optional($detail->product)->name ?? 'Sản phẩm đã xoá',
+                            'size'              => $detail->size ?? '-',
+                            'color'             => $item['color'] ?? '-',
+                            'price'             => $detail->price ?? 0,
+                            'image'             => $detail->image ?? 'img/default.png',
+                            'quantity'          => $item['quantity'] ?? 1,
                         ]);
                     }
 
-                    session()->forget('cart');
-
-                    // 2. XÓA cart DB (user đã login)
+                    // Xoá giỏ
+                    session()->forget(['cart', 'coupon', 'order_data']);
                     if (Auth::check()) {
                         CartItem::where('user_id', Auth::id())->delete();
                     }
 
-                    // 3. XÓA coupon & order_data
-                    session()->forget(['coupon', 'order_data']);
-                    return $saved;
+                    return $orderModel;
                 });
+
+                // Thông báo admin
                 $recipients = User::whereIn('role', ['admin', 'staff'])->get();
-                if ($recipients->isNotEmpty()) {
-                    Notification::send($recipients, new OrderPlaced($saved));
-                }
+                Notification::send($recipients, new OrderPlaced($saved));
 
                 return redirect()->route('user.checkoutsuccess', ['id' => $saved->id]);
             } catch (\Throwable $e) {
-
                 return back()->with('error', 'Đặt hàng thất bại: ' . $e->getMessage());
             }
         }
 
-        return view('user.checkout')->with('error', 'Xác thực không thành công hoặc bị hủy.');
+        // Nếu lỗi hoặc bị hủy
+        $cart = collect($rawCart)->map(function ($item) {
+            $detail = Product_details::find($item['product_detail_id']);
+            return [
+                'product_name' => optional($detail->product)->name ?? 'Sản phẩm đã xoá',
+                'size'         => $detail->size ?? '-',
+                'price'        => $detail->price ?? 0,
+                'image'        => $detail->image ?? 'img/default.png',
+                'quantity'     => $item['quantity'] ?? 0,
+            ];
+        })->toArray();
+
+        $availableCoupons = Coupon::where('status', 'active')->get();
+        $address = $orderData['customer']['address'] ?? Auth::user()->address ?? '';
+        $totals  = $this->calculateTotals($cart, $address);
+
+        return view('user.checkout', array_merge(
+            compact('cart', 'empty', 'availableCoupons', 'address'),
+            $totals
+        ))->with('error', 'Xác thực không thành công hoặc đã bị hủy.');
     }
+
     public function handleMomoCancel()
     {
         // Xóa dữ liệu đơn hàng khỏi session
